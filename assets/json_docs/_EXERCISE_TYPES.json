@@ -1,0 +1,29 @@
+[
+  {
+    "key": "barbell"
+  },
+  {
+    "key": "bodyweight-loadable"
+  },
+  {
+    "key": "bodyweight-only"
+  },
+  {
+    "key": "cable"
+  },
+  {
+    "key": "dumbbell"
+  },
+  {
+    "key": "freemotion"
+  },
+  {
+    "key": "machine"
+  },
+  {
+    "key": "machine-assistance"
+  },
+  {
+    "key": "smith-machine"
+  }
+]
