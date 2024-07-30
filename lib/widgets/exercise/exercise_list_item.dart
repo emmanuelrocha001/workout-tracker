@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'package:workout_tracker/default_configs.dart';
+import '../../providers/config_provider.dart';
 import 'package:workout_tracker/models/muscle_group_dto.dart';
-import 'package:workout_tracker/utility.dart';
 
 import '../general/text_style_templates.dart';
 
@@ -35,12 +34,12 @@ class ExerciseListItem extends StatelessWidget {
     var _theme = Theme.of(context);
     var textTemplates = TextStyleTemplates();
     return Card(
-      color: DefaultConfigs.backgroundColor,
+      color: ConfigProvider.backgroundColor,
       elevation: 0,
       shape: const BorderDirectional(
         bottom: BorderSide(
           width: 1,
-          color: DefaultConfigs.slightContrastBackgroundColor,
+          color: ConfigProvider.slightContrastBackgroundColor,
         ),
       ),
       child: ListTile(
@@ -51,7 +50,7 @@ class ExerciseListItem extends StatelessWidget {
           // activeColor: const Color.fromARGB(255, 44, 78, 128),
           fillColor: WidgetStateProperty.resolveWith<Color>(
             (Set<WidgetState> states) {
-              return DefaultConfigs.mainColor;
+              return ConfigProvider.mainColor;
             },
           ),
           onChanged: null,
@@ -66,15 +65,15 @@ class ExerciseListItem extends StatelessWidget {
               MuscleGroupDto.getMuscleGroupName(data.muscleGroupId)
                   .toUpperCase(),
               style: textTemplates.smallTextStyle(
-                DefaultConfigs.mainTextColor.withOpacity(
-                  DefaultConfigs.mainTextColorWithOpacityPercent,
+                ConfigProvider.mainTextColor.withOpacity(
+                  ConfigProvider.mainTextColorWithOpacityPercent,
                 ),
               ),
             ),
             Text(
               data.name,
               style: textTemplates.defaultTextStyle(
-                DefaultConfigs.mainTextColor,
+                ConfigProvider.mainTextColor,
               ),
             ),
           ],
@@ -82,11 +81,11 @@ class ExerciseListItem extends StatelessWidget {
         subtitle: Align(
           alignment: Alignment.centerLeft,
           child: PillContainer(
-            color: DefaultConfigs.slightContrastBackgroundColor,
+            color: ConfigProvider.slightContrastBackgroundColor,
             child: Text(
               data.exerciseType.toUpperCase(),
               style: textTemplates.defaultTextStyle(
-                DefaultConfigs.mainTextColor,
+                ConfigProvider.mainTextColor,
               ),
             ),
           ),

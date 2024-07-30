@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import './default_configs.dart';
+import './providers/config_provider.dart';
 
 class Utility {
   static Color getTextColorBasedOnBackground({Color? backgroundColor}) {
     return _isDarkEnoughForWhiteText(
-            backgroundColor ?? DefaultConfigs.mainColor)
+            backgroundColor ?? ConfigProvider.mainColor)
         ? Colors.white
         : Colors.black;
   }

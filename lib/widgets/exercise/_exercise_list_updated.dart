@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workout_tracker/default_configs.dart';
+import '../../providers/config_provider.dart';
 
 import '../../providers/exercise_provider.dart';
 
@@ -51,10 +51,10 @@ class _ExerciseListUpdatedState extends State<ExerciseListUpdated> {
     return CustomScrollView(
       slivers: <Widget>[
         SliverAppBar(
-          surfaceTintColor: DefaultConfigs.backgroundColor,
-          shadowColor: DefaultConfigs.slightContrastBackgroundColor,
-          foregroundColor: DefaultConfigs.backgroundColor,
-          backgroundColor: DefaultConfigs.backgroundColor,
+          surfaceTintColor: ConfigProvider.backgroundColor,
+          shadowColor: ConfigProvider.slightContrastBackgroundColor,
+          foregroundColor: ConfigProvider.backgroundColor,
+          backgroundColor: ConfigProvider.backgroundColor,
           forceMaterialTransparency: false,
           automaticallyImplyLeading: false,
           elevation: 0.0,
@@ -79,14 +79,15 @@ class _ExerciseListUpdatedState extends State<ExerciseListUpdated> {
                   onFilter: onFilter,
                 ),
                 const Divider(
-                  color: DefaultConfigs.slightContrastBackgroundColor,
+                  height: ConfigProvider.defaultSpace / 2,
+                  color: ConfigProvider.slightContrastBackgroundColor,
                   // thickness: 1.0,
                 ),
               ],
             ),
           ),
-          expandedHeight: 105.0,
-          collapsedHeight: 105.0,
+          expandedHeight: 100.0,
+          collapsedHeight: 100.0,
           actions: [],
           centerTitle: true,
           pinned: true,

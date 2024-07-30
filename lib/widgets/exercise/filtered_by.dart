@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:workout_tracker/default_configs.dart';
+import '../../providers/config_provider.dart';
 import 'package:workout_tracker/utility.dart';
 
 import "../general/pill_container.dart";
@@ -17,62 +17,80 @@ class FilteredBy extends StatelessWidget {
     required this.onFilter,
   });
 
+  bool hasAppliedFilter() {
+    for (var filter in filters) {
+      if (filter.isNotEmpty) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     var textTemplates = TextStyleTemplates();
     return Container(
-      color: DefaultConfigs.backgroundColor,
-      child: ListTile(
-        dense: true,
-        subtitle: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            PillContainer(
-              child: Text(
-                filters[0].toUpperCase(),
-                style: textTemplates.smallBoldTextStyle(
-                  DefaultConfigs.mainTextColor,
+      // color: Colors.purple,
+      padding: const EdgeInsets.only(
+        left: ConfigProvider.defaultSpace,
+        right: ConfigProvider.defaultSpace,
+        // top: ConfigProvider.defaultSpace / 2,
+      ),
+      alignment: Alignment.centerRight,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: IntrinsicWidth(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              PillContainer(
+                child: Text(
+                  filters[0].toUpperCase(),
+                  style: textTemplates.smallBoldTextStyle(
+                    ConfigProvider.mainTextColor,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              width: DefaultConfigs.defaultSpace,
-            ),
-            PillContainer(
-              child: Text(
-                filters[1].toUpperCase(),
-                style: textTemplates.smallBoldTextStyle(
-                  DefaultConfigs.mainTextColor,
+              const SizedBox(
+                width: ConfigProvider.defaultSpace,
+              ),
+              PillContainer(
+                child: Text(
+                  filters[1].toUpperCase(),
+                  style: textTemplates.smallBoldTextStyle(
+                    ConfigProvider.mainTextColor,
+                  ),
                 ),
               ),
-            ),
-            Spacer(),
-            TextButton(
-              onPressed: onClearFilters,
-              style: TextButton.styleFrom(
-                backgroundColor: DefaultConfigs.slightContrastBackgroundColor,
-              ),
-              child: Text(
-                "CLEAR",
-                style: textTemplates.smallBoldTextStyle(
-                  DefaultConfigs.mainColor,
+              if (hasAppliedFilter())
+                TextButton(
+                  onPressed: onClearFilters,
+                  style: TextButton.styleFrom(
+                    backgroundColor:
+                        ConfigProvider.slightContrastBackgroundColor,
+                  ),
+                  child: Text(
+                    "CLEAR",
+                    style: textTemplates.smallBoldTextStyle(
+                      ConfigProvider.mainColor,
+                    ),
+                  ),
+                ),
+              const SizedBox(width: ConfigProvider.defaultSpace),
+              TextButton(
+                onPressed: onFilter,
+                style: TextButton.styleFrom(
+                  backgroundColor: ConfigProvider.mainColor,
+                ),
+                child: Text(
+                  "FILTER",
+                  style: textTemplates.smallBoldTextStyle(
+                    Utility.getTextColorBasedOnBackground(),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 8.0),
-            TextButton(
-              onPressed: onFilter,
-              style: TextButton.styleFrom(
-                backgroundColor: DefaultConfigs.mainColor,
-              ),
-              child: Text(
-                "FILTER",
-                style: textTemplates.smallBoldTextStyle(
-                  Utility.getTextColorBasedOnBackground(),
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
