@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:workout_tracker/default_configs.dart';
+import '../../providers/config_provider.dart';
 import 'package:workout_tracker/utility.dart';
-
-import '../../providers/exercise_provider.dart';
 
 import "../../models/exercise_type_dto.dart";
 import "../../models/filters_dto.dart";
 
 import '../general/text_style_templates.dart';
+
+import './overlay_action_button.dart';
 
 class FilterGrid extends StatelessWidget {
   final List<FiltersDto> filters;
@@ -30,7 +30,7 @@ class FilterGrid extends StatelessWidget {
           child: Text(
             cFilter.name.toLowerCase(),
             style: textStyles.mediumTextStyle(
-              DefaultConfigs.mainTextColor,
+              ConfigProvider.mainTextColor,
             ),
           ),
         ),
@@ -50,15 +50,15 @@ class FilterGrid extends StatelessWidget {
             return SizedBox.expand(
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
-                  overlayColor: DefaultConfigs.mainTextColor,
+                  overlayColor: ConfigProvider.mainTextColor,
                   elevation: 0.0,
                   backgroundColor: isSelected
-                      ? DefaultConfigs.mainColor
-                      : DefaultConfigs.slightContrastBackgroundColor,
+                      ? ConfigProvider.mainColor
+                      : ConfigProvider.slightContrastBackgroundColor,
                   side: BorderSide(
                     color: isSelected
-                        ? DefaultConfigs.mainColor
-                        : DefaultConfigs.slightContrastBackgroundColor,
+                        ? ConfigProvider.mainColor
+                        : ConfigProvider.slightContrastBackgroundColor,
                     width: 2.0,
                   ),
                   shape: const RoundedRectangleBorder(
@@ -76,7 +76,7 @@ class FilterGrid extends StatelessWidget {
                   style: textStyles.defaultTextStyle(
                     isSelected
                         ? Utility.getTextColorBasedOnBackground()
-                        : DefaultConfigs.mainTextColor,
+                        : ConfigProvider.mainTextColor,
                   ),
                 ),
               ),
@@ -103,48 +103,18 @@ class FilterGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var textTemplates = TextStyleTemplates();
-    return Stack(
-      children: [
-        CustomScrollView(
-          slivers: <Widget>[
-            ..._generateWidgets(filters),
-            const SliverPadding(
-              padding: EdgeInsets.all(DefaultConfigs.largeSpace),
-            )
-          ],
-        ),
-        if (_filtersUpdated())
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: DefaultConfigs.largeSpace * 2,
-              color: Colors.black.withOpacity(.1),
-              child: Padding(
-                padding: const EdgeInsets.all(DefaultConfigs.defaultSpace),
-                child: Center(
-                  child: SizedBox(
-                    width: DefaultConfigs.maxButtonSize,
-                    child: TextButton(
-                      onPressed: onApply,
-                      style: TextButton.styleFrom(
-                        backgroundColor: DefaultConfigs.mainColor,
-                      ),
-                      child: Text(
-                        "APPLY",
-                        style: textTemplates.smallBoldTextStyle(
-                          Utility.getTextColorBasedOnBackground(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-      ],
+    return OverlayActionButton(
+      content: CustomScrollView(
+        slivers: <Widget>[
+          ..._generateWidgets(filters),
+          const SliverPadding(
+            padding: EdgeInsets.all(ConfigProvider.largeSpace),
+          )
+        ],
+      ),
+      showActionButton: _filtersUpdated(),
+      label: "APPLY",
+      onPressed: onApply,
     );
   }
 }

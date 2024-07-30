@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:workout_tracker/default_configs.dart';
-import 'package:workout_tracker/utility.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/config_provider.dart';
 
 import './general/text_style_templates.dart';
 
 class Helper {
+  static double getTopPadding(BuildContext context) {
+    var configProvider = Provider.of<ConfigProvider>(context, listen: false);
+    var mediaQueryTopPadding = MediaQuery.of(context).padding.top;
+    // update if value differs and is non-zero
+    if (mediaQueryTopPadding != 0.0 &&
+        mediaQueryTopPadding != configProvider.topPadding) {
+      configProvider.setTopPadding(mediaQueryTopPadding);
+    }
+    return configProvider.topPadding;
+  }
+
   static Future<dynamic> showPopUp({
     required BuildContext context,
     required String title,
@@ -16,20 +28,21 @@ class Helper {
     return await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        backgroundColor: DefaultConfigs.backgroundColor,
+        backgroundColor: ConfigProvider.backgroundColor,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(
-              DefaultConfigs.defaultSpace,
+              ConfigProvider.defaultSpace,
             ),
             topRight: Radius.circular(
-              DefaultConfigs.defaultSpace,
+              ConfigProvider.defaultSpace,
             ),
           ),
         ),
         builder: (ctx) {
-          return Container(
-            height: (mediaQuery.size.height - mediaQuery.padding.top) * .9,
+          return SizedBox(
+            height:
+                (mediaQuery.size.height - Helper.getTopPadding(context)) * 1,
             // padding: hasPadding ? const EdgeInsets.all(8.0) : EdgeInsets.zero,
             child: SafeArea(
               bottom: true,
@@ -37,30 +50,41 @@ class Helper {
                 children: [
                   Container(
                     decoration: const BoxDecoration(
-                      // color: DefaultConfigs.mainColor,
+                      color: ConfigProvider.backgroundColor,
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(DefaultConfigs.defaultSpace),
-                        topRight: Radius.circular(DefaultConfigs.defaultSpace),
+                        topLeft: Radius.circular(ConfigProvider.defaultSpace),
+                        topRight: Radius.circular(ConfigProvider.defaultSpace),
                       ),
                     ),
-                    child: Row(
+                    child: Stack(
                       children: [
                         // DefaultTextIconButton(onPressed: () {}),
-                        Spacer(),
-                        Container(
-                          margin: const EdgeInsets.all(
-                            DefaultConfigs.defaultSpace,
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: Container(
+                            width: 50.0,
+                            margin: const EdgeInsets.only(
+                              top: ConfigProvider.defaultSpace / 2,
+                            ),
+                            height: ConfigProvider.defaultSpace * .75,
+                            decoration: const BoxDecoration(
+                              color:
+                                  ConfigProvider.slightContrastBackgroundColor,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(ConfigProvider.defaultSpace),
+                              ),
+                            ),
                           ),
-                          decoration: const BoxDecoration(
-                            // color: DefaultConfigs.mainColor,
-                            shape: BoxShape.circle,
-                          ),
+                        ),
+                        // const Spacer(),
+                        Align(
+                          alignment: Alignment.centerRight,
                           child: IconButton(
                             icon: const Icon(
                               Icons.close,
-                              // color: DefaultConfigs.backgroundColor,
-                              color: DefaultConfigs.mainColor,
-                              size: DefaultConfigs.defaultIconSize,
+                              // color: ConfigProvider.backgroundColor,
+                              color: ConfigProvider.mainColor,
+                              size: ConfigProvider.defaultIconSize,
                             ),
                             onPressed: () {
                               Navigator.of(context).pop();
@@ -70,14 +94,18 @@ class Helper {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        title,
-                        style: textTemplates.largeBoldTextStyle(
-                          DefaultConfigs.mainTextColor,
+                  Container(
+                    color: ConfigProvider.backgroundColor,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: ConfigProvider.defaultSpace),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          title,
+                          style: textTemplates.largeBoldTextStyle(
+                            ConfigProvider.mainTextColor,
+                          ),
                         ),
                       ),
                     ),
@@ -85,7 +113,7 @@ class Helper {
                   Expanded(
                       child: Padding(
                     padding: hasPadding
-                        ? const EdgeInsets.all(8.0)
+                        ? const EdgeInsets.all(ConfigProvider.defaultSpace)
                         : EdgeInsets.zero,
                     child: content,
                   )),

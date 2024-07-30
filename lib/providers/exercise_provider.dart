@@ -68,10 +68,11 @@ class ExerciseProvider with ChangeNotifier {
                           _appliedSearchFilter!.toLowerCase(),
                         )) &&
                 (_appliedMuscleGroupIdFilter == null ||
-                    x.muscleGroupId.toLowerCase().contains(
-                          _appliedMuscleGroupIdFilter!.toLowerCase(),
-                        )) &&
+                    _appliedMuscleGroupIdFilter!.isEmpty ||
+                    x.muscleGroupId.toLowerCase() ==
+                        _appliedMuscleGroupIdFilter!.toLowerCase()) &&
                 (_appliedExerciseType == null ||
+                    _appliedExerciseType!.isEmpty ||
                     x.exerciseType.toLowerCase().contains(
                           _appliedExerciseType!.toLowerCase(),
                         )),

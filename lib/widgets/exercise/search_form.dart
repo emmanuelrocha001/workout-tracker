@@ -1,12 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:workout_tracker/class_extensions.dart';
-import 'package:workout_tracker/default_configs.dart';
-import 'package:workout_tracker/models/muscle_group_dto.dart';
-import 'package:workout_tracker/widgets/general/pill_container.dart';
-import '../search/active_search_filter.dart';
+import '../../providers/config_provider.dart';
+import '../../models/muscle_group_dto.dart';
 
 import '../../providers/exercise_provider.dart';
 
@@ -28,7 +24,7 @@ class _SearchFormState extends State<SearchForm> {
   @override
   void initState() {
     super.initState();
-    _focusNode.requestFocus();
+    // _focusNode.requestFocus();
     _controller.addListener(_onKeyStroke);
   }
 
@@ -71,14 +67,14 @@ class _SearchFormState extends State<SearchForm> {
       focusNode: _focusNode,
       controller: _controller,
       style: textStyles.defaultTextStyle(
-        DefaultConfigs.mainTextColor,
+        ConfigProvider.mainTextColor,
       ),
       decoration: InputDecoration(
         hintText: 'Search',
         hintStyle: textStyles.defaultTextStyle(
-          DefaultConfigs.mainTextColor,
+          ConfigProvider.mainTextColor,
         ),
-        fillColor: DefaultConfigs.slightContrastBackgroundColor,
+        fillColor: ConfigProvider.slightContrastBackgroundColor,
         filled: true,
         border: OutlineInputBorder(
           borderSide: BorderSide.none,

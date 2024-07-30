@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workout_tracker/providers/exercise_provider.dart';
-import './widgets/exercise_selection_button.dart';
+import 'package:workout_tracker/providers/config_provider.dart';
+import './providers/exercise_provider.dart';
 
-import './default_configs.dart';
+import './screens/main_content_navigator.dart';
+import './screens/initial_screen.dart';
+import './screens/splash_screen.dart';
+import './widgets/exercise_selection_button.dart';
+import './providers/config_provider.dart';
 import './utility.dart';
 
 void main() {
@@ -18,23 +22,21 @@ class WorkoutTracker extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider<ConfigProvider>(
+          create: (_) => ConfigProvider(),
+        ),
         ChangeNotifierProvider<ExerciseProvider>(
-            create: (_) => ExerciseProvider())
+          create: (_) => ExerciseProvider(),
+        )
       ],
       child: MaterialApp(
         title: 'Workout Tracker',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          // #EE8572
-          // 00A896 percian green
-          // buttonTheme: ButtonThemeData(
-          //   buttonColor: DefaultConfigs.mainColor,
-          //   textTheme: ButtonTextTheme.primary,
-          // ),
           textSelectionTheme: TextSelectionThemeData(
-            cursorColor: DefaultConfigs.mainColor,
+            cursorColor: ConfigProvider.mainColor,
             selectionColor: Colors.grey.shade300,
-            selectionHandleColor: DefaultConfigs.mainColor,
+            selectionHandleColor: ConfigProvider.mainColor,
           ),
           inputDecorationTheme: const InputDecorationTheme(
             isDense: true,
@@ -49,15 +51,15 @@ class WorkoutTracker extends StatelessWidget {
               overlayColor: WidgetStateProperty.resolveWith(
                 (states) {
                   if (states.contains(WidgetState.pressed)) {
-                    return DefaultConfigs.mainTextColor.withOpacity(
+                    return ConfigProvider.mainTextColor.withOpacity(
                         .1); // The color when the button is pressed
                   } else {
-                    return DefaultConfigs.mainTextColor
+                    return ConfigProvider.mainTextColor
                         .withOpacity(.1); // Transparent otherwise
                   }
                 },
               ),
-              iconColor: WidgetStateProperty.all(DefaultConfigs.mainColor),
+              iconColor: WidgetStateProperty.all(ConfigProvider.mainColor),
               iconSize: WidgetStateProperty.all(32),
               shape: WidgetStateProperty.all(
                 RoundedRectangleBorder(
@@ -71,21 +73,20 @@ class WorkoutTracker extends StatelessWidget {
           ),
           iconButtonTheme: IconButtonThemeData(
             style: ButtonStyle(
-              iconColor: WidgetStateProperty.all(DefaultConfigs.mainColor),
+              iconColor: WidgetStateProperty.all(ConfigProvider.mainColor),
               iconSize: WidgetStateProperty.all(32),
             ),
           ),
-          primarySwatch: Utility.createMaterialColor(DefaultConfigs.mainColor),
-          primaryColor: DefaultConfigs.mainColor,
+          primarySwatch: Utility.createMaterialColor(ConfigProvider.mainColor),
+          primaryColor: ConfigProvider.mainColor,
           highlightColor: Colors.grey.shade200,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: const Scaffold(
-          // backgroundColor: Color.fromARGB(255, 44, 78, 128),
-          body: Center(
-            child: ExerciseSelectionButton(),
-          ),
-        ),
+        home: const InitialScreen(),
+        routes: {
+          InitialScreen.routeName: (ctx) => const InitialScreen(),
+          MainContentNavigator.routeName: (ctx) => const MainContentNavigator(),
+        },
       ),
     );
   }
