@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+
 import '../../providers/config_provider.dart';
-import 'package:workout_tracker/models/muscle_group_dto.dart';
+import '../../models/muscle_group_dto.dart';
 
 import '../general/text_style_templates.dart';
 
@@ -91,9 +93,7 @@ class ExerciseListItem extends StatelessWidget {
           ),
         ),
         trailing: IconButton(
-          icon: const Icon(
-            Icons.chevron_right,
-          ),
+          icon: const Icon(Feather.youtube),
           style: _theme.iconButtonTheme.style,
           onPressed: _navigateToYoutube,
         ),

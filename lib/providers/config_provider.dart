@@ -10,7 +10,8 @@ class ConfigProvider extends ChangeNotifier {
     if (topPadding > 0.0) _topPadding = topPadding;
   }
 
-  static const defaultDateFormat = 'MMM d, y hh:mm aaa';
+  static const defaultDateStampFormat = 'MMM d, y hh:mm aaa';
+  static const simpleDateFormat = 'EEE, MMM d';
 
   // COLORS -------------------------->
   static const alternameTextColor = Color.fromARGB(255, 255, 255, 255);

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:workout_tracker/models/muscle_group_dto.dart';
+import '../models/tracked_exercise_dto.dart';
 
 import '../models/exercise_dto.dart';
 
@@ -10,6 +10,7 @@ class ExerciseProvider with ChangeNotifier {
   final String _exercisesFilePath = 'assets/json_docs/_EXERCISES.json';
   List<ExerciseDto> _exercises = [];
   List<ExerciseDto> _filteredExercises = [];
+  List<TrackedExerciseDto> _trackedExercises = [];
   String? _appliedSearchFilter;
   String? _appliedMuscleGroupIdFilter;
   String? _appliedExerciseType;
@@ -36,6 +37,10 @@ class ExerciseProvider with ChangeNotifier {
 
   List<ExerciseDto> get exercises {
     return [..._filteredExercises];
+  }
+
+  List<TrackedExerciseDto> get trackedExercises {
+    return [..._trackedExercises];
   }
 
   int get exercisesCount {
@@ -100,16 +105,6 @@ class ExerciseProvider with ChangeNotifier {
     _appliedSearchFilter = value;
     _applyFilters();
     notifyListeners();
-    // if (search != null && search.isNotEmpty) {
-    //   _appliedSearchFilter = search;
-    //   _filteredExercises = _exercises
-    //       .where((x) => x.name.toLowerCase().contains(search.toLowerCase()))
-    //       .toList();
-    //   notifyListeners();
-    // } else {
-    //   _filteredExercises = [..._exercises];
-    //   notifyListeners();
-    // }
   }
 
   void setAppliedMuscleGroupIdFilter(String value) {
@@ -121,6 +116,39 @@ class ExerciseProvider with ChangeNotifier {
   void setAppliedExerciseType(String value) {
     _appliedExerciseType = value;
     _applyFilters();
+    notifyListeners();
+  }
+
+  // Tracked exercises
+
+  ExerciseDto? getExerciseById(String id) {
+    return _exercises.firstWhere((x) => x.id == id);
+  }
+
+  void addTrackedExercise(String exerciseId) {
+    var exercise = getExerciseById(exerciseId);
+    if (exercise == null) {
+      return;
+    }
+
+    var trackedExercise = TrackedExerciseDto(
+      exercise: exercise,
+    );
+    _trackedExercises.add(trackedExercise);
+    notifyListeners();
+  }
+
+  void reorderTrackedExercises(int oldIndex, int newIndex) {
+    if (oldIndex == newIndex) {
+      return;
+    }
+
+    if (newIndex >= _trackedExercises.length) {
+      newIndex = _trackedExercises.length - 1;
+    }
+    var temp = _trackedExercises[oldIndex];
+    _trackedExercises.removeAt(oldIndex);
+    _trackedExercises.insert(newIndex, temp);
     notifyListeners();
   }
 }

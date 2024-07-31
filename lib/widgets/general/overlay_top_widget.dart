@@ -1,0 +1,46 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/config_provider.dart';
+import '../helper.dart';
+
+class OverlayContent extends StatelessWidget {
+  final Widget content;
+  final Widget overLayContent;
+  final double padding;
+  const OverlayContent(
+      {super.key,
+      required this.content,
+      required this.overLayContent,
+      this.padding = 60.0});
+
+  @override
+  Widget build(BuildContext context) {
+    print('top padding ${Helper.getTopPadding(context)}');
+    var topPadding = Helper.getTopPadding(context);
+    return Stack(
+      children: [
+        SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(top: padding),
+            child: content,
+          ),
+        ),
+        Positioned(
+          top: 0,
+          right: 0,
+          left: 0,
+          child: Container(
+            // width: MediaQuery.of(context).size.width,
+            color: ConfigProvider.backgroundColor,
+            padding: EdgeInsets.only(top: topPadding),
+            height: padding + topPadding,
+            // padding:
+            //     EdgeInsets.only(top: topPadding + configProvider.topPadding),
+            child: overLayContent,
+          ),
+        ),
+      ],
+    );
+  }
+}
