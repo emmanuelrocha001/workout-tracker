@@ -16,31 +16,35 @@ class OverlayContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('top padding ${Helper.getTopPadding(context)}');
     var topPadding = Helper.getTopPadding(context);
-    return Stack(
-      children: [
-        SafeArea(
-          child: Padding(
-            padding: EdgeInsets.only(top: padding),
-            child: content,
-          ),
+    return Center(
+      child: SizedBox(
+        width: Helper.getMaxContentWidth(context),
+        child: Stack(
+          children: [
+            SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(top: padding),
+                child: content,
+              ),
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              left: 0,
+              child: Container(
+                // width: MediaQuery.of(context).size.width,
+                color: ConfigProvider.backgroundColor,
+                padding: EdgeInsets.only(top: topPadding),
+                height: padding + topPadding,
+                // padding:
+                //     EdgeInsets.only(top: topPadding + configProvider.topPadding),
+                child: overLayContent,
+              ),
+            ),
+          ],
         ),
-        Positioned(
-          top: 0,
-          right: 0,
-          left: 0,
-          child: Container(
-            // width: MediaQuery.of(context).size.width,
-            color: ConfigProvider.backgroundColor,
-            padding: EdgeInsets.only(top: topPadding),
-            height: padding + topPadding,
-            // padding:
-            //     EdgeInsets.only(top: topPadding + configProvider.topPadding),
-            child: overLayContent,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

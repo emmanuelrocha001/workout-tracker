@@ -14,15 +14,17 @@ class ConfigProvider extends ChangeNotifier {
   static const simpleDateFormat = 'EEE, MMM d';
 
   // COLORS -------------------------->
-  static const alternameTextColor = Color.fromARGB(255, 255, 255, 255);
   static const mainTextColor = Color.fromARGB(255, 0, 0, 0);
+  static const alternateTextColor = Color.fromARGB(255, 104, 104, 104);
   static const mainTextColorWithOpacityPercent = .75;
-  static const mainColor = Color.fromARGB(255, 255, 62, 62);
+  // static const mainColor = Color.fromARGB(255, 255, 62, 62);
+  static const mainColor = Color(0xff0F4C75);
   static const backgroundColor = Color.fromARGB(255, 246, 246, 246);
   static const slightContrastBackgroundColor =
       Color.fromARGB(255, 230, 230, 230);
 
   // SIZING -------------------------->
+  static const maxContentWidth = 600.0;
   static const maxButtonSize = 200.0;
   static const double logoZize = 100.0;
 
@@ -35,6 +37,7 @@ class ConfigProvider extends ChangeNotifier {
   static const xLargeFontSize = 24.0;
   static const xxLargeFontSize = 28.0;
   static const defaultIconSize = 28.0;
+  static const smallIconSize = 18.0;
 
   // SPACING
   static const defaultSpace = 8.0;

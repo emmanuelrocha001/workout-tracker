@@ -6,7 +6,11 @@ import './tracked_exercise_list_item_body.dart';
 
 class TrackedExerciseListItem extends StatelessWidget {
   final TrackedExerciseDto trackedExercise;
-  const TrackedExerciseListItem({super.key, required this.trackedExercise});
+  final showAsSimplified;
+  const TrackedExerciseListItem(
+      {super.key,
+      required this.trackedExercise,
+      this.showAsSimplified = false});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +18,7 @@ class TrackedExerciseListItem extends StatelessWidget {
       child: Column(
         children: [
           TrackedExerciseListItemHeader(trackedExercise: trackedExercise),
-          const TrackedExerciseListItemBody()
+          if (!showAsSimplified) const TrackedExerciseListItemBody()
         ],
       ),
     );

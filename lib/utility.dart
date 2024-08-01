@@ -13,16 +13,16 @@ class Utility {
   static bool _isDarkEnoughForWhiteText(Color backgroundColor) {
     // Calculate the relative luminance of the background color
     double luminance = backgroundColor.computeLuminance();
-    print(
-        '${backgroundColor.alpha},${backgroundColor.red},${backgroundColor.green},${backgroundColor.blue}');
-    print('luminance: $luminance');
+    // print(
+    //     '${backgroundColor.alpha},${backgroundColor.red},${backgroundColor.green},${backgroundColor.blue}');
+    // print('luminance: $luminance');
 
     // Luminance of white text
     double luminanceWhite = 1.0; // Maximum luminance
 
     // Calculate contrast ratio
     double contrastRatio = (luminance + 0.05) / (luminanceWhite + 0.05);
-    print('contrast ratio: $contrastRatio');
+    // print('contrast ratio: $contrastRatio');
     // Check if the contrast ratio is at least 4.5:1
     return contrastRatio < (1 - (1 / 4.5));
   }

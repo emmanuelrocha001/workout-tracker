@@ -31,7 +31,7 @@ class TextStyleTemplates {
   TextStyle smallBoldTextStyle(Color color) {
     return GoogleFonts.poppins(
       fontSize: ConfigProvider.smallFontSize,
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w700,
       color: color,
     );
   }

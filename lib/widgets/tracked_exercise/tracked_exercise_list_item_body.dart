@@ -6,7 +6,7 @@ class TrackedExerciseListItemBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Placeholder(
-      fallbackHeight: 50.0,
+      fallbackHeight: 100.0,
       color: Colors.grey,
     );
   }

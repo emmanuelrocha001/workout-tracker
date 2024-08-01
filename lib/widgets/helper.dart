@@ -17,6 +17,13 @@ class Helper {
     return configProvider.topPadding;
   }
 
+  static double getMaxContentWidth(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    return width <= ConfigProvider.maxContentWidth
+        ? width
+        : ConfigProvider.maxContentWidth;
+  }
+
   static Future<dynamic> showPopUp({
     required BuildContext context,
     required String title,
