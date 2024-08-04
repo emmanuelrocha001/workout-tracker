@@ -10,6 +10,9 @@ class ConfigProvider extends ChangeNotifier {
     if (topPadding > 0.0) _topPadding = topPadding;
   }
 
+  static const decimalRegexPattern = r'^\d{0,4}$|^\d{0,4}\.{1}\d{0,2}$';
+  static const digitRegexPattern = r'^\d{0,4}$';
+
   static const defaultDateStampFormat = 'MMM d, y hh:mm aaa';
   static const simpleDateFormat = 'EEE, MMM d';
 
@@ -19,6 +22,7 @@ class ConfigProvider extends ChangeNotifier {
   static const mainTextColorWithOpacityPercent = .75;
   // static const mainColor = Color.fromARGB(255, 255, 62, 62);
   static const mainColor = Color(0xff0F4C75);
+  static const backgroundColorSolid = Colors.white;
   static const backgroundColor = Color.fromARGB(255, 246, 246, 246);
   static const slightContrastBackgroundColor =
       Color.fromARGB(255, 230, 230, 230);

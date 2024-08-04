@@ -5,28 +5,31 @@ import './exercise_dto.dart';
 class TrackedExerciseDto {
   late String id;
   ExerciseDto exercise;
-  List<SetDto> sets;
+  List<SetDto> sets = [];
 
   TrackedExerciseDto({
     this.id = "",
-    this.sets = const [],
     required this.exercise,
   }) {
     if (id.isEmpty) {
       id = const Uuid().v4();
+      print("from generating id ${id}");
     }
+    sets.add(SetDto());
   }
 }
 
 class SetDto {
-  final int reps;
-  final int weight;
-  final int? restTime;
+  int? reps;
+  double? weight;
+  int? restTime;
+  bool isLogged;
   // final int? duration;
 
   SetDto({
-    required this.reps,
-    required this.weight,
+    this.reps,
+    this.weight,
     this.restTime,
+    this.isLogged = false,
   });
 }

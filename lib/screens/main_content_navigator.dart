@@ -23,6 +23,7 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
   Widget build(BuildContext context) {
     var textTemplates = TextStyleTemplates();
     return Scaffold(
+      backgroundColor: ConfigProvider.backgroundColor,
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
           labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
@@ -44,6 +45,7 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
           }),
         ),
         child: NavigationBar(
+          backgroundColor: ConfigProvider.backgroundColorSolid,
           elevation: 2.0,
           onDestinationSelected: (int index) {
             setState(() {

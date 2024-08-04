@@ -10,6 +10,8 @@ import '../general/text_style_templates.dart';
 import "../general/pill_container.dart";
 import "../../models/exercise_dto.dart";
 
+import '../helper.dart';
+
 class ExerciseListItem extends StatelessWidget {
   final ExerciseDto data;
   final String selectedId;
@@ -20,16 +22,6 @@ class ExerciseListItem extends StatelessWidget {
     required this.selectedId,
     required this.onSelect,
   });
-
-  void _navigateToYoutube() async {
-    var baseUrl = "https://www.youtube.com";
-
-    var url = (data.youtubeId?.isNotEmpty ?? false)
-        ? "$baseUrl/watch?v=${data.youtubeId}"
-        : "$baseUrl/results?search_query=${Uri.encodeComponent(data.name)}";
-
-    await launchUrlString(url, mode: LaunchMode.externalApplication);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +87,12 @@ class ExerciseListItem extends StatelessWidget {
         trailing: IconButton(
           icon: const Icon(Feather.youtube),
           style: _theme.iconButtonTheme.style,
-          onPressed: _navigateToYoutube,
+          onPressed: () {
+            Helper.navigateToYoutube(
+              youtubeId: data.youtubeId,
+              searchQuery: data.name,
+            );
+          },
         ),
       ),
     );

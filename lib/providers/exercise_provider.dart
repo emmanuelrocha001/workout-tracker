@@ -138,6 +138,12 @@ class ExerciseProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void deleteTrackedExercise(String trackedExerciseId) {
+    print("from delete exercise ${trackedExerciseId}");
+    _trackedExercises.removeWhere((x) => x.id == trackedExerciseId);
+    notifyListeners();
+  }
+
   void reorderTrackedExercises(int oldIndex, int newIndex) {
     if (oldIndex == newIndex) {
       return;
@@ -150,5 +156,16 @@ class ExerciseProvider with ChangeNotifier {
     _trackedExercises.removeAt(oldIndex);
     _trackedExercises.insert(newIndex, temp);
     notifyListeners();
+  }
+
+  bool addSetToTrackedExercise(String trackedExerciseId, SetDto set) {
+    var trackedExercise =
+        _trackedExercises.where((x) => x.id == trackedExerciseId).firstOrNull;
+
+    if (trackedExercise == null) {
+      return false;
+    }
+    trackedExercise.sets.add(set);
+    return true;
   }
 }

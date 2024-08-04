@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../providers/config_provider.dart';
 
@@ -22,6 +23,20 @@ class Helper {
     return width <= ConfigProvider.maxContentWidth
         ? width
         : ConfigProvider.maxContentWidth;
+  }
+
+  static void navigateToYoutube({
+    String? youtubeId,
+    String? searchQuery,
+  }) async {
+    if (youtubeId == null && searchQuery == null) return;
+    var baseUrl = "https://www.youtube.com";
+
+    var url = (youtubeId?.isNotEmpty ?? false)
+        ? "$baseUrl/watch?v=$youtubeId"
+        : "$baseUrl/results?search_query=${Uri.encodeComponent(searchQuery!)}";
+
+    await launchUrlString(url, mode: LaunchMode.externalApplication);
   }
 
   static Future<dynamic> showPopUp({

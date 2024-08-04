@@ -28,7 +28,7 @@ class TrackedExerciseList extends StatefulWidget {
 class _TrackedExerciseListState extends State<TrackedExerciseList> {
   bool onReorderInProgress = false;
 
-  void onAddExercise(BuildContext context) async {
+  void onAddExercise() async {
     dynamic exerciseId = await Helper.showPopUp(
       context: context,
       title: 'Exercises',
@@ -42,33 +42,23 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
     }
   }
 
-  // Widget proxyDecorator(Widget child, int index, Animation<double> animation) {
-  //   var exerciseProvider =
-  //       Provider.of<ExerciseProvider>(context, listen: false);
-  //   var trackedExercises = exerciseProvider.trackedExercises;
-  //   var header = TrackedExerciseListItemHeader(
-  //     trackedExercise: trackedExercises[index],
-  //   );
-  //   return AnimatedBuilder(
-  //     animation: animation,
-  //     builder: (BuildContext context, Widget? child) {
-  //       final double animValue = Curves.easeInOut.transform(animation.value);
-  //       final double elevation = lerpDouble(0, 6, animValue)!;
-  //       final double scaleY = lerpDouble(100, 50, animValue)!;
-  //       return SizedBox(
-  //         height: scaleY,
-  //         child: Material(
-  //           borderRadius: BorderRadius.circular(ConfigProvider.defaultSpace),
-  //           elevation: elevation,
-  //           color: ConfigProvider.mainColor,
-  //           shadowColor: ConfigProvider.mainColor,
-  //           child: child,
-  //         ),
-  //       );
-  //     },
-  //     child: child,
-  //   );
-  // }
+  Widget proxyDecorator(Widget child, int index, Animation<double> animation) {
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (BuildContext context, Widget? child) {
+        final double animValue = Curves.easeInOut.transform(animation.value);
+        final double elevation = lerpDouble(0, 6, animValue)!;
+        return Material(
+          borderRadius: BorderRadius.circular(ConfigProvider.defaultSpace),
+          elevation: elevation,
+          color: ConfigProvider.mainColor,
+          shadowColor: ConfigProvider.mainColor,
+          child: child,
+        );
+      },
+      child: child,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +70,7 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
         .toUpperCase();
     return OverlayContent(
       content: ReorderableListView(
+        proxyDecorator: proxyDecorator,
         onReorderStart: (index) {
           setState(() {
             onReorderInProgress = true;
@@ -132,9 +123,7 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
             child: Padding(
               padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
               child: TextButton(
-                onPressed: () {
-                  onAddExercise(context);
-                },
+                onPressed: onAddExercise,
                 style: TextButton.styleFrom(
                   backgroundColor: ConfigProvider.mainColor,
                 ),

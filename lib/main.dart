@@ -29,64 +29,78 @@ class WorkoutTracker extends StatelessWidget {
           create: (_) => ExerciseProvider(),
         )
       ],
-      child: MaterialApp(
-        title: 'Workout Tracker',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          textSelectionTheme: TextSelectionThemeData(
-            cursorColor: ConfigProvider.mainColor,
-            selectionColor: Colors.grey.shade300,
-            selectionHandleColor: ConfigProvider.mainColor,
-          ),
-          inputDecorationTheme: const InputDecorationTheme(
-            isDense: true,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(5)),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+
+          if (!currentFocus.hasPrimaryFocus &&
+              currentFocus.focusedChild != null) {
+            print('unfocusing');
+            FocusManager.instance.primaryFocus!.unfocus();
+          }
+        },
+        child: MaterialApp(
+          title: 'Workout Tracker',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: ConfigProvider.mainColor,
+              selectionColor: Colors.grey.shade300,
+              selectionHandleColor: ConfigProvider.mainColor,
             ),
-          ),
-          textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all(Colors.transparent),
-              foregroundColor: WidgetStateProperty.all(Colors.black),
-              overlayColor: WidgetStateProperty.resolveWith(
-                (states) {
-                  if (states.contains(WidgetState.pressed)) {
-                    return ConfigProvider.mainTextColor.withOpacity(
-                        .1); // The color when the button is pressed
-                  } else {
-                    return ConfigProvider.mainTextColor
-                        .withOpacity(.1); // Transparent otherwise
-                  }
-                },
+            inputDecorationTheme: const InputDecorationTheme(
+              isDense: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(5)),
               ),
-              iconColor: WidgetStateProperty.all(ConfigProvider.mainColor),
-              iconSize: WidgetStateProperty.all(32),
-              shape: WidgetStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                foregroundColor: WidgetStateProperty.all(Colors.black),
+                overlayColor: WidgetStateProperty.resolveWith(
+                  (states) {
+                    if (states.contains(WidgetState.pressed)) {
+                      return ConfigProvider.mainTextColor.withOpacity(
+                          .1); // The color when the button is pressed
+                    } else {
+                      return ConfigProvider.mainTextColor
+                          .withOpacity(.1); // Transparent otherwise
+                    }
+                  },
+                ),
+                iconColor: WidgetStateProperty.all(ConfigProvider.mainColor),
+                iconSize: WidgetStateProperty.all(32),
+                shape: WidgetStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
                 ),
               ),
             ),
-          ),
-          textTheme: const TextTheme(
-            labelLarge: TextStyle(color: Colors.black),
-          ),
-          iconButtonTheme: IconButtonThemeData(
-            style: ButtonStyle(
-              iconColor: WidgetStateProperty.all(ConfigProvider.mainColor),
-              iconSize: WidgetStateProperty.all(32),
+            textTheme: const TextTheme(
+              labelLarge: TextStyle(color: Colors.black),
             ),
+            iconButtonTheme: IconButtonThemeData(
+              style: ButtonStyle(
+                iconColor: WidgetStateProperty.all(ConfigProvider.mainColor),
+                iconSize: WidgetStateProperty.all(32),
+              ),
+            ),
+            primarySwatch:
+                Utility.createMaterialColor(ConfigProvider.mainColor),
+            primaryColor: ConfigProvider.mainColor,
+            highlightColor: Colors.grey.shade200,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
-          primarySwatch: Utility.createMaterialColor(ConfigProvider.mainColor),
-          primaryColor: ConfigProvider.mainColor,
-          highlightColor: Colors.grey.shade200,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
+          home: const InitialScreen(),
+          routes: {
+            InitialScreen.routeName: (ctx) => const InitialScreen(),
+            MainContentNavigator.routeName: (ctx) =>
+                const MainContentNavigator(),
+          },
         ),
-        home: const InitialScreen(),
-        routes: {
-          InitialScreen.routeName: (ctx) => const InitialScreen(),
-          MainContentNavigator.routeName: (ctx) => const MainContentNavigator(),
-        },
       ),
     );
   }

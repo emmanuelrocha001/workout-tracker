@@ -34,11 +34,19 @@ class OverlayContent extends StatelessWidget {
               left: 0,
               child: Container(
                 // width: MediaQuery.of(context).size.width,
-                color: ConfigProvider.backgroundColor,
                 padding: EdgeInsets.only(top: topPadding),
                 height: padding + topPadding,
                 // padding:
                 //     EdgeInsets.only(top: topPadding + configProvider.topPadding),
+                decoration: const BoxDecoration(
+                  color: ConfigProvider.backgroundColor,
+                  border: Border(
+                    bottom: BorderSide(
+                      color: ConfigProvider.slightContrastBackgroundColor,
+                      width: 1,
+                    ),
+                  ),
+                ),
                 child: overLayContent,
               ),
             ),
