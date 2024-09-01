@@ -168,4 +168,35 @@ class ExerciseProvider with ChangeNotifier {
     trackedExercise.sets.add(set);
     return true;
   }
+
+  bool removeSetFromTrackedExercise(String trackedExerciseId, int index) {
+    var trackedExercise =
+        _trackedExercises.where((x) => x.id == trackedExerciseId).firstOrNull;
+
+    if (trackedExercise == null) {
+      return false;
+    }
+    trackedExercise.sets.removeAt(index);
+    return true;
+  }
+
+  bool updateSetInTrackedExercise(
+      String trackedExerciseId, int index, SetDto set) {
+    var trackedExercise =
+        _trackedExercises.where((x) => x.id == trackedExerciseId).firstOrNull;
+
+    if (trackedExercise == null) {
+      return false;
+    }
+
+    var oldIsSetLogged = trackedExercise.isSetLogged();
+
+    trackedExercise.sets[index] = set;
+
+    if (oldIsSetLogged != trackedExercise.isSetLogged()) {
+      notifyListeners();
+    }
+
+    return true;
+  }
 }

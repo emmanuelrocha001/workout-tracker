@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 import '../providers/config_provider.dart';
 
@@ -56,7 +55,7 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
           destinations: <Widget>[
             NavigationDestination(
               icon: Icon(
-                Feather.user,
+                Icons.account_circle_outlined,
                 color: currentPageIndex == 0
                     ? ConfigProvider.backgroundColor
                     : Colors.black,
@@ -78,7 +77,7 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
                   '2',
                 ),
                 child: Icon(
-                  Feather.folder,
+                  Icons.folder_copy_rounded,
                   color: currentPageIndex == 2
                       ? ConfigProvider.backgroundColor
                       : Colors.black,

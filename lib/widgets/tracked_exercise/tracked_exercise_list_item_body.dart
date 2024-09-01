@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:uuid/uuid.dart';
 import '../../providers/exercise_provider.dart';
 
@@ -32,13 +31,13 @@ class _TrackedExerciseListItemBodyState
     extends State<TrackedExerciseListItemBody> {
   List<SetDto> sets = [];
   List<String> currentlyEditingTextFieldHistory = [];
+  int? currentEditingTextFieldIndex;
   List<TextEditingController> _weightControllers = [];
   List<TextEditingController> _repsControllers = [];
 
   @override
   void initState() {
     super.initState();
-    print("init state");
     sets = [...widget.sets];
 
     // _repsControllers = widget.sets.mapIndexed((index, set) {
@@ -80,13 +79,33 @@ class _TrackedExerciseListItemBodyState
     required TextEditingController controller,
     required Function(double) save,
     required bool allowDecimal,
+    required bool canEdit,
     String hintText = '',
   }) {
     var textStyleTemplates = TextStyleTemplates();
+    // TODO fix and account for jumping around different text fields
+    void formatAndSaveValue() {
+      if (controller.text.isEmpty) {
+        save(0.0);
+        controller.text = '0';
+      } else {
+        var parsedValue = double.parse(controller.text);
+        save(parsedValue);
+
+        var formattedValue = parsedValue.toStringAsFixed(
+            parsedValue.truncateToDouble() == parsedValue ? 0 : 2);
+
+        controller.text = formattedValue;
+      }
+    }
+
     return TextField(
       keyboardType: const TextInputType.numberWithOptions(signed: true),
       textInputAction: TextInputAction.done,
       cursorColor: ConfigProvider.mainColor,
+      onSubmitted: (value) {
+        print("on submitted");
+      },
       onTapOutside: (event) {
         // save on tap outside
         if (controller.text.isEmpty) {
@@ -104,6 +123,7 @@ class _TrackedExerciseListItemBodyState
       },
       onTap: () {
         // reset history
+        print("on text field tap, restting history");
         currentlyEditingTextFieldHistory = [controller.text];
       },
       onChanged: (value) {
@@ -118,6 +138,7 @@ class _TrackedExerciseListItemBodyState
           }
         }
       },
+      enabled: canEdit,
       controller: controller,
       decoration: InputDecoration(
         fillColor: ConfigProvider.slightContrastBackgroundColor,
@@ -131,6 +152,9 @@ class _TrackedExerciseListItemBodyState
           borderRadius: BorderRadius.circular(10),
         ),
       ),
+      style: textStyleTemplates.defaultTextStyle(
+        ConfigProvider.mainTextColor,
+      ),
       inputFormatters: [
         allowDecimal
             ? FilteringTextInputFormatter.deny(RegExp(r'[^\d.]'))
@@ -140,25 +164,65 @@ class _TrackedExerciseListItemBodyState
   }
 
   String getPreviousSetWeight(index) {
-    if (index > 0 &&
-        index < sets.length - 1 &&
-        sets[index - 1].weight != null) {
-      return sets[index - 1].weight.toString();
+    if (index > 0 && index <= sets.length - 1) {
+      for (var i = index; i >= 0; i--) {
+        if (sets[i].weight != null) {
+          return sets[i].weight.toString();
+        }
+      }
     }
     return '';
   }
 
   String getPreviousSetReps(index) {
-    if (index > 0 && index < sets.length - 1 && sets[index - 1].reps != null) {
-      return sets[index - 1].reps.toString();
+    if (index > 0 && index <= sets.length - 1) {
+      for (var i = index; i >= 0; i--) {
+        if (sets[i].reps != null) {
+          return sets[i].reps.toString();
+        }
+      }
     }
     return '';
   }
 
-  void onSetWeightChange(String trackedExerciseId, int index) {
-    // if (value.isNotEmpty) {
-    //   sets[index].weight = double.parse(value);
-    // }
+  void _onLog({
+    required String trackedExerciseId,
+    required int index,
+    required bool val,
+    double? previousSetWeight,
+    int? previousSetReps,
+  }) {
+    if (index >= 0 && index < sets.length) {
+      var tSet = SetDto.getCopy(sets[index]);
+      if (previousSetWeight != null) {
+        tSet.weight = previousSetWeight;
+      }
+      if (previousSetReps != null) {
+        tSet.reps = previousSetReps;
+      }
+      tSet.isLogged = val;
+      _onUpdateSet(trackedExerciseId, index, tSet);
+    }
+  }
+
+  void _onRemoveSet(trackedExcerciseId, int index) {
+    var setRemoved = Provider.of<ExerciseProvider>(context, listen: false)
+        .removeSetFromTrackedExercise(trackedExcerciseId, index);
+    if (setRemoved) {
+      setState(() {
+        sets.removeAt(index);
+      });
+    }
+  }
+
+  void _onUpdateSet(String trackedExerciseId, int index, SetDto set) {
+    var setUpdated = Provider.of<ExerciseProvider>(context, listen: false)
+        .updateSetInTrackedExercise(trackedExerciseId, index, set);
+    if (setUpdated) {
+      setState(() {
+        sets[index] = set;
+      });
+    }
   }
 
   List<Widget> generateSetRows() {
@@ -174,64 +238,114 @@ class _TrackedExerciseListItemBodyState
       );
     }).toList();
 
-    return sets
-        .mapIndexed((index, set) => Dismissible(
-              key: Key(
-                  '${widget.trackedExerciseId}_${index}_${const Uuid().v4()}'),
-              background: Container(
-                color: Colors.red,
-                alignment: Alignment.centerRight,
-                child: const Padding(
-                  padding: EdgeInsets.all(ConfigProvider.defaultSpace),
-                  child: Icon(
-                    Feather.trash,
-                    color: Colors.white,
-                  ),
+    return sets.mapIndexed((index, set) {
+      var previousSetReps = getPreviousSetReps(index);
+      var previousSetWeight = getPreviousSetWeight(index);
+      var canLog = (set.reps != null || previousSetReps.isNotEmpty) &&
+          (set.weight != null || previousSetWeight.isNotEmpty);
+      return Dismissible(
+        key: Key('${widget.trackedExerciseId}_${index}_${const Uuid().v4()}'),
+        background: Container(
+          color: Colors.red,
+          alignment: Alignment.centerRight,
+          child: const Padding(
+            padding: EdgeInsets.all(ConfigProvider.defaultSpace),
+            child: Icon(
+              Icons.delete_outline_rounded,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        onDismissed: (direction) {
+          _onRemoveSet(widget.trackedExerciseId, index);
+        },
+        child: Row(
+          children: [
+            rowItem(Text(
+              '$index',
+              style: textStyleTemplates.defaultTextStyle(
+                ConfigProvider.mainTextColor,
+              ),
+            )),
+            rowItem(
+              getNumberInput(
+                controller: _weightControllers[index],
+                save: (double number) {
+                  print("saving weight for index $index");
+                  var weightBeforeUpdate = sets[index].weight;
+                  sets[index].weight = number;
+                  var isUpdated =
+                      Provider.of<ExerciseProvider>(context, listen: false)
+                          .updateSetInTrackedExercise(
+                              widget.trackedExerciseId, index, sets[index]);
+                  setState(() {
+                    if (!isUpdated) {
+                      print("was not updated");
+                      sets[index].weight = weightBeforeUpdate;
+                    }
+                  });
+                },
+                allowDecimal: true,
+                canEdit: !set.isLogged,
+                hintText: previousSetWeight,
+              ),
+            ),
+            rowItem(
+              getNumberInput(
+                controller: _repsControllers[index],
+                save: (double number) {
+                  print("saving reps for index $index");
+                  var repsBeforeUpdate = sets[index].reps;
+                  sets[index].reps = number.toInt();
+                  var isUpdated =
+                      Provider.of<ExerciseProvider>(context, listen: false)
+                          .updateSetInTrackedExercise(
+                              widget.trackedExerciseId, index, sets[index]);
+                  setState(() {
+                    if (!isUpdated) {
+                      sets[index].reps = repsBeforeUpdate;
+                    }
+                  });
+                },
+                allowDecimal: false,
+                canEdit: !set.isLogged,
+                hintText: previousSetReps,
+              ),
+            ),
+            rowItem(
+              Checkbox(
+                value: set.isLogged,
+                activeColor: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(ConfigProvider.defaultSpace / 2),
                 ),
+                onChanged: canLog
+                    ? (val) {
+                        _onLog(
+                          trackedExerciseId: widget.trackedExerciseId,
+                          index: index,
+                          val: val ?? false,
+                          previousSetWeight: sets[index].weight == null
+                              ? double.tryParse(previousSetWeight)
+                              : null,
+                          previousSetReps: sets[index].reps == null
+                              ? int.tryParse(previousSetReps)
+                              : null,
+                        );
+                      }
+                    : null,
               ),
-              onDismissed: (direction) {
-                setState(() {
-                  sets.removeAt(index);
-                });
-              },
-              child: Row(
-                children: [
-                  rowItem(Text(
-                    '$index',
-                    style: textStyleTemplates.defaultTextStyle(
-                      ConfigProvider.mainTextColor,
-                    ),
-                  )),
-                  rowItem(
-                    getNumberInput(
-                      controller: _weightControllers[index],
-                      save: (double number) {
-                        sets[index].weight = number;
-                      },
-                      allowDecimal: true,
-                      hintText: getPreviousSetWeight(index),
-                    ),
-                  ),
-                  rowItem(
-                    getNumberInput(
-                        controller: _repsControllers[index],
-                        save: (double number) {
-                          sets[index].reps = number.toInt();
-                        },
-                        allowDecimal: false),
-                  ),
-                  rowItem(
-                    Checkbox(value: set.isLogged, onChanged: (val) {}),
-                  ),
-                ],
-              ),
-            ))
-        .toList();
+            ),
+          ],
+        ),
+      );
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    print("rebuilding body in tracked exercise list item");
+    // print("rebuilding body in tracked exercise list item");
     return Padding(
       padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
       child: Column(

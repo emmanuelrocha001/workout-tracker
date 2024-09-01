@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
 import '../../providers/exercise_provider.dart';
 import '../../providers/config_provider.dart';
@@ -34,7 +33,9 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
             Row(
               children: [
                 PillContainer(
-                  color: Colors.orangeAccent,
+                  color: trackedExercise.isSetLogged()
+                      ? Colors.green
+                      : Colors.orangeAccent,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -44,16 +45,20 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
                             .toUpperCase(),
                         style: textTemplates.smallBoldTextStyle(
                           Utility.getTextColorBasedOnBackground(
-                            backgroundColor: Colors.orangeAccent,
+                            backgroundColor: trackedExercise.isSetLogged()
+                                ? Colors.green
+                                : Colors.orangeAccent,
                           ),
                         ),
                       ),
-                      const Padding(
+                      Padding(
                         padding: const EdgeInsets.all(
                             ConfigProvider.defaultSpace / 2),
-                        child: const Icon(
-                          Feather.clock,
-                          color: Colors.orange,
+                        child: Icon(
+                          trackedExercise.isSetLogged()
+                              ? Icons.check
+                              : Icons.watch_later_outlined,
+                          color: Colors.white,
                           size: ConfigProvider.smallIconSize,
                         ),
                       ),
@@ -64,7 +69,7 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
                 if (!showAsSimplified)
                   IconButton(
                     icon: const Icon(
-                      Feather.youtube,
+                      Icons.ondemand_video_rounded,
                       color: ConfigProvider.mainColor,
                       size: ConfigProvider.defaultIconSize,
                     ),
@@ -79,7 +84,7 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
                 if (!showAsSimplified)
                   IconButton(
                     icon: const Icon(
-                      Feather.more_vertical,
+                      Icons.more_vert_rounded,
                       color: ConfigProvider.mainTextColor,
                       size: ConfigProvider.defaultIconSize,
                     ),

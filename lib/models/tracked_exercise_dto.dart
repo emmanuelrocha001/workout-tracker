@@ -1,4 +1,5 @@
 import 'package:uuid/uuid.dart';
+import 'dart:convert';
 
 import './exercise_dto.dart';
 
@@ -17,6 +18,10 @@ class TrackedExerciseDto {
     }
     sets.add(SetDto());
   }
+
+  bool isSetLogged() {
+    return sets.every((x) => x.isLogged);
+  }
 }
 
 class SetDto {
@@ -32,4 +37,18 @@ class SetDto {
     this.restTime,
     this.isLogged = false,
   });
+
+  factory SetDto.getCopy(SetDto set) {
+    return SetDto(
+      reps: set.reps,
+      weight: set.weight,
+      restTime: set.restTime,
+      isLogged: set.isLogged,
+    );
+  }
+
+  @override
+  String toString() {
+    return '\nSetDto{\nreps: $reps, \nweight: $weight, \nrestTime: $restTime, \nisLogged: $isLogged}';
+  }
 }

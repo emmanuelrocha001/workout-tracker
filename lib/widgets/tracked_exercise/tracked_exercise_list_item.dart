@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../utility.dart';
 
 import '../../providers/config_provider.dart';
 
@@ -42,7 +43,7 @@ class TrackedExerciseListItem extends StatelessWidget {
           if (!showAsSimplified)
             TrackedExerciseListItemBody(
               trackedExerciseId: trackedExercise.id,
-              sets: trackedExercise.sets,
+              sets: trackedExercise.sets.map((x) => SetDto.getCopy(x)).toList(),
             )
         ],
       ),

@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
-
+import 'dart:convert';
 import './providers/config_provider.dart';
 
 class Utility {
+  static Object getDeepCopy(Object object) {
+    try {
+      return jsonDecode(jsonEncode(object));
+    } catch (e, s) {
+      print(e);
+      return object;
+    }
+  }
+
   static Color getTextColorBasedOnBackground({Color? backgroundColor}) {
     return _isDarkEnoughForWhiteText(
             backgroundColor ?? ConfigProvider.mainColor)

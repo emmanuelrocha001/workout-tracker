@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 import '../../providers/config_provider.dart';
 import '../../models/muscle_group_dto.dart';
@@ -85,7 +84,7 @@ class ExerciseListItem extends StatelessWidget {
           ),
         ),
         trailing: IconButton(
-          icon: const Icon(Feather.youtube),
+          icon: const Icon(Icons.ondemand_video),
           style: _theme.iconButtonTheme.style,
           onPressed: () {
             Helper.navigateToYoutube(
