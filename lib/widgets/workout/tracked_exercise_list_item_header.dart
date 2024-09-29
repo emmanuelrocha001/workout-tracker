@@ -31,7 +31,7 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
             Row(
               children: [
                 PillContainer(
-                  color: trackedExercise.isSetLogged()
+                  color: trackedExercise.areSetsLogged()
                       ? Colors.green
                       : Colors.orangeAccent,
                   child: Row(
@@ -43,7 +43,7 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
                             .toUpperCase(),
                         style: TextStyleTemplates.smallBoldTextStyle(
                           Utility.getTextColorBasedOnBackground(
-                            backgroundColor: trackedExercise.isSetLogged()
+                            backgroundColor: trackedExercise.areSetsLogged()
                                 ? Colors.green
                                 : Colors.orangeAccent,
                           ),
@@ -53,7 +53,7 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
                         padding: const EdgeInsets.all(
                             ConfigProvider.defaultSpace / 2),
                         child: Icon(
-                          trackedExercise.isSetLogged()
+                          trackedExercise.areSetsLogged()
                               ? Icons.check
                               : Icons.watch_later_outlined,
                           color: Colors.white,

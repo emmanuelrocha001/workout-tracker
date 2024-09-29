@@ -146,17 +146,13 @@ class _TrackedExerciseListItemBodyState
     required String trackedExerciseId,
     required int index,
     required bool val,
-    double? previousSetWeight,
-    int? previousSetReps,
+    required double setWeight,
+    required int setReps,
   }) {
     if (index >= 0 && index < sets.length) {
       var tSet = SetDto.getCopy(sets[index]);
-      if (previousSetWeight != null) {
-        tSet.weight = previousSetWeight;
-      }
-      if (previousSetReps != null) {
-        tSet.reps = previousSetReps;
-      }
+      tSet.weight = setWeight;
+      tSet.reps = setReps;
       tSet.isLogged = val;
       _onUpdateSet(trackedExerciseId, index, tSet);
     }
@@ -164,7 +160,7 @@ class _TrackedExerciseListItemBodyState
 
   void _onRemoveSet(trackedExcerciseId, int index) {
     var setRemoved = Provider.of<WorkoutProvider>(context, listen: false)
-        .removeSetFromTrackedExercise(trackedExcerciseId, index);
+        .deleteSetFromTrackedExercise(trackedExcerciseId, index);
     if (setRemoved) {
       setState(() {
         sets.removeAt(index);
@@ -198,8 +194,6 @@ class _TrackedExerciseListItemBodyState
     return sets.mapIndexed((index, set) {
       var previousSetReps = getPreviousSetReps(index);
       var previousSetWeight = getPreviousSetWeight(index);
-      var canLog = (set.reps != null || previousSetReps.isNotEmpty) &&
-          (set.weight != null || previousSetWeight.isNotEmpty);
 
       return Dismissible(
         key: Key('${widget.trackedExerciseId}_${index}_${const Uuid().v4()}'),
@@ -269,28 +263,32 @@ class _TrackedExerciseListItemBodyState
             ),
             rowItem(
               Checkbox(
-                value: set.isLogged,
-                activeColor: Colors.green,
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(ConfigProvider.defaultSpace / 2),
-                ),
-                onChanged: canLog
-                    ? (val) {
-                        _onLog(
-                          trackedExerciseId: widget.trackedExerciseId,
-                          index: index,
-                          val: val ?? false,
-                          previousSetWeight: sets[index].weight == null
-                              ? double.tryParse(previousSetWeight)
-                              : null,
-                          previousSetReps: sets[index].reps == null
-                              ? int.tryParse(previousSetReps)
-                              : null,
-                        );
-                      }
-                    : null,
-              ),
+                  value: set.isLogged,
+                  activeColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(ConfigProvider.defaultSpace / 2),
+                  ),
+                  onChanged: (val) {
+                    // can log based on current values
+                    var weight = sets[index].weight ??
+                        double.tryParse(previousSetWeight);
+                    var reps =
+                        sets[index].reps ?? int.tryParse(previousSetReps);
+
+                    var canLog = weight != null && reps != null;
+                    if (canLog) {
+                      _onLog(
+                        trackedExerciseId: widget.trackedExerciseId,
+                        index: index,
+                        val: val ?? false,
+                        setWeight: weight,
+                        setReps: reps,
+                      );
+                    } else {
+                      print("Cannot log set $index");
+                    }
+                  }),
             ),
           ],
         ),
@@ -300,7 +298,6 @@ class _TrackedExerciseListItemBodyState
 
   @override
   Widget build(BuildContext context) {
-    print("rebuilding body in tracked exercise list item");
     return Padding(
       padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
       child: Column(

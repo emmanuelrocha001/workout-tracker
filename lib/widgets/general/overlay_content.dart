@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../general/text_style_templates.dart';
 import '../../providers/config_provider.dart';
+
+import '../../utility.dart';
 import '../helper.dart';
 
 class OverlayContent extends StatelessWidget {
   final Widget content;
   final Widget overLayContent;
   final double padding;
-  const OverlayContent(
-      {super.key,
-      required this.content,
-      required this.overLayContent,
-      this.padding = 60.0});
+  final bool showActionButton;
+  final String? actionButtonLabel;
+  final Function()? onActionButtonPressed;
+
+  const OverlayContent({
+    super.key,
+    required this.content,
+    required this.overLayContent,
+    this.actionButtonLabel,
+    this.showActionButton = false,
+    this.onActionButtonPressed,
+    this.padding = 60.0,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +61,33 @@ class OverlayContent extends StatelessWidget {
                 child: overLayContent,
               ),
             ),
+            if (showActionButton)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: ConfigProvider.largeSpace * 2,
+                  color: Colors.black.withOpacity(.1),
+                  child: Center(
+                    child: SizedBox(
+                      width: ConfigProvider.maxButtonSize,
+                      child: TextButton(
+                        onPressed: onActionButtonPressed,
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.green,
+                        ),
+                        child: Text(
+                          actionButtonLabel ?? "FINISH",
+                          style: TextStyleTemplates.smallBoldTextStyle(
+                            Utility.getTextColorBasedOnBackground(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

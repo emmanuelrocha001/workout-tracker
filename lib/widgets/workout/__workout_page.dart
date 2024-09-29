@@ -14,7 +14,6 @@ class WorkoutPage extends StatelessWidget {
     var workoutProvider = Provider.of<WorkoutProvider>(context);
 
     var isWorkoutInProgress = workoutProvider.isWorkoutInProgress();
-    print("isWorkoutInProgress: $isWorkoutInProgress");
     return isWorkoutInProgress
         ? const TrackedExerciseList()
         : const WorkoutActivity();

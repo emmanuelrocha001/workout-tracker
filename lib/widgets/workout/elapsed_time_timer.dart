@@ -1,9 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'dart:math';
 import 'dart:async';
 import 'package:intl/intl.dart';
-import 'package:workout_tracker/providers/config_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/config_provider.dart';
+import '../general/text_style_templates.dart';
 
 class ElapsedTimeTimer extends StatefulWidget {
   final DateTime startTime;
@@ -58,6 +60,9 @@ class _ElapsedTimeTimerState extends State<ElapsedTimeTimer> {
 
     var formatter = NumberFormat(ConfigProvider.twoDigitFormat);
     return Text(
-        '${formatter.format(hours)}:${formatter.format(minutes)}:${formatter.format(seconds)}');
+      '${formatter.format(hours)}:${formatter.format(minutes)}:${formatter.format(seconds)}',
+      style:
+          TextStyleTemplates.mediumBoldTextStyle(ConfigProvider.mainTextColor),
+    );
   }
 }

@@ -119,7 +119,7 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
           }
         },
       ),
-      padding: 85.0,
+      padding: 100.0,
       overLayContent: Column(
         children: [
           Row(
@@ -160,6 +160,11 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
             ),
         ],
       ),
+      showActionButton: workoutProvider.isInProgressWorkoutReadyTofinish(),
+      actionButtonLabel: "FINISH",
+      onActionButtonPressed: () {
+        workoutProvider.finishInProgressWorkout();
+      },
     );
   }
 }

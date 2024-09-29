@@ -21,6 +21,7 @@ class TrackedExerciseDto {
   }
 
   factory TrackedExerciseDto.fromJson(Map<String, dynamic> json) {
+    // print("from TrackedExerciseDto.fromJson ${json}\n");
     return TrackedExerciseDto(
       id: json['id'],
       exercise: ExerciseDto.fromJson(json['exercise']),
@@ -43,7 +44,10 @@ class TrackedExerciseDto {
     };
   }
 
-  bool isSetLogged() {
+  bool areSetsLogged() {
+    if (sets.isEmpty) {
+      return false;
+    }
     return sets.every((x) => x.isLogged);
   }
 }
@@ -72,6 +76,7 @@ class SetDto {
   }
 
   factory SetDto.fromJson(Map<String, dynamic> json) {
+    // print("from SetDto.fromJson ${json}\n");
     // TODO: Add validation
     return SetDto(
       reps: json['reps'],

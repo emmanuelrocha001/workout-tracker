@@ -4,8 +4,8 @@ import '../../utility.dart';
 import '../../providers/config_provider.dart';
 
 import '../../models/tracked_exercise_dto.dart';
-import './tracked_exercise_list_item_header.dart';
-import './tracked_exercise_list_item_body.dart';
+import 'tracked_exercise_list_item_header.dart';
+import 'tracked_exercise_list_item_body.dart';
 
 class TrackedExerciseListItem extends StatelessWidget {
   final TrackedExerciseDto trackedExercise;

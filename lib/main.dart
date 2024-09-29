@@ -40,7 +40,6 @@ class WorkoutTracker extends StatelessWidget {
 
           if (!currentFocus.hasPrimaryFocus &&
               currentFocus.focusedChild != null) {
-            print('unfocusing');
             FocusManager.instance.primaryFocus!.unfocus();
           }
         },

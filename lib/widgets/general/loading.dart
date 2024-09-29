@@ -14,7 +14,7 @@ class Loading extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircularProgressIndicator(
       backgroundColor: backgroundColor != null
-          ? backgroundColor!.withOpacity(.5)
+          ? backgroundColor?.withOpacity(.5)
           : Colors.white.withOpacity(.5),
       valueColor:
           AlwaysStoppedAnimation<Color>(color ?? ConfigProvider.mainColor),
