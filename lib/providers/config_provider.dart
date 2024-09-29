@@ -15,6 +15,7 @@ class ConfigProvider extends ChangeNotifier {
 
   static const defaultDateStampFormat = 'MMM d, y hh:mm aaa';
   static const simpleDateFormat = 'EEE, MMM d';
+  static const twoDigitFormat = '00';
 
   // COLORS -------------------------->
   static const mainTextColor = Color.fromARGB(255, 0, 0, 0);

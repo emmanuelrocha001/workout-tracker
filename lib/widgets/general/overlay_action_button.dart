@@ -20,7 +20,6 @@ class OverlayActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var textTemplates = TextStyleTemplates();
     return Stack(
       children: [
         content,
@@ -42,7 +41,7 @@ class OverlayActionButton extends StatelessWidget {
                     ),
                     child: Text(
                       label,
-                      style: textTemplates.smallBoldTextStyle(
+                      style: TextStyleTemplates.smallBoldTextStyle(
                         Utility.getTextColorBasedOnBackground(),
                       ),
                     ),

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../providers/config_provider.dart';
 
-import '../widgets/tracked_exercise/_tracked_exercise_list.dart';
-
+import '../widgets/workout/__workout_page.dart';
 import '../widgets/exercise_selection_button.dart';
 import '../widgets/general/text_style_templates.dart';
 
@@ -20,7 +19,6 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
 
   @override
   Widget build(BuildContext context) {
-    var textTemplates = TextStyleTemplates();
     return Scaffold(
       backgroundColor: ConfigProvider.backgroundColor,
       bottomNavigationBar: NavigationBarTheme(
@@ -38,7 +36,7 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
             //     ConfigProvider.backgroundColor,
             //   );
             // }
-            return textTemplates.smallBoldTextStyle(
+            return TextStyleTemplates.smallBoldTextStyle(
               Colors.black,
             );
           }),
@@ -102,7 +100,7 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
         ),
 
         /// Track page
-        const TrackedExerciseList(),
+        const WorkoutPage(),
 
         /// Messages page
         const Card(

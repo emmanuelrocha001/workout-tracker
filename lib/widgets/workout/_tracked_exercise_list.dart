@@ -1,19 +1,20 @@
 import 'dart:ui';
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 import '../../providers/config_provider.dart';
 import '../../providers/exercise_provider.dart';
-
-import '../../models/tracked_exercise_dto.dart';
+import '../../providers/workout_provider.dart';
 
 import '../exercise/_exercise_list.dart';
-import './tracked_exercise_list_item.dart';
-import './tracked_exercise_list_item_header.dart';
+import 'tracked_exercise_list_item.dart';
+import 'tracked_exercise_list_item_header.dart';
+import 'elapsed_time_timer.dart';
 
-import '../general/overlay_top_widget.dart';
+import '../general/overlay_content.dart';
 import '../general/text_style_templates.dart';
 import '../helper.dart';
 import '../../utility.dart';
@@ -35,10 +36,20 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
       content: const ExerciseList(),
     );
     if (exerciseId != null && exerciseId.isNotEmpty) {
-      var exerciseProvider =
-          Provider.of<ExerciseProvider>(context, listen: false);
-      exerciseProvider.addTrackedExercise(exerciseId);
-      print('FROM selector ${exerciseId}');
+      if (context.mounted) {
+        var workoutProvider =
+            // ignore: use_build_context_synchronously
+            Provider.of<WorkoutProvider>(context, listen: false);
+        var exerciseProvider =
+            // ignore: use_build_context_synchronously
+            Provider.of<ExerciseProvider>(context, listen: false);
+        var exercise = exerciseProvider.getExerciseById(exerciseId);
+
+        if (exercise == null) return;
+
+        workoutProvider.addTrackedExercise(exercise);
+        print('FROM selector ${exerciseId}');
+      }
     }
   }
 
@@ -62,9 +73,10 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
 
   @override
   Widget build(BuildContext context) {
-    var textTemplates = TextStyleTemplates();
-    var exerciseProvider = Provider.of<ExerciseProvider>(context);
-    var trackedExercises = exerciseProvider.trackedExercises;
+    var workoutProvider = Provider.of<WorkoutProvider>(
+      context,
+    );
+    var trackedExercises = workoutProvider.trackedExercises;
     var title = DateFormat(ConfigProvider.simpleDateFormat)
         .format(DateTime.now())
         .toUpperCase();
@@ -100,42 +112,52 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
           }
           try {
             var exerciseProvider =
-                Provider.of<ExerciseProvider>(context, listen: false);
+                Provider.of<WorkoutProvider>(context, listen: false);
             exerciseProvider.reorderTrackedExercises(oldIndex, newIndex);
           } catch (e) {
             print('from catch ${e}');
           }
         },
       ),
-      overLayContent: Row(
+      padding: 85.0,
+      overLayContent: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
-            child: Text(
-              title,
-              style: textTemplates
-                  .mediumBoldTextStyle(ConfigProvider.mainTextColor),
-            ),
-          ),
-          const Spacer(),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
-              child: TextButton(
-                onPressed: onAddExercise,
-                style: TextButton.styleFrom(
-                  backgroundColor: ConfigProvider.mainColor,
-                ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
                 child: Text(
-                  "ADD EXERCISE",
-                  style: textTemplates.smallBoldTextStyle(
-                    Utility.getTextColorBasedOnBackground(),
+                  title,
+                  style: TextStyleTemplates.mediumBoldTextStyle(
+                      ConfigProvider.mainTextColor),
+                ),
+              ),
+              const Spacer(),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
+                  child: TextButton(
+                    onPressed: onAddExercise,
+                    style: TextButton.styleFrom(
+                      backgroundColor: ConfigProvider.mainColor,
+                    ),
+                    child: Text(
+                      "ADD EXERCISE",
+                      style: TextStyleTemplates.smallBoldTextStyle(
+                        Utility.getTextColorBasedOnBackground(),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
+          if (workoutProvider.inProgressWorkoutStartTime != null)
+            Align(
+              child: ElapsedTimeTimer(
+                  startTime: workoutProvider.inProgressWorkoutStartTime!),
+            ),
         ],
       ),
     );

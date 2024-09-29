@@ -10,7 +10,6 @@ class ExerciseProvider with ChangeNotifier {
   final String _exercisesFilePath = 'assets/json_docs/_EXERCISES.json';
   List<ExerciseDto> _exercises = [];
   List<ExerciseDto> _filteredExercises = [];
-  List<TrackedExerciseDto> _trackedExercises = [];
   String? _appliedSearchFilter;
   String? _appliedMuscleGroupIdFilter;
   String? _appliedExerciseType;
@@ -37,10 +36,6 @@ class ExerciseProvider with ChangeNotifier {
 
   List<ExerciseDto> get exercises {
     return [..._filteredExercises];
-  }
-
-  List<TrackedExerciseDto> get trackedExercises {
-    return [..._trackedExercises];
   }
 
   int get exercisesCount {
@@ -119,84 +114,7 @@ class ExerciseProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Tracked exercises
-
   ExerciseDto? getExerciseById(String id) {
     return _exercises.firstWhere((x) => x.id == id);
-  }
-
-  void addTrackedExercise(String exerciseId) {
-    var exercise = getExerciseById(exerciseId);
-    if (exercise == null) {
-      return;
-    }
-
-    var trackedExercise = TrackedExerciseDto(
-      exercise: exercise,
-    );
-    _trackedExercises.add(trackedExercise);
-    notifyListeners();
-  }
-
-  void deleteTrackedExercise(String trackedExerciseId) {
-    print("from delete exercise ${trackedExerciseId}");
-    _trackedExercises.removeWhere((x) => x.id == trackedExerciseId);
-    notifyListeners();
-  }
-
-  void reorderTrackedExercises(int oldIndex, int newIndex) {
-    if (oldIndex == newIndex) {
-      return;
-    }
-
-    if (newIndex >= _trackedExercises.length) {
-      newIndex = _trackedExercises.length - 1;
-    }
-    var temp = _trackedExercises[oldIndex];
-    _trackedExercises.removeAt(oldIndex);
-    _trackedExercises.insert(newIndex, temp);
-    notifyListeners();
-  }
-
-  bool addSetToTrackedExercise(String trackedExerciseId, SetDto set) {
-    var trackedExercise =
-        _trackedExercises.where((x) => x.id == trackedExerciseId).firstOrNull;
-
-    if (trackedExercise == null) {
-      return false;
-    }
-    trackedExercise.sets.add(set);
-    return true;
-  }
-
-  bool removeSetFromTrackedExercise(String trackedExerciseId, int index) {
-    var trackedExercise =
-        _trackedExercises.where((x) => x.id == trackedExerciseId).firstOrNull;
-
-    if (trackedExercise == null) {
-      return false;
-    }
-    trackedExercise.sets.removeAt(index);
-    return true;
-  }
-
-  bool updateSetInTrackedExercise(
-      String trackedExerciseId, int index, SetDto set) {
-    var trackedExercise =
-        _trackedExercises.where((x) => x.id == trackedExerciseId).firstOrNull;
-
-    if (trackedExercise == null) {
-      return false;
-    }
-
-    var oldIsSetLogged = trackedExercise.isSetLogged();
-
-    trackedExercise.sets[index] = set;
-
-    if (oldIsSetLogged != trackedExercise.isSetLogged()) {
-      notifyListeners();
-    }
-
-    return true;
   }
 }

@@ -55,4 +55,17 @@ class ExerciseDto {
       description: description,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'muscleGroupId': muscleGroupId,
+      'exerciseType': exerciseType,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+      'youtubeId': youtubeId,
+      'description': description,
+    };
+  }
 }

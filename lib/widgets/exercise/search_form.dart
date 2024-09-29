@@ -66,12 +66,12 @@ class _SearchFormState extends State<SearchForm> {
     return TextField(
       focusNode: _focusNode,
       controller: _controller,
-      style: textStyles.defaultTextStyle(
+      style: TextStyleTemplates.defaultTextStyle(
         ConfigProvider.mainTextColor,
       ),
       decoration: InputDecoration(
         hintText: 'Search',
-        hintStyle: textStyles.defaultTextStyle(
+        hintStyle: TextStyleTemplates.defaultTextStyle(
           ConfigProvider.mainTextColor,
         ),
         fillColor: ConfigProvider.slightContrastBackgroundColor,

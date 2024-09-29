@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/exercise_provider.dart';
+import '../../providers/workout_provider.dart';
 import '../../providers/config_provider.dart';
 
 import '../../models/muscle_group_dto.dart';
 import '../../models/tracked_exercise_dto.dart';
 import '../general/pill_container.dart';
-import '../../widgets/general/text_style_templates.dart';
+import '../general/text_style_templates.dart';
 
 import '../helper.dart';
 import '../../utility.dart';
@@ -23,8 +23,6 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var exerciseData = trackedExercise.exercise;
-    var _theme = Theme.of(context);
-    var textTemplates = TextStyleTemplates();
     return Container(
       child: Padding(
         padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
@@ -43,7 +41,7 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
                         MuscleGroupDto.getMuscleGroupName(
                                 exerciseData.muscleGroupId)
                             .toUpperCase(),
-                        style: textTemplates.smallBoldTextStyle(
+                        style: TextStyleTemplates.smallBoldTextStyle(
                           Utility.getTextColorBasedOnBackground(
                             backgroundColor: trackedExercise.isSetLogged()
                                 ? Colors.green
@@ -91,7 +89,7 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
                     // style: _theme.iconButtonTheme.style,
                     onPressed: () {
                       // TODO add more options
-                      Provider.of<ExerciseProvider>(context, listen: false)
+                      Provider.of<WorkoutProvider>(context, listen: false)
                           .deleteTrackedExercise(trackedExercise.id);
                     },
                   ),
@@ -104,14 +102,14 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
                 children: [
                   Text(
                     exerciseData.name,
-                    style: textTemplates.defaultTextStyle(
+                    style: TextStyleTemplates.defaultTextStyle(
                       ConfigProvider.mainTextColor,
                     ),
                   ),
                   if (!showAsSimplified)
                     Text(
                       exerciseData.exerciseType.toUpperCase(),
-                      style: textTemplates.smallTextStyle(
+                      style: TextStyleTemplates.smallTextStyle(
                         ConfigProvider.alternateTextColor,
                       ),
                     ),

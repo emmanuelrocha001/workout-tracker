@@ -28,7 +28,6 @@ class FilteredBy extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var textTemplates = TextStyleTemplates();
     return Container(
       // color: Colors.purple,
       padding: const EdgeInsets.only(
@@ -46,7 +45,7 @@ class FilteredBy extends StatelessWidget {
               PillContainer(
                 child: Text(
                   filters[0].toUpperCase(),
-                  style: textTemplates.smallBoldTextStyle(
+                  style: TextStyleTemplates.smallBoldTextStyle(
                     ConfigProvider.mainTextColor,
                   ),
                 ),
@@ -57,7 +56,7 @@ class FilteredBy extends StatelessWidget {
               PillContainer(
                 child: Text(
                   filters[1].toUpperCase(),
-                  style: textTemplates.smallBoldTextStyle(
+                  style: TextStyleTemplates.smallBoldTextStyle(
                     ConfigProvider.mainTextColor,
                   ),
                 ),
@@ -71,7 +70,7 @@ class FilteredBy extends StatelessWidget {
                   ),
                   child: Text(
                     "CLEAR",
-                    style: textTemplates.smallBoldTextStyle(
+                    style: TextStyleTemplates.smallBoldTextStyle(
                       ConfigProvider.mainColor,
                     ),
                   ),
@@ -84,7 +83,7 @@ class FilteredBy extends StatelessWidget {
                 ),
                 child: Text(
                   "FILTER",
-                  style: textTemplates.smallBoldTextStyle(
+                  style: TextStyleTemplates.smallBoldTextStyle(
                     Utility.getTextColorBasedOnBackground(),
                   ),
                 ),

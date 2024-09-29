@@ -45,7 +45,6 @@ class Helper {
     required Widget content,
     bool hasPadding = true,
   }) async {
-    var textTemplates = TextStyleTemplates();
     final mediaQuery = MediaQuery.of(context);
     return await showModalBottomSheet(
         context: context,
@@ -125,7 +124,7 @@ class Helper {
                         alignment: Alignment.topLeft,
                         child: Text(
                           title,
-                          style: textTemplates.largeBoldTextStyle(
+                          style: TextStyleTemplates.largeBoldTextStyle(
                             ConfigProvider.mainTextColor,
                           ),
                         ),

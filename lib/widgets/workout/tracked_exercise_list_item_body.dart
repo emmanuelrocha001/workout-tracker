@@ -1,15 +1,16 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import '../../providers/exercise_provider.dart';
 
 import '../../providers/config_provider.dart';
+import '../../providers/workout_provider.dart';
+
+import '../general/custom_number_input_formatter.dart';
 
 import '../../utility.dart';
-import '../../widgets/general/text_style_templates.dart';
+import '../general/text_style_templates.dart';
 
 import '../../models/tracked_exercise_dto.dart';
 
@@ -30,8 +31,6 @@ class TrackedExerciseListItemBody extends StatefulWidget {
 class _TrackedExerciseListItemBodyState
     extends State<TrackedExerciseListItemBody> {
   List<SetDto> sets = [];
-  List<String> currentlyEditingTextFieldHistory = [];
-  int? currentEditingTextFieldIndex;
   List<TextEditingController> _weightControllers = [];
   List<TextEditingController> _repsControllers = [];
 
@@ -39,12 +38,17 @@ class _TrackedExerciseListItemBodyState
   void initState() {
     super.initState();
     sets = [...widget.sets];
-
+    print("init state");
     // _repsControllers = widget.sets.mapIndexed((index, set) {
     //   return TextEditingController(
     //     text: set.reps != null ? set.reps.toString() : '',
-    //   );
+    //   );n
     // }).toList();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   Widget rowItem(Widget content) {
@@ -67,7 +71,7 @@ class _TrackedExerciseListItemBodyState
         .map((text) => rowItem(
               Text(
                 text,
-                style: textStyleTemplates.smallBoldTextStyle(
+                style: TextStyleTemplates.smallBoldTextStyle(
                   ConfigProvider.mainTextColor,
                 ),
               ),
@@ -82,67 +86,19 @@ class _TrackedExerciseListItemBodyState
     required bool canEdit,
     String hintText = '',
   }) {
-    var textStyleTemplates = TextStyleTemplates();
-    // TODO fix and account for jumping around different text fields
-    void formatAndSaveValue() {
-      if (controller.text.isEmpty) {
-        save(0.0);
-        controller.text = '0';
-      } else {
-        var parsedValue = double.parse(controller.text);
-        save(parsedValue);
-
-        var formattedValue = parsedValue.toStringAsFixed(
-            parsedValue.truncateToDouble() == parsedValue ? 0 : 2);
-
-        controller.text = formattedValue;
-      }
-    }
-
     return TextField(
       keyboardType: const TextInputType.numberWithOptions(signed: true),
       textInputAction: TextInputAction.done,
       cursorColor: ConfigProvider.mainColor,
-      onSubmitted: (value) {
-        print("on submitted");
-      },
-      onTapOutside: (event) {
-        // save on tap outside
-        if (controller.text.isEmpty) {
-          save(0.0);
-          controller.text = '0';
-        } else {
-          var parsedValue = double.parse(controller.text);
-          save(parsedValue);
-
-          var formattedValue = parsedValue.toStringAsFixed(
-              parsedValue.truncateToDouble() == parsedValue ? 0 : 2);
-
-          controller.text = formattedValue;
-        }
-      },
-      onTap: () {
-        // reset history
-        print("on text field tap, restting history");
-        currentlyEditingTextFieldHistory = [controller.text];
-      },
+      onTap: () {},
       onChanged: (value) {
-        if (value.isNotEmpty) {
-          RegExp pattern = RegExp(allowDecimal
-              ? ConfigProvider.decimalRegexPattern
-              : ConfigProvider.digitRegexPattern);
-          if (pattern.hasMatch(value)) {
-            currentlyEditingTextFieldHistory.add(value);
-          } else {
-            controller.text = currentlyEditingTextFieldHistory.last;
-          }
-        }
+        save(double.tryParse(value) ?? 0);
       },
       enabled: canEdit,
       controller: controller,
       decoration: InputDecoration(
         fillColor: ConfigProvider.slightContrastBackgroundColor,
-        hintStyle: textStyleTemplates.defaultTextStyle(
+        hintStyle: TextStyleTemplates.defaultTextStyle(
           ConfigProvider.alternateTextColor.withOpacity(.5),
         ),
         filled: true,
@@ -152,13 +108,14 @@ class _TrackedExerciseListItemBodyState
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      style: textStyleTemplates.defaultTextStyle(
+      style: TextStyleTemplates.defaultTextStyle(
         ConfigProvider.mainTextColor,
       ),
       inputFormatters: [
         allowDecimal
             ? FilteringTextInputFormatter.deny(RegExp(r'[^\d.]'))
             : FilteringTextInputFormatter.digitsOnly,
+        CustomNumberInputFormatter(allowDecimals: allowDecimal),
       ],
     );
   }
@@ -206,7 +163,7 @@ class _TrackedExerciseListItemBodyState
   }
 
   void _onRemoveSet(trackedExcerciseId, int index) {
-    var setRemoved = Provider.of<ExerciseProvider>(context, listen: false)
+    var setRemoved = Provider.of<WorkoutProvider>(context, listen: false)
         .removeSetFromTrackedExercise(trackedExcerciseId, index);
     if (setRemoved) {
       setState(() {
@@ -216,7 +173,7 @@ class _TrackedExerciseListItemBodyState
   }
 
   void _onUpdateSet(String trackedExerciseId, int index, SetDto set) {
-    var setUpdated = Provider.of<ExerciseProvider>(context, listen: false)
+    var setUpdated = Provider.of<WorkoutProvider>(context, listen: false)
         .updateSetInTrackedExercise(trackedExerciseId, index, set);
     if (setUpdated) {
       setState(() {
@@ -243,6 +200,7 @@ class _TrackedExerciseListItemBodyState
       var previousSetWeight = getPreviousSetWeight(index);
       var canLog = (set.reps != null || previousSetReps.isNotEmpty) &&
           (set.weight != null || previousSetWeight.isNotEmpty);
+
       return Dismissible(
         key: Key('${widget.trackedExerciseId}_${index}_${const Uuid().v4()}'),
         background: Container(
@@ -263,7 +221,7 @@ class _TrackedExerciseListItemBodyState
           children: [
             rowItem(Text(
               '$index',
-              style: textStyleTemplates.defaultTextStyle(
+              style: TextStyleTemplates.defaultTextStyle(
                 ConfigProvider.mainTextColor,
               ),
             )),
@@ -275,15 +233,13 @@ class _TrackedExerciseListItemBodyState
                   var weightBeforeUpdate = sets[index].weight;
                   sets[index].weight = number;
                   var isUpdated =
-                      Provider.of<ExerciseProvider>(context, listen: false)
+                      Provider.of<WorkoutProvider>(context, listen: false)
                           .updateSetInTrackedExercise(
                               widget.trackedExerciseId, index, sets[index]);
-                  setState(() {
-                    if (!isUpdated) {
-                      print("was not updated");
-                      sets[index].weight = weightBeforeUpdate;
-                    }
-                  });
+
+                  if (!isUpdated) {
+                    sets[index].weight = weightBeforeUpdate;
+                  }
                 },
                 allowDecimal: true,
                 canEdit: !set.isLogged,
@@ -298,14 +254,13 @@ class _TrackedExerciseListItemBodyState
                   var repsBeforeUpdate = sets[index].reps;
                   sets[index].reps = number.toInt();
                   var isUpdated =
-                      Provider.of<ExerciseProvider>(context, listen: false)
+                      Provider.of<WorkoutProvider>(context, listen: false)
                           .updateSetInTrackedExercise(
                               widget.trackedExerciseId, index, sets[index]);
-                  setState(() {
-                    if (!isUpdated) {
-                      sets[index].reps = repsBeforeUpdate;
-                    }
-                  });
+
+                  if (!isUpdated) {
+                    sets[index].reps = repsBeforeUpdate;
+                  }
                 },
                 allowDecimal: false,
                 canEdit: !set.isLogged,
@@ -345,7 +300,7 @@ class _TrackedExerciseListItemBodyState
 
   @override
   Widget build(BuildContext context) {
-    // print("rebuilding body in tracked exercise list item");
+    print("rebuilding body in tracked exercise list item");
     return Padding(
       padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
       child: Column(
@@ -362,7 +317,7 @@ class _TrackedExerciseListItemBodyState
                 onPressed: () {
                   var set = SetDto();
 
-                  var setAdded = Provider.of<ExerciseProvider>(context,
+                  var setAdded = Provider.of<WorkoutProvider>(context,
                           listen: false)
                       .addSetToTrackedExercise(widget.trackedExerciseId, set);
                   if (setAdded) {
@@ -376,7 +331,7 @@ class _TrackedExerciseListItemBodyState
                 ),
                 child: Text(
                   "ADD SET",
-                  style: TextStyleTemplates().smallTextStyle(
+                  style: TextStyleTemplates.smallTextStyle(
                     Utility.getTextColorBasedOnBackground(),
                   ),
                 ),

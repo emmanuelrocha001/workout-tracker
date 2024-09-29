@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_tracker/providers/config_provider.dart';
 import './providers/exercise_provider.dart';
+import 'providers/workout_provider.dart';
 
 import './screens/main_content_navigator.dart';
 import './screens/initial_screen.dart';
@@ -27,6 +28,9 @@ class WorkoutTracker extends StatelessWidget {
         ),
         ChangeNotifierProvider<ExerciseProvider>(
           create: (_) => ExerciseProvider(),
+        ),
+        ChangeNotifierProvider<WorkoutProvider>(
+          create: (_) => WorkoutProvider(),
         )
       ],
       child: GestureDetector(

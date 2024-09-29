@@ -21,7 +21,6 @@ class FilterGrid extends StatelessWidget {
   });
 
   List<Widget> _generateWidgets(List<FiltersDto> filters) {
-    var textStyles = TextStyleTemplates();
     var tempWidgets = <Widget>[];
     for (var cFilter in filters) {
       var cFilterTitle = SliverToBoxAdapter(
@@ -29,7 +28,7 @@ class FilterGrid extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Text(
             cFilter.name.toLowerCase(),
-            style: textStyles.mediumTextStyle(
+            style: TextStyleTemplates.mediumTextStyle(
               ConfigProvider.mainTextColor,
             ),
           ),
@@ -73,7 +72,7 @@ class FilterGrid extends StatelessWidget {
                 child: Text(
                   cFilter.filters[index].displayValue.toUpperCase(),
                   textAlign: TextAlign.center,
-                  style: textStyles.defaultTextStyle(
+                  style: TextStyleTemplates.defaultTextStyle(
                     isSelected
                         ? Utility.getTextColorBasedOnBackground()
                         : ConfigProvider.mainTextColor,

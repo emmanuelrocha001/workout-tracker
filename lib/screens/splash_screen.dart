@@ -14,7 +14,6 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     const size = 100.0;
     var mediaQuery = MediaQuery.of(context);
-    var textTemplates = TextStyleTemplates();
     var content = Container(
       height: mediaQuery.size.height,
       width: mediaQuery.size.width,
@@ -38,7 +37,7 @@ class SplashScreen extends StatelessWidget {
                   // ),
                   Text(
                     'eRP',
-                    style: textTemplates.largeBoldTextStyle(
+                    style: TextStyleTemplates.largeBoldTextStyle(
                       ConfigProvider.mainColor,
                     ),
                   ),

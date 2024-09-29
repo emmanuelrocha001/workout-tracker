@@ -24,8 +24,6 @@ class ExerciseListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var _theme = Theme.of(context);
-    var textTemplates = TextStyleTemplates();
     return Card(
       color: ConfigProvider.backgroundColor,
       elevation: 0,
@@ -57,7 +55,7 @@ class ExerciseListItem extends StatelessWidget {
             Text(
               MuscleGroupDto.getMuscleGroupName(data.muscleGroupId)
                   .toUpperCase(),
-              style: textTemplates.smallTextStyle(
+              style: TextStyleTemplates.smallTextStyle(
                 ConfigProvider.mainTextColor.withOpacity(
                   ConfigProvider.mainTextColorWithOpacityPercent,
                 ),
@@ -65,7 +63,7 @@ class ExerciseListItem extends StatelessWidget {
             ),
             Text(
               data.name,
-              style: textTemplates.defaultTextStyle(
+              style: TextStyleTemplates.defaultTextStyle(
                 ConfigProvider.mainTextColor,
               ),
             ),
@@ -77,7 +75,7 @@ class ExerciseListItem extends StatelessWidget {
             color: ConfigProvider.slightContrastBackgroundColor,
             child: Text(
               data.exerciseType.toUpperCase(),
-              style: textTemplates.defaultTextStyle(
+              style: TextStyleTemplates.defaultTextStyle(
                 ConfigProvider.mainTextColor,
               ),
             ),
@@ -85,7 +83,7 @@ class ExerciseListItem extends StatelessWidget {
         ),
         trailing: IconButton(
           icon: const Icon(Icons.ondemand_video),
-          style: _theme.iconButtonTheme.style,
+          style: Theme.of(context).iconButtonTheme.style,
           onPressed: () {
             Helper.navigateToYoutube(
               youtubeId: data.youtubeId,

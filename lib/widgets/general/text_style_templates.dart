@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../providers/config_provider.dart';
 
 class TextStyleTemplates {
-  TextStyle xSmallTextStyle(Color color) {
+  static TextStyle xSmallTextStyle(Color color) {
     return GoogleFonts.poppins(
       fontSize: ConfigProvider.xSmallFontSize,
       fontWeight: FontWeight.w500,
@@ -12,7 +12,7 @@ class TextStyleTemplates {
     );
   }
 
-  TextStyle xSmallBoldTextStyle(Color color) {
+  static TextStyle xSmallBoldTextStyle(Color color) {
     return GoogleFonts.poppins(
       fontSize: ConfigProvider.xSmallFontSize,
       fontWeight: FontWeight.w600,
@@ -20,7 +20,7 @@ class TextStyleTemplates {
     );
   }
 
-  TextStyle smallTextStyle(Color color) {
+  static TextStyle smallTextStyle(Color color) {
     return GoogleFonts.poppins(
       fontSize: ConfigProvider.smallFontSize,
       fontWeight: FontWeight.w500,
@@ -28,7 +28,7 @@ class TextStyleTemplates {
     );
   }
 
-  TextStyle smallBoldTextStyle(Color color) {
+  static TextStyle smallBoldTextStyle(Color color) {
     return GoogleFonts.poppins(
       fontSize: ConfigProvider.smallFontSize,
       fontWeight: FontWeight.w700,
@@ -36,7 +36,8 @@ class TextStyleTemplates {
     );
   }
 
-  TextStyle defaultTextStyle(Color color, {double? size, FontWeight? weight}) {
+  static TextStyle defaultTextStyle(Color color,
+      {double? size, FontWeight? weight}) {
     return GoogleFonts.poppins(
       fontSize: size ?? ConfigProvider.defaultFontSize,
       fontWeight: weight ?? FontWeight.w500,
@@ -44,7 +45,7 @@ class TextStyleTemplates {
     );
   }
 
-  TextStyle defaultBoldTextStyle(Color color) {
+  static TextStyle defaultBoldTextStyle(Color color) {
     return GoogleFonts.poppins(
       fontSize: ConfigProvider.defaultFontSize,
       fontWeight: FontWeight.w600,
@@ -52,7 +53,7 @@ class TextStyleTemplates {
     );
   }
 
-  TextStyle mediumTextStyle(Color color) {
+  static TextStyle mediumTextStyle(Color color) {
     return GoogleFonts.poppins(
       fontSize: ConfigProvider.mediumFontSize,
       fontWeight: FontWeight.w500,
@@ -60,7 +61,7 @@ class TextStyleTemplates {
     );
   }
 
-  TextStyle mediumBoldTextStyle(Color color) {
+  static TextStyle mediumBoldTextStyle(Color color) {
     return GoogleFonts.poppins(
       fontSize: ConfigProvider.mediumFontSize,
       fontWeight: FontWeight.w600,
@@ -68,7 +69,7 @@ class TextStyleTemplates {
     );
   }
 
-  TextStyle largeTextStyle(Color color) {
+  static TextStyle largeTextStyle(Color color) {
     return GoogleFonts.poppins(
       fontSize: ConfigProvider.largeFontSize,
       fontWeight: FontWeight.w500,
@@ -76,7 +77,7 @@ class TextStyleTemplates {
     );
   }
 
-  TextStyle largeBoldTextStyle(Color color) {
+  static TextStyle largeBoldTextStyle(Color color) {
     return GoogleFonts.poppins(
       fontSize: ConfigProvider.largeFontSize,
       fontWeight: FontWeight.w600,

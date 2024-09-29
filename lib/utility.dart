@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import './providers/config_provider.dart';
+import 'package:uuid/uuid.dart';
 
 class Utility {
-  static Object getDeepCopy(Object object) {
-    try {
-      return jsonDecode(jsonEncode(object));
-    } catch (e, s) {
-      print(e);
-      return object;
+  static generateId() {
+    return const Uuid().v4();
+  }
+
+  static formatNumberInput(String value) {
+    if (value.isEmpty) {
+      return '0';
     }
+
+    var parsedValue = double.parse(value);
+    return parsedValue
+        .toStringAsFixed(parsedValue.truncateToDouble() == parsedValue ? 0 : 2);
   }
 
   static Color getTextColorBasedOnBackground({Color? backgroundColor}) {
