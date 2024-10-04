@@ -53,12 +53,12 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
           destinations: <Widget>[
             NavigationDestination(
               icon: Icon(
-                Icons.account_circle_outlined,
+                Icons.bug_report_rounded,
                 color: currentPageIndex == 0
                     ? ConfigProvider.backgroundColor
                     : Colors.black,
               ),
-              label: 'Profile',
+              label: 'Debug',
             ),
             NavigationDestination(
               icon: Icon(
@@ -67,22 +67,22 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
                     ? ConfigProvider.backgroundColor
                     : Colors.black,
               ),
-              label: 'Track',
+              label: 'Workout',
             ),
-            NavigationDestination(
-              icon: Badge(
-                label: Text(
-                  '2',
-                ),
-                child: Icon(
-                  Icons.folder_copy_rounded,
-                  color: currentPageIndex == 2
-                      ? ConfigProvider.backgroundColor
-                      : Colors.black,
-                ),
-              ),
-              label: 'Templates',
-            ),
+            // NavigationDestination(
+            //   icon: Badge(
+            //     label: Text(
+            //       '2',
+            //     ),
+            //     child: Icon(
+            //       Icons.folder_copy_rounded,
+            //       color: currentPageIndex == 2
+            //           ? ConfigProvider.backgroundColor
+            //           : Colors.black,
+            //     ),
+            //   ),
+            //   label: 'Templates',
+            // ),
           ],
         ),
       ),
@@ -103,16 +103,16 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
         const WorkoutPage(),
 
         /// Messages page
-        const Card(
-          shadowColor: Colors.transparent,
-          child: SizedBox.expand(
-            child: Center(
-              child: Text(
-                'Templates',
-              ),
-            ),
-          ),
-        ),
+        // const Card(
+        //   shadowColor: Colors.transparent,
+        //   child: SizedBox.expand(
+        //     child: Center(
+        //       child: Text(
+        //         'Templates',
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ][currentPageIndex],
     );
   }

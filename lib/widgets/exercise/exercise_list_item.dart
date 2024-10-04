@@ -82,7 +82,9 @@ class ExerciseListItem extends StatelessWidget {
           ),
         ),
         trailing: IconButton(
-          icon: const Icon(Icons.ondemand_video),
+          icon: const Icon(
+            Icons.play_circle_fill_rounded,
+          ),
           style: Theme.of(context).iconButtonTheme.style,
           onPressed: () {
             Helper.navigateToYoutube(

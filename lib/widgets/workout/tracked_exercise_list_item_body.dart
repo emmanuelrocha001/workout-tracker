@@ -8,6 +8,7 @@ import '../../providers/config_provider.dart';
 import '../../providers/workout_provider.dart';
 
 import '../general/custom_number_input_formatter.dart';
+import '../general/row_item.dart';
 
 import '../../utility.dart';
 import '../general/text_style_templates.dart';
@@ -51,25 +52,12 @@ class _TrackedExerciseListItemBodyState
     super.dispose();
   }
 
-  Widget rowItem(Widget content) {
-    return Expanded(
-      flex: 1,
-      child: Align(
-        alignment: Alignment.center,
-        child: Padding(
-          padding: const EdgeInsets.all(ConfigProvider.defaultSpace / 2),
-          child: content,
-        ),
-      ),
-    );
-  }
-
   List<Widget> generateHeaderRow() {
     var headers = ['SET', 'WEIGHT', 'REPS', 'LOG'];
     var textStyleTemplates = TextStyleTemplates();
     return headers
-        .map((text) => rowItem(
-              Text(
+        .map((text) => RowItem(
+              child: Text(
                 text,
                 style: TextStyleTemplates.smallBoldTextStyle(
                   ConfigProvider.mainTextColor,
@@ -213,14 +201,15 @@ class _TrackedExerciseListItemBodyState
         },
         child: Row(
           children: [
-            rowItem(Text(
+            RowItem(
+                child: Text(
               '$index',
               style: TextStyleTemplates.defaultTextStyle(
                 ConfigProvider.mainTextColor,
               ),
             )),
-            rowItem(
-              getNumberInput(
+            RowItem(
+              child: getNumberInput(
                 controller: _weightControllers[index],
                 save: (double number) {
                   print("saving weight for index $index");
@@ -240,8 +229,8 @@ class _TrackedExerciseListItemBodyState
                 hintText: previousSetWeight,
               ),
             ),
-            rowItem(
-              getNumberInput(
+            RowItem(
+              child: getNumberInput(
                 controller: _repsControllers[index],
                 save: (double number) {
                   print("saving reps for index $index");
@@ -261,8 +250,8 @@ class _TrackedExerciseListItemBodyState
                 hintText: previousSetReps,
               ),
             ),
-            rowItem(
-              Checkbox(
+            RowItem(
+              child: Checkbox(
                   value: set.isLogged,
                   activeColor: Colors.green,
                   shape: RoundedRectangleBorder(

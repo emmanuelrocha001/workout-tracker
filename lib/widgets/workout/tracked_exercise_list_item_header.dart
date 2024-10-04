@@ -23,101 +23,126 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var exerciseData = trackedExercise.exercise;
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
-        child: Column(
-          children: [
-            Row(
+    return Padding(
+      padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              PillContainer(
+                color: trackedExercise.areSetsLogged()
+                    ? Colors.green
+                    : Colors.orangeAccent,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      MuscleGroupDto.getMuscleGroupName(
+                              exerciseData.muscleGroupId)
+                          .toUpperCase(),
+                      style: TextStyleTemplates.smallBoldTextStyle(
+                        Utility.getTextColorBasedOnBackground(
+                          backgroundColor: trackedExercise.areSetsLogged()
+                              ? Colors.green
+                              : Colors.orangeAccent,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.all(ConfigProvider.defaultSpace / 2),
+                      child: Icon(
+                        trackedExercise.areSetsLogged()
+                            ? Icons.check
+                            : Icons.watch_later_outlined,
+                        color: Colors.white,
+                        size: ConfigProvider.smallIconSize,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              if (!showAsSimplified)
+                IconButton(
+                  icon: const Icon(
+                    Icons.play_circle_fill_rounded,
+                    color: ConfigProvider.mainColor,
+                    size: ConfigProvider.defaultIconSize,
+                  ),
+                  // style: _theme.iconButtonTheme.style,
+                  onPressed: () {
+                    Helper.navigateToYoutube(
+                      youtubeId: exerciseData.youtubeId,
+                      searchQuery: exerciseData.name,
+                    );
+                  },
+                ),
+              if (!showAsSimplified)
+                MenuAnchor(
+                  style: const MenuStyle(
+                    backgroundColor: WidgetStatePropertyAll<Color>(
+                        ConfigProvider.backgroundColor),
+                    // elevation: WidgetStatePropertyAll<double>(0.0),
+                  ),
+                  builder: (BuildContext context, MenuController controller,
+                      Widget? child) {
+                    return IconButton(
+                      icon: const Icon(
+                        Icons.more_vert_rounded,
+                        color: ConfigProvider.mainTextColor,
+                        size: ConfigProvider.defaultIconSize,
+                      ),
+                      // style: _theme.iconButtonTheme.style,
+                      onPressed: () {
+                        // TODO add more options
+                        if (controller.isOpen) {
+                          controller.close();
+                        } else {
+                          controller.open();
+                        }
+                        // Provider.of<WorkoutProvider>(context, listen: false)
+                        //     .deleteTrackedExercise(trackedExercise.id);
+                      },
+                    );
+                  },
+                  menuChildren: [
+                    MenuItemButton(
+                      child: const Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.red,
+                      ),
+                      onPressed: () {
+                        Provider.of<WorkoutProvider>(context, listen: false)
+                            .deleteTrackedExercise(trackedExercise.id);
+                      },
+                    ),
+                  ],
+                ),
+            ],
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                PillContainer(
-                  color: trackedExercise.areSetsLogged()
-                      ? Colors.green
-                      : Colors.orangeAccent,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        MuscleGroupDto.getMuscleGroupName(
-                                exerciseData.muscleGroupId)
-                            .toUpperCase(),
-                        style: TextStyleTemplates.smallBoldTextStyle(
-                          Utility.getTextColorBasedOnBackground(
-                            backgroundColor: trackedExercise.areSetsLogged()
-                                ? Colors.green
-                                : Colors.orangeAccent,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(
-                            ConfigProvider.defaultSpace / 2),
-                        child: Icon(
-                          trackedExercise.areSetsLogged()
-                              ? Icons.check
-                              : Icons.watch_later_outlined,
-                          color: Colors.white,
-                          size: ConfigProvider.smallIconSize,
-                        ),
-                      ),
-                    ],
+                Text(
+                  exerciseData.name,
+                  style: TextStyleTemplates.defaultTextStyle(
+                    ConfigProvider.mainTextColor,
                   ),
                 ),
-                const Spacer(),
                 if (!showAsSimplified)
-                  IconButton(
-                    icon: const Icon(
-                      Icons.ondemand_video_rounded,
-                      color: ConfigProvider.mainColor,
-                      size: ConfigProvider.defaultIconSize,
+                  Text(
+                    exerciseData.exerciseType.toUpperCase(),
+                    style: TextStyleTemplates.smallTextStyle(
+                      ConfigProvider.alternateTextColor,
                     ),
-                    // style: _theme.iconButtonTheme.style,
-                    onPressed: () {
-                      Helper.navigateToYoutube(
-                        youtubeId: exerciseData.youtubeId,
-                        searchQuery: exerciseData.name,
-                      );
-                    },
-                  ),
-                if (!showAsSimplified)
-                  IconButton(
-                    icon: const Icon(
-                      Icons.more_vert_rounded,
-                      color: ConfigProvider.mainTextColor,
-                      size: ConfigProvider.defaultIconSize,
-                    ),
-                    // style: _theme.iconButtonTheme.style,
-                    onPressed: () {
-                      // TODO add more options
-                      Provider.of<WorkoutProvider>(context, listen: false)
-                          .deleteTrackedExercise(trackedExercise.id);
-                    },
                   ),
               ],
             ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    exerciseData.name,
-                    style: TextStyleTemplates.defaultTextStyle(
-                      ConfigProvider.mainTextColor,
-                    ),
-                  ),
-                  if (!showAsSimplified)
-                    Text(
-                      exerciseData.exerciseType.toUpperCase(),
-                      style: TextStyleTemplates.smallTextStyle(
-                        ConfigProvider.alternateTextColor,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

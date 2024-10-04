@@ -12,6 +12,8 @@ class WorkoutProvider extends ChangeNotifier {
   WorkoutDto? _inProgressWorkout;
   List<WorkoutDto> _workoutHistory = [];
   SharedPreferencesWithCache? _cache;
+  bool _showLatestWorkoutHistoryEntryAsFinished = false;
+
   WorkoutProvider() {
     // loadExcercises();
     setupCache();
@@ -65,6 +67,25 @@ class WorkoutProvider extends ChangeNotifier {
     }
   }
 
+  bool get showLatestWorkoutHistoryEntryAsFinished {
+    return _showLatestWorkoutHistoryEntryAsFinished;
+  }
+
+  void latestWorkoutHistoryEntryShownAsFinished() {
+    _showLatestWorkoutHistoryEntryAsFinished = false;
+  }
+
+  List<WorkoutDto> get workoutHistory {
+    return [..._workoutHistory];
+  }
+
+  WorkoutDto? get latestWorkoutHistoryEntry {
+    if (_workoutHistory.isEmpty) {
+      return null;
+    }
+    return _workoutHistory[_workoutHistory.length - 1];
+  }
+
   void _saveInProgressWorkout() async {
     if (_inProgressWorkout == null) {
       return;
@@ -79,17 +100,26 @@ class WorkoutProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void cancelInProgressWorkout() {
+    _inProgressWorkout = null;
+    notifyListeners();
+    _cache!.remove(_inProgressWorkoutKey);
+  }
+
   void finishInProgressWorkout() {
     if (_inProgressWorkout == null) {
-      return;
+      return null;
     }
     _inProgressWorkout!.endTime = DateTime.now();
+
+    _showLatestWorkoutHistoryEntryAsFinished = true;
 
     // save to history
     _workoutHistory.add(_inProgressWorkout!);
     _inProgressWorkout = null;
 
     notifyListeners();
+
     // TODO might need to await in scenario where uses refreshes the page.
     _cache!.remove(_inProgressWorkoutKey);
     _cache!.setStringList(_workoutHistoryKey,

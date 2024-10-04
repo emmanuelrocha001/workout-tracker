@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:workout_tracker/widgets/workout/workout_history_list_item.dart';
 
 import '../../providers/config_provider.dart';
 import '../../providers/exercise_provider.dart';
@@ -137,26 +138,92 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                 alignment: Alignment.centerRight,
                 child: Padding(
                   padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
-                  child: TextButton(
-                    onPressed: onAddExercise,
-                    style: TextButton.styleFrom(
-                      backgroundColor: ConfigProvider.mainColor,
+                  child: MenuAnchor(
+                    style: const MenuStyle(
+                      backgroundColor: WidgetStatePropertyAll<Color>(
+                          ConfigProvider.backgroundColor),
+                      // elevation: WidgetStatePropertyAll<double>(0.0),
                     ),
-                    child: Text(
-                      "ADD EXERCISE",
-                      style: TextStyleTemplates.smallBoldTextStyle(
-                        Utility.getTextColorBasedOnBackground(),
+                    builder: (BuildContext context, MenuController controller,
+                        Widget? child) {
+                      return IconButton(
+                        icon: const Icon(
+                          Icons.more_vert_rounded,
+                          color: ConfigProvider.mainTextColor,
+                          size: ConfigProvider.defaultIconSize,
+                        ),
+                        // style: _theme.iconButtonTheme.style,
+                        onPressed: () {
+                          // TODO add more options
+                          if (controller.isOpen) {
+                            controller.close();
+                          } else {
+                            controller.open();
+                          }
+                          // Provider.of<WorkoutProvider>(context, listen: false)
+                          //     .deleteTrackedExercise(trackedExercise.id);
+                        },
+                      );
+                    },
+                    menuChildren: [
+                      MenuItemButton(
+                        style: const ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll<Color>(
+                              ConfigProvider.mainColor),
+                        ),
+                        onPressed: onAddExercise,
+                        child: Text(
+                          "ADD EXERCISE",
+                          style: TextStyleTemplates.defaultBoldTextStyle(
+                              ConfigProvider.backgroundColor),
+                        ),
                       ),
-                    ),
+                      // MenuItemButton(
+                      //   style: const ButtonStyle(
+                      //     backgroundColor: WidgetStatePropertyAll<Color>(
+                      //         ConfigProvider.mainColor),
+                      //   ),
+                      //   onPressed: onAddExercise,
+                      //   child: Text(
+                      //     "ADD CONTAINER",
+                      //     style: TextStyleTemplates.defaultBoldTextStyle(
+                      //         ConfigProvider.backgroundColor),
+                      //   ),
+                      // ),
+                    ],
                   ),
                 ),
               ),
             ],
           ),
           if (workoutProvider.inProgressWorkoutStartTime != null)
-            Align(
-              child: ElapsedTimeTimer(
-                  startTime: workoutProvider.inProgressWorkoutStartTime!),
+            Stack(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: ConfigProvider.defaultSpace / 2),
+                    child: TextButton(
+                      onPressed: workoutProvider.cancelInProgressWorkout,
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.red,
+                      ),
+                      child: Text(
+                        "CANCEL WORKOUT ",
+                        style: TextStyleTemplates.smallBoldTextStyle(
+                          ConfigProvider.backgroundColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.center,
+                  child: ElapsedTimeTimer(
+                      startTime: workoutProvider.inProgressWorkoutStartTime!),
+                ),
+              ],
             ),
         ],
       ),
