@@ -134,6 +134,18 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                 ),
               ),
               const Spacer(),
+              TextButton(
+                onPressed: onAddExercise,
+                style: TextButton.styleFrom(
+                  backgroundColor: ConfigProvider.mainColor,
+                ),
+                child: Text(
+                  "ADD EXERCISE",
+                  style: TextStyleTemplates.smallBoldTextStyle(
+                    Utility.getTextColorBasedOnBackground(),
+                  ),
+                ),
+              ),
               Align(
                 alignment: Alignment.centerRight,
                 child: Padding(
@@ -166,18 +178,6 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                       );
                     },
                     menuChildren: [
-                      MenuItemButton(
-                        style: const ButtonStyle(
-                          backgroundColor: WidgetStatePropertyAll<Color>(
-                              ConfigProvider.mainColor),
-                        ),
-                        onPressed: onAddExercise,
-                        child: Text(
-                          "ADD EXERCISE",
-                          style: TextStyleTemplates.defaultBoldTextStyle(
-                              ConfigProvider.backgroundColor),
-                        ),
-                      ),
                       // MenuItemButton(
                       //   style: const ButtonStyle(
                       //     backgroundColor: WidgetStatePropertyAll<Color>(
@@ -185,11 +185,23 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                       //   ),
                       //   onPressed: onAddExercise,
                       //   child: Text(
-                      //     "ADD CONTAINER",
+                      //     "ADD EXERCISE",
                       //     style: TextStyleTemplates.defaultBoldTextStyle(
                       //         ConfigProvider.backgroundColor),
                       //   ),
                       // ),
+                      MenuItemButton(
+                        style: const ButtonStyle(
+                          backgroundColor:
+                              WidgetStatePropertyAll<Color>(Colors.red),
+                        ),
+                        onPressed: workoutProvider.cancelInProgressWorkout,
+                        child: Text(
+                          "CANCEL WORKOUT",
+                          style: TextStyleTemplates.defaultBoldTextStyle(
+                              ConfigProvider.backgroundColor),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -197,33 +209,10 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
             ],
           ),
           if (workoutProvider.inProgressWorkoutStartTime != null)
-            Stack(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: ConfigProvider.defaultSpace / 2),
-                    child: TextButton(
-                      onPressed: workoutProvider.cancelInProgressWorkout,
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.red,
-                      ),
-                      child: Text(
-                        "CANCEL WORKOUT ",
-                        style: TextStyleTemplates.smallBoldTextStyle(
-                          ConfigProvider.backgroundColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.center,
-                  child: ElapsedTimeTimer(
-                      startTime: workoutProvider.inProgressWorkoutStartTime!),
-                ),
-              ],
+            Align(
+              alignment: Alignment.center,
+              child: ElapsedTimeTimer(
+                  startTime: workoutProvider.inProgressWorkoutStartTime!),
             ),
         ],
       ),

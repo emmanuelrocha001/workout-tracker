@@ -75,7 +75,7 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
                   backgroundColor: ConfigProvider.mainColor,
                 ),
                 child: Text(
-                  "Start Workout",
+                  "START WORKOUT",
                   style: TextStyleTemplates.smallBoldTextStyle(
                     Utility.getTextColorBasedOnBackground(),
                   ),
