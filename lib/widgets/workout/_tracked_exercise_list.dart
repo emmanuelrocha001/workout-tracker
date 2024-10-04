@@ -134,18 +134,6 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                 ),
               ),
               const Spacer(),
-              TextButton(
-                onPressed: onAddExercise,
-                style: TextButton.styleFrom(
-                  backgroundColor: ConfigProvider.mainColor,
-                ),
-                child: Text(
-                  "ADD EXERCISE",
-                  style: TextStyleTemplates.smallBoldTextStyle(
-                    Utility.getTextColorBasedOnBackground(),
-                  ),
-                ),
-              ),
               Align(
                 alignment: Alignment.centerRight,
                 child: Padding(
@@ -203,6 +191,25 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                         ),
                       ),
                     ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: ConfigProvider.defaultSpace / 4,
+                    right: ConfigProvider.defaultSpace,
+                    bottom: ConfigProvider.defaultSpace,
+                    top: ConfigProvider.defaultSpace),
+                child: TextButton(
+                  onPressed: onAddExercise,
+                  style: TextButton.styleFrom(
+                    backgroundColor: ConfigProvider.mainColor,
+                  ),
+                  child: Text(
+                    "ADD EXERCISE",
+                    style: TextStyleTemplates.smallBoldTextStyle(
+                      Utility.getTextColorBasedOnBackground(),
+                    ),
                   ),
                 ),
               ),
