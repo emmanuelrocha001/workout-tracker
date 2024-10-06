@@ -13,10 +13,12 @@ import '../../utility.dart';
 
 class TrackedExerciseListItemHeader extends StatelessWidget {
   final TrackedExerciseDto trackedExercise;
+  final Function(int) onReorder;
   final bool showAsSimplified;
   const TrackedExerciseListItemHeader({
     super.key,
     required this.trackedExercise,
+    required this.onReorder,
     this.showAsSimplified = false,
   });
 
@@ -64,21 +66,6 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
               ),
               const Spacer(),
               if (!showAsSimplified)
-                IconButton(
-                  icon: const Icon(
-                    Icons.play_circle_fill_rounded,
-                    color: ConfigProvider.mainColor,
-                    size: ConfigProvider.defaultIconSize,
-                  ),
-                  // style: _theme.iconButtonTheme.style,
-                  onPressed: () {
-                    Helper.navigateToYoutube(
-                      youtubeId: exerciseData.youtubeId,
-                      searchQuery: exerciseData.name,
-                    );
-                  },
-                ),
-              if (!showAsSimplified)
                 MenuAnchor(
                   style: const MenuStyle(
                     backgroundColor: WidgetStatePropertyAll<Color>(
@@ -95,7 +82,6 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
                       ),
                       // style: _theme.iconButtonTheme.style,
                       onPressed: () {
-                        // TODO add more options
                         if (controller.isOpen) {
                           controller.close();
                         } else {
@@ -108,9 +94,52 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
                   },
                   menuChildren: [
                     MenuItemButton(
-                      child: const Icon(
-                        Icons.delete_outline_rounded,
-                        color: Colors.red,
+                      child: const Tooltip(
+                        message: 'Watch exercise video',
+                        child: Icon(
+                          Icons.play_circle_fill_rounded,
+                          color: ConfigProvider.mainColor,
+                          size: ConfigProvider.defaultIconSize,
+                        ),
+                      ),
+                      onPressed: () {
+                        Helper.navigateToYoutube(
+                          youtubeId: exerciseData.youtubeId,
+                          searchQuery: exerciseData.name,
+                        );
+                      },
+                    ),
+                    MenuItemButton(
+                      child: const Tooltip(
+                        message: 'Move exercise up',
+                        child: Icon(
+                          Icons.keyboard_arrow_up_rounded,
+                          color: ConfigProvider.mainColor,
+                        ),
+                      ),
+                      onPressed: () {
+                        onReorder(-1);
+                      },
+                    ),
+                    MenuItemButton(
+                      child: const Tooltip(
+                        message: 'Move exercise down',
+                        child: Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: ConfigProvider.mainColor,
+                        ),
+                      ),
+                      onPressed: () {
+                        onReorder(1);
+                      },
+                    ),
+                    MenuItemButton(
+                      child: const Tooltip(
+                        message: 'Remove exercise',
+                        child: Icon(
+                          Icons.delete_outline_rounded,
+                          color: Colors.red,
+                        ),
                       ),
                       onPressed: () {
                         Provider.of<WorkoutProvider>(context, listen: false)

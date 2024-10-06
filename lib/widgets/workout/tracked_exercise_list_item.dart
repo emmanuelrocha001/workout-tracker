@@ -10,9 +10,11 @@ import 'tracked_exercise_list_item_body.dart';
 class TrackedExerciseListItem extends StatelessWidget {
   final TrackedExerciseDto trackedExercise;
   final bool showAsSimplified;
+  final Function(int) onReorder;
   const TrackedExerciseListItem(
       {super.key,
       required this.trackedExercise,
+      required this.onReorder,
       this.showAsSimplified = false});
 
   @override
@@ -38,6 +40,7 @@ class TrackedExerciseListItem extends StatelessWidget {
         children: [
           TrackedExerciseListItemHeader(
             trackedExercise: trackedExercise,
+            onReorder: onReorder,
             showAsSimplified: showAsSimplified,
           ),
           if (!showAsSimplified)

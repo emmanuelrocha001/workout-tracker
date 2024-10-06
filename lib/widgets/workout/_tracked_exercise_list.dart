@@ -54,6 +54,17 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
     }
   }
 
+  void onReorder(int oldIndex, int newIndex) {
+    print('${oldIndex} ${newIndex}');
+    try {
+      var exerciseProvider =
+          Provider.of<WorkoutProvider>(context, listen: false);
+      exerciseProvider.reorderTrackedExercises(oldIndex, newIndex);
+    } catch (e) {
+      print('from catch ${e}');
+    }
+  }
+
   Widget proxyDecorator(Widget child, int index, Animation<double> animation) {
     return AnimatedBuilder(
       animation: animation,
@@ -96,29 +107,28 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
             });
           });
         },
-        children: <Widget>[
-          for (int index = 0; index < trackedExercises.length; index += 1)
-            TrackedExerciseListItem(
-              key: ValueKey(trackedExercises[index].id),
-              trackedExercise: trackedExercises[index],
-              showAsSimplified: onReorderInProgress,
-            ),
-        ],
         onReorder: (int oldIndex, int newIndex) {
           print('${oldIndex} ${newIndex}');
 
           if (oldIndex < newIndex) {
-            //if moving up the list the new index provided by the call back is off by 1
+            //if moving up the list, the new index provided by the call back is off by 1
             newIndex -= 1;
           }
-          try {
-            var exerciseProvider =
-                Provider.of<WorkoutProvider>(context, listen: false);
-            exerciseProvider.reorderTrackedExercises(oldIndex, newIndex);
-          } catch (e) {
-            print('from catch ${e}');
-          }
+
+          onReorder(oldIndex, newIndex);
         },
+        children: <Widget>[
+          for (int index = 0; index < trackedExercises.length; index += 1)
+            TrackedExerciseListItem(
+              key: ValueKey(trackedExercises[index].id),
+              onReorder: (int increment) {
+                // -1 means move up, 1 means move down
+                onReorder(index, index + increment);
+              },
+              trackedExercise: trackedExercises[index],
+              showAsSimplified: onReorderInProgress,
+            ),
+        ],
       ),
       padding: 100.0,
       overLayContent: Column(
