@@ -39,6 +39,31 @@ class WorkoutDto {
     workout.setAreTrackedExercisesLogged();
     return workout;
   }
+
+  factory WorkoutDto.fromWorkoutDto({
+    required WorkoutDto workout,
+  }) {
+    // mark sets as not logged.
+    var tempExercises = workout.exercises.map((x) {
+      var trackedExercise =
+          TrackedExerciseDto.newInstance(exercise: x.exercise);
+      trackedExercise.sets = x.sets.map((y) {
+        var updatedSet = SetDto.getCopy(y);
+        updatedSet.isLogged = false;
+        return updatedSet;
+      }).toList();
+      return trackedExercise;
+    }).toList();
+
+    return WorkoutDto(
+      id: Utility.generateId(),
+      title: workout.title,
+      exercises: tempExercises,
+      startTime: DateTime.now(),
+      endTime: null,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,

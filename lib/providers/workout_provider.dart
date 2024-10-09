@@ -100,6 +100,11 @@ class WorkoutProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void startWorkoutFromHistory(WorkoutDto workout) {
+    _inProgressWorkout = WorkoutDto.fromWorkoutDto(workout: workout);
+    notifyListeners();
+  }
+
   void cancelInProgressWorkout() {
     _inProgressWorkout = null;
     notifyListeners();
