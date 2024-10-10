@@ -193,7 +193,10 @@ class WorkoutProvider extends ChangeNotifier {
 
     if (newIndex >= _inProgressWorkout!.exercises.length) {
       newIndex = _inProgressWorkout!.exercises.length - 1;
+    } else if (newIndex < 0) {
+      newIndex = 0;
     }
+
     var temp = _inProgressWorkout!.exercises[oldIndex];
     _inProgressWorkout!.exercises.removeAt(oldIndex);
     _inProgressWorkout!.exercises.insert(newIndex, temp);
