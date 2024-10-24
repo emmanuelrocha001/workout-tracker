@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:workout_tracker/models/exercise_dto.dart';
+import '../models/exercise_dto.dart';
 import '../models/workout_dto.dart';
 import '../models/tracked_exercise_dto.dart';
+import '../models/adjust_workout_times_dto.dart';
 
 class WorkoutProvider extends ChangeNotifier {
   static const String _inProgressWorkoutKey = 'inProgressWorkout';
@@ -42,6 +43,9 @@ class WorkoutProvider extends ChangeNotifier {
       if (cachedEncodedValue != null) {
         _inProgressWorkout =
             WorkoutDto.fromJson(jsonDecode(cachedEncodedValue));
+        if (_inProgressWorkout!.endTime == null) {
+          _inProgressWorkout!.autoTimingSelected = true;
+        }
         notifyListeners();
       }
     } catch (e) {
@@ -57,9 +61,13 @@ class WorkoutProvider extends ChangeNotifier {
       print('\ncached workout history:\n\n $cachedEncodedValueList\n\n');
 
       if (cachedEncodedValueList != null) {
-        _workoutHistory = (cachedEncodedValueList)
-            .map((workout) => WorkoutDto.fromJson(jsonDecode(workout)))
-            .toList();
+        _workoutHistory = (cachedEncodedValueList).map((workout) {
+          var tempWorkout = WorkoutDto.fromJson(jsonDecode(workout));
+          // populate for legacy data
+          tempWorkout.createTime ??= tempWorkout.startTime;
+          tempWorkout.lastUpdated ??= tempWorkout.endTime;
+          return tempWorkout;
+        }).toList();
         notifyListeners();
       }
     } catch (e) {
@@ -100,8 +108,14 @@ class WorkoutProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void startWorkoutFromHistory(WorkoutDto workout) {
-    _inProgressWorkout = WorkoutDto.fromWorkoutDto(workout: workout);
+  void startWorkoutFromHistory({
+    required WorkoutDto workout,
+    required bool shouldStartAsNew,
+  }) {
+    _inProgressWorkout = WorkoutDto.fromWorkoutDto(
+      workout: workout,
+      shouldCreateAsNew: shouldStartAsNew,
+    );
     notifyListeners();
   }
 
@@ -111,16 +125,53 @@ class WorkoutProvider extends ChangeNotifier {
     _cache!.remove(_inProgressWorkoutKey);
   }
 
+  bool updateInProgresssWorkoutTimes(AdjustWorkoutTimesDto update) {
+    if (_inProgressWorkout == null) {
+      return false;
+    }
+    print("updating workout times");
+    _inProgressWorkout!.startTime = update.startTime;
+    _inProgressWorkout!.endTime = update.endTime;
+    _inProgressWorkout!.autoTimingSelected = update.autoTimingSelected;
+    _inProgressWorkout!.setAreTrackedExercisesLogged();
+    _saveInProgressWorkout();
+    notifyListeners();
+    return true;
+  }
+
   void finishInProgressWorkout() {
     if (_inProgressWorkout == null) {
-      return null;
+      return;
     }
     _inProgressWorkout!.endTime = DateTime.now();
+    _inProgressWorkout!.lastUpdated = _inProgressWorkout!.endTime;
 
     _showLatestWorkoutHistoryEntryAsFinished = true;
 
     // save to history
     _workoutHistory.add(_inProgressWorkout!);
+    _inProgressWorkout = null;
+
+    notifyListeners();
+
+    // TODO might need to await in scenario where uses refreshes the page.
+    _cache!.remove(_inProgressWorkoutKey);
+    _cache!.setStringList(_workoutHistoryKey,
+        _workoutHistory.map((workout) => jsonEncode(workout)).toList());
+  }
+
+  void finishUpdatingWorkoutHistoryEntry() {
+    if (_inProgressWorkout == null) {
+      return;
+    }
+
+    var index =
+        _workoutHistory.indexWhere((x) => x.id == _inProgressWorkout!.id);
+    if (index == -1) {
+      return;
+    }
+
+    _workoutHistory[index] = _inProgressWorkout!;
     _inProgressWorkout = null;
 
     notifyListeners();
@@ -143,6 +194,29 @@ class WorkoutProvider extends ChangeNotifier {
 
   DateTime? get inProgressWorkoutStartTime {
     return _inProgressWorkout!.startTime;
+  }
+
+  DateTime? get inProgressWorkoutEndTime {
+    return _inProgressWorkout?.endTime;
+  }
+
+  bool get inProgressWorkoutAutoTimingSelected {
+    return _inProgressWorkout?.autoTimingSelected ?? false;
+  }
+
+  bool setInProgressWorkoutStartTime(DateTime startTime) {
+    _inProgressWorkout!.startTime = startTime;
+    _saveInProgressWorkout();
+    notifyListeners();
+    return true;
+  }
+
+  DateTime? get inProgressWorkoutLastUpdated {
+    return _inProgressWorkout!.lastUpdated;
+  }
+
+  bool get updatingLoggedWorkout {
+    return _inProgressWorkout?.lastUpdated != null;
   }
 
   List<TrackedExerciseDto> get trackedExercises {

@@ -84,4 +84,36 @@ class TextStyleTemplates {
       color: color,
     );
   }
+
+  static TextStyle xLargeTextStyle(Color color) {
+    return GoogleFonts.poppins(
+      fontSize: ConfigProvider.xLargeFontSize,
+      fontWeight: FontWeight.w500,
+      color: color,
+    );
+  }
+
+  static TextStyle xLargeBoldTextStyle(Color color) {
+    return GoogleFonts.poppins(
+      fontSize: ConfigProvider.xLargeFontSize,
+      fontWeight: FontWeight.w600,
+      color: color,
+    );
+  }
+
+  static TextStyle xxLargeTextStyle(Color color) {
+    return GoogleFonts.poppins(
+      fontSize: ConfigProvider.xxLargeFontSize,
+      fontWeight: FontWeight.w500,
+      color: color,
+    );
+  }
+
+  static TextStyle xxLargeBoldTextStyle(Color color) {
+    return GoogleFonts.poppins(
+      fontSize: ConfigProvider.xxLargeFontSize,
+      fontWeight: FontWeight.w600,
+      color: color,
+    );
+  }
 }

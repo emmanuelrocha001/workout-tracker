@@ -1,8 +1,59 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import './providers/config_provider.dart';
 import 'package:uuid/uuid.dart';
+import './models/aux_models.dart';
 
 class Utility {
+  static String getElapsedTimeString({
+    required TimeDiff timeDiff,
+    bool includeTimeUnits = false,
+  }) {
+    var formatter = NumberFormat(ConfigProvider.twoDigitFormat);
+    return '${timeDiff.isNegativeTimeDiff ? "-" : ""} ${formatter.format(timeDiff.hours)}${includeTimeUnits ? "h" : ""}:${formatter.format(timeDiff.minutes)}${includeTimeUnits ? "m" : ""}:${formatter.format(timeDiff.seconds)}${includeTimeUnits ? "s" : ""}';
+  }
+
+  static TimeDiff getTimeDifference({
+    required DateTime startTime,
+    required DateTime endTime,
+  }) {
+    var totalSeconds = 0;
+    var isStartTimeBeforeEndTime = startTime.isBefore(endTime);
+    if (isStartTimeBeforeEndTime) {
+      totalSeconds = endTime.difference(startTime).inSeconds;
+    } else {
+      totalSeconds = startTime.difference(endTime).inSeconds;
+    }
+
+    return getTimeDifferenceAsTimeDiff(totalSeconds, !isStartTimeBeforeEndTime);
+  }
+
+  static TimeDiff getTimeDifferenceAsTimeDiff(
+    int totalSeconds,
+    bool isNegativeTimeDiff,
+  ) {
+    const secondsInDay = 60 * 60 * 24;
+    var days = (totalSeconds / (secondsInDay)).floor();
+    totalSeconds -= (days * secondsInDay);
+
+    const secondsInHour = 60 * 60;
+    var hours = (totalSeconds / (secondsInHour)).floor();
+    totalSeconds -= (hours * secondsInHour);
+
+    const secondsInMinute = 60;
+    var minutes = (totalSeconds / (secondsInMinute)).floor();
+    totalSeconds -= (minutes * secondsInMinute);
+
+    var seconds = totalSeconds;
+
+    return TimeDiff(
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds,
+      isNegativeTimeDiff: isNegativeTimeDiff,
+    );
+  }
+
   static generateId() {
     return const Uuid().v4();
   }

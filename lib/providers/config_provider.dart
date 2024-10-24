@@ -14,6 +14,8 @@ class ConfigProvider extends ChangeNotifier {
   static const digitRegexPattern = r'^\d{0,4}$';
 
   static const defaultDateStampFormat = 'MMM d, y hh:mm aaa';
+  static const defaultShortenDateStampFormat = 'MMM d, y';
+  static const defaultTimeFormat = 'hh:mm aaa';
   static const simpleDateFormat = 'EEE, MMM d';
   static const twoDigitFormat = '00';
 
@@ -39,8 +41,8 @@ class ConfigProvider extends ChangeNotifier {
   static const defaultFontSize = 14.0;
   static const mediumFontSize = 18.0;
   static const largeFontSize = 20.0;
-  static const xLargeFontSize = 24.0;
-  static const xxLargeFontSize = 28.0;
+  static const xLargeFontSize = 32.0;
+  static const xxLargeFontSize = 64.0;
   static const defaultIconSize = 28.0;
   static const smallIconSize = 18.0;
 
@@ -48,4 +50,11 @@ class ConfigProvider extends ChangeNotifier {
   static const defaultSpace = 8.0;
   static const mediumSpace = 16.0;
   static const largeSpace = 24.0;
+
+  // text
+  static const cancelInProgressWorkoutText =
+      'Are you sure you want to cancel this workout? All progress will be lost.';
+
+  static const cancelUpdateWorkoutText =
+      'Are you sure you want to cancel workout update? All progress will be lost.';
 }

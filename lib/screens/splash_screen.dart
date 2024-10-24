@@ -13,45 +13,42 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const size = 100.0;
-    var mediaQuery = MediaQuery.of(context);
-    var content = Container(
-      height: mediaQuery.size.height,
-      width: mediaQuery.size.width,
-      color: ConfigProvider.backgroundColor,
-      alignment: Alignment.center,
-      child: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
-              alignment: Alignment.center,
-              height: size,
-              width: size,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Icon(
-                  //   Icons.fitness_center,
-                  //   size: size / 4,
-                  //   color: ConfigProvider.mainColor,
-                  // ),
-                  Text(
-                    'eRP',
-                    style: TextStyleTemplates.largeBoldTextStyle(
-                      ConfigProvider.mainColor,
+    var content = Scaffold(
+      body: Center(
+        child: SingleChildScrollView(
+          child: Stack(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
+                alignment: Alignment.center,
+                height: size,
+                width: size,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Icon(
+                    //   Icons.fitness_center,
+                    //   size: size / 4,
+                    //   color: ConfigProvider.mainColor,
+                    // ),
+                    Text(
+                      'eRP',
+                      style: TextStyleTemplates.largeBoldTextStyle(
+                        ConfigProvider.mainColor,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                // child: Image.asset(
+                //   ConfigProvider.logoImagePath,
+                //   fit: BoxFit.contain,
+                //   width: ConfigProvider.logoSize,
+                //   height: ConfigProvider.logoSize,
+                // ),
               ),
-              // child: Image.asset(
-              //   ConfigProvider.logoImagePath,
-              //   fit: BoxFit.contain,
-              //   width: ConfigProvider.logoSize,
-              //   height: ConfigProvider.logoSize,
-              // ),
-            ),
-            Container(width: size, height: size, child: Loading()),
-          ],
+              const SizedBox(width: size, height: size, child: Loading()),
+            ],
+          ),
         ),
       ),
     );

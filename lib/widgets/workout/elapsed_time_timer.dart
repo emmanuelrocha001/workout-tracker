@@ -3,12 +3,22 @@ import 'dart:async';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
+import '../../utility.dart';
+import '../../models/aux_models.dart';
+
 import '../../providers/config_provider.dart';
 import '../general/text_style_templates.dart';
 
 class ElapsedTimeTimer extends StatefulWidget {
   final DateTime startTime;
-  const ElapsedTimeTimer({super.key, required this.startTime});
+  final DateTime? endTime;
+  final bool logTicker;
+  const ElapsedTimeTimer({
+    super.key,
+    required this.startTime,
+    this.endTime,
+    this.logTicker = false,
+  });
 
   @override
   State<ElapsedTimeTimer> createState() => _ElapsedTimeTimerState();
@@ -26,20 +36,40 @@ class _ElapsedTimeTimerState extends State<ElapsedTimeTimer>
     startElapsedTimer();
   }
 
+  void reInitializeTimer() {
+    if (timer!.isActive) {
+      print("timer unexpectedly active. cancelling");
+      timer?.cancel();
+    }
+    // trigger a rebuild to avoid lag on resume.
+    setState(() {});
+    startElapsedTimer();
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      if (timer!.isActive) {
-        print("timer unexpectedly active. cancelling");
-        timer?.cancel();
-      }
-      // trigger a rebuild to avoid lag on resume.
-      setState(() {});
-      startElapsedTimer();
+      // if (timer!.isActive) {
+      //   print("timer unexpectedly active. cancelling");
+      //   timer?.cancel();
+      // }
+      // // trigger a rebuild to avoid lag on resume.
+      // setState(() {});
+      // startElapsedTimer();
+      reInitializeTimer();
     } else if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
       timer?.cancel();
     }
+  }
+
+  @override
+  void didUpdateWidget(covariant ElapsedTimeTimer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.startTime == widget.startTime) return;
+    print(
+        "didUpdateWidget, reinitializing timer ${widget.startTime.toIso8601String()}");
+    reInitializeTimer();
   }
 
   @override
@@ -54,7 +84,7 @@ class _ElapsedTimeTimerState extends State<ElapsedTimeTimer>
     var id = Random().nextInt(100000);
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        print("increasing elapsed time from $id timer");
+        if (widget.logTicker) print("increasing elapsed time from $id timer");
         elapsedSeconds++;
       });
     });
@@ -63,24 +93,9 @@ class _ElapsedTimeTimerState extends State<ElapsedTimeTimer>
   @override
   Widget build(BuildContext context) {
     // TODO easier to init date time from seconds and then format it?
-    var totalSeconds = elapsedSeconds;
-    const secondsInDay = 60 * 60 * 24;
-    var days = (totalSeconds / (secondsInDay)).floor();
-    totalSeconds -= (days * secondsInDay);
-
-    const secondsInHour = 60 * 60;
-    var hours = (totalSeconds / (secondsInHour)).floor();
-    totalSeconds -= (hours * secondsInHour);
-
-    const secondsInMinute = 60;
-    var minutes = (totalSeconds / (secondsInMinute)).floor();
-    totalSeconds -= (minutes * secondsInMinute);
-
-    var seconds = totalSeconds;
-
-    var formatter = NumberFormat(ConfigProvider.twoDigitFormat);
     return Text(
-      '${formatter.format(hours)}:${formatter.format(minutes)}:${formatter.format(seconds)}',
+      Utility.getElapsedTimeString(
+          timeDiff: Utility.getTimeDifferenceAsTimeDiff(elapsedSeconds, false)),
       style:
           TextStyleTemplates.mediumBoldTextStyle(ConfigProvider.mainTextColor),
     );

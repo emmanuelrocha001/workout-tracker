@@ -3,24 +3,32 @@ import './tracked_exercise_dto.dart';
 
 class WorkoutDto {
   late String id;
+  DateTime? createTime;
   DateTime? startTime;
   DateTime? endTime;
+  DateTime? lastUpdated;
   String? title;
   List<TrackedExerciseDto> exercises = [];
   bool areTrackedExercisesLogged = false;
+  bool autoTimingSelected = false;
 
   WorkoutDto({
     required this.id,
     required this.title,
     required this.exercises,
+    required this.createTime,
     required this.startTime,
     required this.endTime,
+    required this.lastUpdated,
     this.areTrackedExercisesLogged = false,
+    this.autoTimingSelected = false,
   });
 
   WorkoutDto.newInstance({this.title = ""}) {
     id = Utility.generateId();
+    createTime = DateTime.now();
     startTime = DateTime.now();
+    autoTimingSelected = true;
   }
 
   factory WorkoutDto.fromJson(Map<String, dynamic> json) {
@@ -29,9 +37,15 @@ class WorkoutDto {
     var workout = WorkoutDto(
       id: json['id'],
       title: json['title'],
+      createTime: json['createTime'] != null
+          ? DateTime.parse(json['createTime'])
+          : null,
       startTime:
           json['startTime'] != null ? DateTime.parse(json['startTime']) : null,
       endTime: json['endTime'] != null ? DateTime.parse(json['endTime']) : null,
+      lastUpdated: json['lastUpdated'] != null
+          ? DateTime.parse(json['lastUpdated'])
+          : null,
       exercises: (json['exercises'] as List)
           .map((exercise) => TrackedExerciseDto.fromJson(exercise))
           .toList(),
@@ -42,6 +56,7 @@ class WorkoutDto {
 
   factory WorkoutDto.fromWorkoutDto({
     required WorkoutDto workout,
+    required bool shouldCreateAsNew,
   }) {
     // mark sets as not logged.
     var tempExercises = workout.exercises.map((x) {
@@ -49,18 +64,23 @@ class WorkoutDto {
           TrackedExerciseDto.newInstance(exercise: x.exercise);
       trackedExercise.sets = x.sets.map((y) {
         var updatedSet = SetDto.getCopy(y);
-        updatedSet.isLogged = false;
+        if (shouldCreateAsNew) {
+          updatedSet.isLogged = false;
+        }
         return updatedSet;
       }).toList();
       return trackedExercise;
     }).toList();
 
     return WorkoutDto(
-      id: Utility.generateId(),
+      id: shouldCreateAsNew ? Utility.generateId() : workout.id,
       title: workout.title,
       exercises: tempExercises,
-      startTime: DateTime.now(),
-      endTime: null,
+      createTime: shouldCreateAsNew ? DateTime.now() : workout.createTime,
+      startTime: shouldCreateAsNew ? DateTime.now() : workout.startTime,
+      endTime: shouldCreateAsNew ? null : workout.endTime,
+      lastUpdated: shouldCreateAsNew ? null : workout.lastUpdated,
+      autoTimingSelected: shouldCreateAsNew,
     );
   }
 
@@ -69,8 +89,10 @@ class WorkoutDto {
       'id': id,
       'title': title,
       'exercises': exercises.map((x) => x.toJson()).toList(),
-      'endTime': endTime?.toIso8601String(),
+      'createTime': createTime?.toIso8601String(),
       'startTime': startTime?.toIso8601String(),
+      'endTime': endTime?.toIso8601String(),
+      'lastUpdated': lastUpdated?.toIso8601String(),
     };
   }
 

@@ -27,7 +27,7 @@ class _InitialScreenState extends State<InitialScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 1), _getInitialView);
+    Future.delayed(const Duration(seconds: 1), _getInitialView);
   }
 
   @override

@@ -4,7 +4,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:workout_tracker/widgets/workout/workout_history_list_item.dart';
+import '../../models/adjust_workout_times_dto.dart';
+import './adjust_workout_time_form.dart';
 
 import '../../providers/config_provider.dart';
 import '../../providers/exercise_provider.dart';
@@ -65,6 +66,25 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
     }
   }
 
+  void _adjustWorkoutTimes() async {
+    var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
+    var update = await Helper.showDialogForm(
+      context: context,
+      content: AdjustWorkoutTimeForm(
+        initial: AdjustWorkoutTimesDto(
+          startTime: workoutProvider.inProgressWorkoutStartTime,
+          endTime: workoutProvider.inProgressWorkoutEndTime,
+          autoTimingSelected:
+              workoutProvider.inProgressWorkoutAutoTimingSelected,
+        ),
+        canEnableAutoTiming: !workoutProvider.updatingLoggedWorkout,
+      ),
+    );
+    if (update != null && update is AdjustWorkoutTimesDto) {
+      workoutProvider.updateInProgresssWorkoutTimes(update);
+    }
+  }
+
   Widget proxyDecorator(Widget child, int index, Animation<double> animation) {
     return AnimatedBuilder(
       animation: animation,
@@ -92,6 +112,19 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
     var title = DateFormat(ConfigProvider.simpleDateFormat)
         .format(DateTime.now())
         .toUpperCase();
+
+    var elapsedTimeString = "";
+    if (!workoutProvider.inProgressWorkoutAutoTimingSelected &&
+        workoutProvider.inProgressWorkoutStartTime != null &&
+        workoutProvider.inProgressWorkoutEndTime != null) {
+      var diff = Utility.getTimeDifference(
+          startTime: workoutProvider.inProgressWorkoutStartTime!,
+          endTime: workoutProvider.inProgressWorkoutEndTime!);
+      elapsedTimeString = Utility.getElapsedTimeString(
+        timeDiff: diff,
+        includeTimeUnits: true,
+      );
+    }
     return OverlayContent(
       content: ReorderableListView(
         proxyDecorator: proxyDecorator,
@@ -176,26 +209,43 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                       );
                     },
                     menuChildren: [
-                      // MenuItemButton(
-                      //   style: const ButtonStyle(
-                      //     backgroundColor: WidgetStatePropertyAll<Color>(
-                      //         ConfigProvider.mainColor),
-                      //   ),
-                      //   onPressed: onAddExercise,
-                      //   child: Text(
-                      //     "ADD EXERCISE",
-                      //     style: TextStyleTemplates.defaultBoldTextStyle(
-                      //         ConfigProvider.backgroundColor),
-                      //   ),
-                      // ),
+                      MenuItemButton(
+                        style: const ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll<Color>(
+                              ConfigProvider.backgroundColor),
+                        ),
+                        onPressed: _adjustWorkoutTimes,
+                        child: Text(
+                          "ADJUST TIME",
+                          style: TextStyleTemplates.defaultBoldTextStyle(
+                              ConfigProvider.mainColor),
+                        ),
+                      ),
                       MenuItemButton(
                         style: const ButtonStyle(
                           backgroundColor:
                               WidgetStatePropertyAll<Color>(Colors.red),
                         ),
-                        onPressed: workoutProvider.cancelInProgressWorkout,
+                        onPressed: () async {
+                          var res = await Helper.showConfirmationDialogForm(
+                              context: context,
+                              message: !workoutProvider.updatingLoggedWorkout
+                                  ? ConfigProvider.cancelInProgressWorkoutText
+                                  : ConfigProvider.cancelUpdateWorkoutText,
+                              confimationButtonLabel: "CONFIRM",
+                              confirmationButtonColor: Colors.red,
+                              cancelButtonColor:
+                                  ConfigProvider.slightContrastBackgroundColor,
+                              cancelButtonLabel: 'RESUME');
+
+                          if (res) {
+                            workoutProvider.cancelInProgressWorkout();
+                          }
+                        },
                         child: Text(
-                          "CANCEL WORKOUT",
+                          !workoutProvider.updatingLoggedWorkout
+                              ? "CANCEL WORKOUT"
+                              : "CANCEL UPDATE",
                           style: TextStyleTemplates.defaultBoldTextStyle(
                               ConfigProvider.backgroundColor),
                         ),
@@ -228,15 +278,26 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
           if (workoutProvider.inProgressWorkoutStartTime != null)
             Align(
               alignment: Alignment.center,
-              child: ElapsedTimeTimer(
-                  startTime: workoutProvider.inProgressWorkoutStartTime!),
+              child: elapsedTimeString.isNotEmpty
+                  ? Text(
+                      elapsedTimeString,
+                      style: TextStyleTemplates.mediumBoldTextStyle(
+                          ConfigProvider.mainTextColor),
+                    )
+                  : ElapsedTimeTimer(
+                      startTime: workoutProvider.inProgressWorkoutStartTime!),
             ),
         ],
       ),
       showActionButton: workoutProvider.isInProgressWorkoutReadyTofinish(),
-      actionButtonLabel: "FINISH",
+      actionButtonLabel:
+          !workoutProvider.updatingLoggedWorkout ? "FINISH" : "UPDATE",
       onActionButtonPressed: () {
-        workoutProvider.finishInProgressWorkout();
+        if (!workoutProvider.updatingLoggedWorkout) {
+          workoutProvider.finishInProgressWorkout();
+        } else {
+          workoutProvider.finishUpdatingWorkoutHistoryEntry();
+        }
       },
     );
   }

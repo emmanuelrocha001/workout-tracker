@@ -191,7 +191,7 @@ class WorkoutHistoryListItem extends StatelessWidget {
                   menuChildren: [
                     MenuItemButton(
                       child: const Tooltip(
-                        message: 'Start workout from entry',
+                        message: 'Start from past workout',
                         child: Icon(
                           Icons.restart_alt_rounded,
                           color: ConfigProvider.mainColor,
@@ -200,7 +200,22 @@ class WorkoutHistoryListItem extends StatelessWidget {
                       ),
                       onPressed: () {
                         workoutProvider.startWorkoutFromHistory(
-                          workout,
+                            workout: workout, shouldStartAsNew: true);
+                      },
+                    ),
+                    MenuItemButton(
+                      child: const Tooltip(
+                        message: 'Update workout entry',
+                        child: Icon(
+                          Icons.edit_rounded,
+                          color: ConfigProvider.mainColor,
+                          size: ConfigProvider.defaultIconSize,
+                        ),
+                      ),
+                      onPressed: () {
+                        workoutProvider.startWorkoutFromHistory(
+                          workout: workout,
+                          shouldStartAsNew: false,
                         );
                       },
                     ),
