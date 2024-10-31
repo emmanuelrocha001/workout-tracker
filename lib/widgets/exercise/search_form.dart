@@ -25,7 +25,13 @@ class _SearchFormState extends State<SearchForm> {
   void initState() {
     super.initState();
     // _focusNode.requestFocus();
+    Future.delayed(const Duration(seconds: 0), () => resetSearch());
     _controller.addListener(_onKeyStroke);
+  }
+
+  void resetSearch() {
+    Provider.of<ExerciseProvider>(context, listen: false)
+        .setAppliedSearchFilter("");
   }
 
   _onKeyStroke() {

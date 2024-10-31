@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import '../models/tracked_exercise_dto.dart';
@@ -24,7 +24,11 @@ class ExerciseProvider with ChangeNotifier {
     try {
       List<dynamic> tempExercises =
           json.decode((await rootBundle.loadString(_exercisesFilePath)));
-      _exercises = tempExercises.map((x) => ExerciseDto.fromJson(x)).toList();
+      _exercises = tempExercises.map((x) {
+        var temp = ExerciseDto.fromJson(x);
+        temp.setSearchableString();
+        return temp;
+      }).toList();
       _filteredExercises = [..._exercises];
     } catch (e, s) {
       print(e);
@@ -58,15 +62,39 @@ class ExerciseProvider with ChangeNotifier {
     return _appliedExerciseType ?? "";
   }
 
+  List<ExerciseDto> _applySearchFilter(List<ExerciseDto> tList) {
+    var searchString = _appliedSearchFilter!.toLowerCase();
+    // print('search string $searchString');
+    var searchableStringToExerciseMap = <String, ExerciseDto>{};
+    var tSet = tList.where((x) {
+      var matchByStringContains = x.searchableString.contains(searchString);
+      if (!searchableStringToExerciseMap.containsKey(x.searchableString) &&
+          !matchByStringContains &&
+          searchString.length > 2) {
+        searchableStringToExerciseMap[x.searchableString] = x;
+      }
+      return matchByStringContains;
+    }).toList();
+
+    // print('searchable map length ${searchableStringToExerciseMap.length}');
+    var results = extractAllSorted(
+      choices: searchableStringToExerciseMap.keys.toList(),
+      query: searchString,
+      cutoff: 65,
+    );
+    // print('search results length${results.length}');
+    return [
+      ...results.map((x) => searchableStringToExerciseMap[x.choice]!),
+      ...tSet,
+    ];
+  }
+
   void _applyFilters() {
+    // search can be optimized with some pre-processing of searchable content. looks like this is not something that is offered by fuzzywuzzy package. TODO - look for a better package or implement a custom solution if needed.
     try {
-      _filteredExercises = _exercises
+      var tList = _exercises
           .where(
             (x) =>
-                (_appliedSearchFilter == null ||
-                    x.name.toLowerCase().contains(
-                          _appliedSearchFilter!.toLowerCase(),
-                        )) &&
                 (_appliedMuscleGroupIdFilter == null ||
                     _appliedMuscleGroupIdFilter!.isEmpty ||
                     x.muscleGroupId.toLowerCase() ==
@@ -78,6 +106,11 @@ class ExerciseProvider with ChangeNotifier {
                         )),
           )
           .toList();
+      if (_appliedSearchFilter == null) {
+        _filteredExercises = tList;
+      } else {
+        _filteredExercises = _applySearchFilter(tList);
+      }
     } catch (error) {
       print(error);
     }
@@ -92,12 +125,13 @@ class ExerciseProvider with ChangeNotifier {
   }
 
   void setAppliedSearchFilter(String value) {
-    print("applied filter");
-    print(value);
-    if (value == null) {
-      print("is null");
+    if (value == _appliedSearchFilter) return;
+
+    if (value.isEmpty && _appliedSearchFilter != null) {
+      _appliedSearchFilter = null;
+    } else {
+      _appliedSearchFilter = value;
     }
-    _appliedSearchFilter = value;
     _applyFilters();
     notifyListeners();
   }

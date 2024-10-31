@@ -1,3 +1,5 @@
+import "package:workout_tracker/models/muscle_group_dto.dart";
+
 import "../class_extensions.dart";
 
 class ExerciseDto {
@@ -9,6 +11,7 @@ class ExerciseDto {
   final String updatedAt;
   final String? youtubeId;
   final String? description;
+  String searchableString = "";
 
   ExerciseDto({
     required this.id,
@@ -67,5 +70,10 @@ class ExerciseDto {
       'youtubeId': youtubeId,
       'description': description,
     };
+  }
+
+  void setSearchableString() {
+    searchableString =
+        '${name.toLowerCase()} ${MuscleGroupDto.getMuscleGroupName(muscleGroupId).toUpperCase()}';
   }
 }
