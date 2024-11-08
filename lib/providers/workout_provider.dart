@@ -79,7 +79,7 @@ class WorkoutProvider extends ChangeNotifier {
     return _showLatestWorkoutHistoryEntryAsFinished;
   }
 
-  void latestWorkoutHistoryEntryShownAsFinished() {
+  void resetShowLatestWorkoutHistoryEntryAsFinished() {
     _showLatestWorkoutHistoryEntryAsFinished = false;
   }
 
@@ -178,6 +178,20 @@ class WorkoutProvider extends ChangeNotifier {
 
     // TODO might need to await in scenario where uses refreshes the page.
     _cache!.remove(_inProgressWorkoutKey);
+    _cache!.setStringList(_workoutHistoryKey,
+        _workoutHistory.map((workout) => jsonEncode(workout)).toList());
+  }
+
+  void deleteWorkoutHistoryEntry(String workoutId) {
+    var index = _workoutHistory.indexWhere((x) => x.id == workoutId);
+    if (index == -1) {
+      return;
+    }
+
+    _workoutHistory.removeAt(index);
+    notifyListeners();
+
+    // TODO might need to await in scenario where uses refreshes the page.
     _cache!.setStringList(_workoutHistoryKey,
         _workoutHistory.map((workout) => jsonEncode(workout)).toList());
   }

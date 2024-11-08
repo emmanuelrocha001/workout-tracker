@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:workout_tracker/widgets/workout/_workout_history_.dart';
 
 import '../providers/config_provider.dart';
+import '../providers/workout_provider.dart';
 
-import '../widgets/workout/__workout_page.dart';
-import '../widgets/exercise_selection_button.dart';
+import '../widgets/workout/_workout_page_.dart';
 import '../widgets/general/text_style_templates.dart';
 
 class MainContentNavigator extends StatefulWidget {
@@ -16,6 +18,27 @@ class MainContentNavigator extends StatefulWidget {
 
 class _MainContentNavigatorState extends State<MainContentNavigator> {
   int currentPageIndex = 1;
+
+  void navigateToPage(int index) {
+    if (index > 0 && index < 2) {
+      setState(() {
+        currentPageIndex = index;
+      });
+    }
+    setState(() {
+      currentPageIndex = index;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // might need to delay this. context is possibly not ready. did not navigate while testing on web build
+    var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
+    if (workoutProvider.isWorkoutInProgress()) {
+      currentPageIndex = 0;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,21 +76,21 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
           destinations: <Widget>[
             NavigationDestination(
               icon: Icon(
-                Icons.bug_report_rounded,
+                Icons.fitness_center_rounded,
                 color: currentPageIndex == 0
                     ? ConfigProvider.backgroundColor
                     : Colors.black,
               ),
-              label: 'Debug',
+              label: 'Workout',
             ),
             NavigationDestination(
               icon: Icon(
-                Icons.fitness_center_rounded,
+                Icons.history_rounded,
                 color: currentPageIndex == 1
                     ? ConfigProvider.backgroundColor
                     : Colors.black,
               ),
-              label: 'Workout',
+              label: 'History',
             ),
             // NavigationDestination(
             //   icon: Badge(
@@ -87,20 +110,20 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
         ),
       ),
       body: <Widget>[
+        WorkoutPage(
+          navigateToWorkoutHistory: () {
+            navigateToPage(1);
+          },
+        ),
+
         /// Profile
-        const Card(
-          shadowColor: Colors.transparent,
-          child: SizedBox.expand(
-            child: Center(
-              child: Text(
-                'Profile',
-              ),
-            ),
-          ),
+        WorkoutHistory(
+          navigateToWorkout: () {
+            navigateToPage(0);
+          },
         ),
 
         /// Track page
-        const WorkoutPage(),
 
         /// Messages page
         // const Card(

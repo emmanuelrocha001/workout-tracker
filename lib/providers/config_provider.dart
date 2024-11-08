@@ -57,4 +57,7 @@ class ConfigProvider extends ChangeNotifier {
 
   static const cancelUpdateWorkoutText =
       'Are you sure you want to cancel workout update? All progress will be lost.';
+
+  static const deleteWorkoutEntryText =
+      'Are you sure you want to delete this workout entry? This action cannot be undone.';
 }

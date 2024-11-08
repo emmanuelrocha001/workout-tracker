@@ -11,42 +11,65 @@ import '../../models/workout_dto.dart';
 import '../../models/tracked_exercise_dto.dart';
 
 import '../general/row_item.dart';
+import './workout_history_list_item_summary.dart';
+import './workout_history_list_item_breakdown.dart';
+
+import '../helper.dart';
 
 class WorkoutHistoryListItem extends StatelessWidget {
   final WorkoutDto workout;
+  final void Function() navigateToWorkout;
   const WorkoutHistoryListItem({
     super.key,
     required this.workout,
+    required this.navigateToWorkout,
   });
 
-  List<Widget> _generateSetRows(List<SetDto> sets) {
-    return sets.mapIndexed((index, set) {
+  List<Widget> _generateSimplifiedCompletedExerciseList(
+      List<TrackedExerciseDto> trackedExercises) {
+    return trackedExercises.map((
+      trackedExercise,
+    ) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           RowItem(
             isCompact: true,
             child: Text(
-              '$index',
-              style: TextStyleTemplates.smallTextStyle(
+              '${trackedExercise.sets.length} x',
+              style: TextStyleTemplates.defaultTextStyle(
+                ConfigProvider.mainTextColor,
+              ),
+            ),
+          ),
+          RowItem(
+            hasCompactPadding: true,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              trackedExercise.exercise.name,
+              style: TextStyleTemplates.defaultTextStyle(
                 ConfigProvider.mainTextColor,
               ),
             ),
           ),
           RowItem(
             isCompact: true,
+            alignment: Alignment.centerLeft,
+            minWidth: 70.0,
             child: Text(
-              '${set.weight}',
-              style: TextStyleTemplates.smallTextStyle(
+              '${trackedExercise.sets.last.weight} lbs x ',
+              style: TextStyleTemplates.defaultTextStyle(
                 ConfigProvider.mainTextColor,
               ),
             ),
           ),
           RowItem(
             isCompact: true,
+            minWidth: 70.0,
+            alignment: Alignment.centerLeft,
             child: Text(
-              'x ${set.reps}',
-              style: TextStyleTemplates.smallTextStyle(
+              '${trackedExercise.sets.last.reps}',
+              style: TextStyleTemplates.defaultTextStyle(
                 ConfigProvider.mainTextColor,
               ),
             ),
@@ -56,88 +79,100 @@ class WorkoutHistoryListItem extends StatelessWidget {
     }).toList();
   }
 
-  List<Widget> _generateCompletedExerciseList(
-      List<TrackedExerciseDto> trackedExercises) {
-    return trackedExercises.map((trackedExercise) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            trackedExercise.exercise.name,
-            style: TextStyleTemplates.defaultTextStyle(
+  Widget _simplifiedCompletedExerciseListHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        RowItem(
+          isCompact: true,
+          child: Text(
+            '',
+            style: TextStyleTemplates.defaultBoldTextStyle(
               ConfigProvider.mainTextColor,
             ),
           ),
-          ..._generateSetRows(trackedExercise.sets),
-          const SizedBox(height: ConfigProvider.defaultSpace / 2),
-        ],
-      );
-    }).toList();
+        ),
+        RowItem(
+          hasCompactPadding: true,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Exercise',
+            style: TextStyleTemplates.defaultBoldTextStyle(
+              ConfigProvider.mainTextColor,
+            ),
+          ),
+        ),
+        RowItem(
+          isCompact: true,
+          alignment: Alignment.centerLeft,
+          hasCompactPadding: true,
+          minWidth: 140.0,
+          child: Text(
+            'Last Set',
+            style: TextStyleTemplates.defaultBoldTextStyle(
+              ConfigProvider.mainTextColor,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
-  Widget _getWorkoutSummary() {
-    var duration = workout.endTime!.difference(workout.startTime!).inMinutes;
-    var hours = (duration / 60).floor();
-    var minutes = duration % 60;
+  void _deleteWorkoutEntry(BuildContext context) async {
+    var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
+    var res = await Helper.showConfirmationDialogForm(
+        context: context,
+        message: ConfigProvider.deleteWorkoutEntryText,
+        confimationButtonLabel: "CONFIRM",
+        confirmationButtonColor: Colors.red,
+        cancelButtonColor: ConfigProvider.slightContrastBackgroundColor,
+        cancelButtonLabel: 'CANCEL');
 
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: ConfigProvider.defaultSpace / 2,
-        right: ConfigProvider.defaultSpace / 2,
-        bottom: ConfigProvider.defaultSpace,
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              RowItem(
-                isCompact: true,
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.access_time_rounded,
-                      color: ConfigProvider.mainTextColor,
-                      size: ConfigProvider.smallIconSize,
-                    ),
-                    const SizedBox(width: ConfigProvider.defaultSpace / 2),
-                    Text(
-                      '${hours}h ${minutes}m',
-                      style: TextStyleTemplates.defaultBoldTextStyle(
-                        ConfigProvider.mainTextColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // RowItem(
-              //   isCompact: true,
-              //   child: Text(
-              //     '${set.weight}',
-              //     style: TextStyleTemplates.smallTextStyle(
-              //       ConfigProvider.mainTextColor,
-              //     ),
-              //   ),
-              // ),
-              // RowItem(
-              //   isCompact: true,
-              //   child: Text(
-              //     'x ${set.reps}',
-              //     style: TextStyleTemplates.smallTextStyle(
-              //       ConfigProvider.mainTextColor,
-              //     ),
-              //   ),
-              // ),
-            ],
-          ),
-        ],
-      ),
-    );
+    if (res ?? false) {
+      workoutProvider.deleteWorkoutHistoryEntry(workout.id);
+    }
+  }
+
+  void startWorkoutFromHistory({
+    required BuildContext context,
+    required bool startAsNew,
+  }) async {
+    var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
+    var isUpdate = workoutProvider.updatingLoggedWorkout;
+    var messge =
+        'Are you sure you want to ${startAsNew ? "start from a past workout" : "start an update"}? There is ${!isUpdate ? "a workout" : "an update"} in progress. All progress will be lost.';
+    bool? res = true;
+
+    if (workoutProvider.isWorkoutInProgress()) {
+      res = await Helper.showConfirmationDialogForm(
+        context: context,
+        message: messge,
+        confimationButtonLabel: 'CONFIRM',
+        confirmationButtonColor: Colors.red,
+        cancelButtonColor: ConfigProvider.slightContrastBackgroundColor,
+        cancelButtonLabel: 'RESUME IN PROGRESS',
+      );
+
+      if (res == null) {
+        return;
+      }
+      if (res) {
+        workoutProvider.startWorkoutFromHistory(
+          workout: workout,
+          shouldStartAsNew: startAsNew,
+        );
+      }
+    } else {
+      workoutProvider.startWorkoutFromHistory(
+        workout: workout,
+        shouldStartAsNew: startAsNew,
+      );
+    }
+    navigateToWorkout();
   }
 
   @override
   Widget build(BuildContext context) {
-    var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
     var title = DateFormat(ConfigProvider.defaultDateStampFormat)
         .format(workout.endTime!)
         .toUpperCase();
@@ -162,6 +197,28 @@ class WorkoutHistoryListItem extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
+                IconButton(
+                  icon: const Icon(
+                    Icons.fullscreen_rounded,
+                    color: ConfigProvider.mainColor,
+                    size: ConfigProvider.defaultIconSize,
+                  ),
+                  // style: _theme.iconButtonTheme.style,
+                  onPressed: () {
+                    Helper.showPopUp(
+                      context: context,
+                      title: title,
+                      content: Center(
+                        child: Column(
+                          children: [
+                            WorkoutHistoryListItemSummary(workout: workout),
+                            WorkoutHistoryListItemBreakdown(workout: workout)
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 MenuAnchor(
                   style: const MenuStyle(
                     backgroundColor: WidgetStatePropertyAll<Color>(
@@ -198,9 +255,11 @@ class WorkoutHistoryListItem extends StatelessWidget {
                           size: ConfigProvider.defaultIconSize,
                         ),
                       ),
-                      onPressed: () {
-                        workoutProvider.startWorkoutFromHistory(
-                            workout: workout, shouldStartAsNew: true);
+                      onPressed: () async {
+                        startWorkoutFromHistory(
+                          context: context,
+                          startAsNew: true,
+                        );
                       },
                     ),
                     MenuItemButton(
@@ -212,32 +271,35 @@ class WorkoutHistoryListItem extends StatelessWidget {
                           size: ConfigProvider.defaultIconSize,
                         ),
                       ),
-                      onPressed: () {
-                        workoutProvider.startWorkoutFromHistory(
-                          workout: workout,
-                          shouldStartAsNew: false,
+                      onPressed: () async {
+                        startWorkoutFromHistory(
+                          context: context,
+                          startAsNew: false,
                         );
                       },
                     ),
-                    // MenuItemButton(
-                    //   child: const Tooltip(
-                    //     message: 'Delete workout entry',
-                    //     child: Icon(
-                    //       Icons.delete_outline_rounded,
-                    //       color: Colors.red,
-                    //       size: ConfigProvider.defaultIconSize,
-                    //     ),
-                    //   ),
-                    //   onPressed: () {},
-                    // ),
+                    MenuItemButton(
+                        child: const Tooltip(
+                          message: 'Delete workout entry',
+                          child: Icon(
+                            Icons.delete_outline_rounded,
+                            color: Colors.red,
+                            size: ConfigProvider.defaultIconSize,
+                          ),
+                        ),
+                        onPressed: () {
+                          _deleteWorkoutEntry(context);
+                        }),
                   ],
                 ),
               ],
             ),
-            _getWorkoutSummary(),
-            ..._generateCompletedExerciseList(
+            WorkoutHistoryListItemSummary(workout: workout),
+            _simplifiedCompletedExerciseListHeader(),
+            ..._generateSimplifiedCompletedExerciseList(
               workout.exercises,
-            )
+            ),
+            const SizedBox(height: ConfigProvider.defaultSpace),
           ],
         ),
       ),

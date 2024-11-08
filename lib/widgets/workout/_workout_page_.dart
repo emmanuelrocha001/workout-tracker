@@ -4,10 +4,14 @@ import 'package:provider/provider.dart';
 import '../../providers/workout_provider.dart';
 
 import './_tracked_exercise_list.dart';
-import '_workout_history_list.dart';
+import './_start_new_workout.dart';
 
 class WorkoutPage extends StatelessWidget {
-  const WorkoutPage({super.key});
+  final void Function() navigateToWorkoutHistory;
+  const WorkoutPage({
+    super.key,
+    required this.navigateToWorkoutHistory,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +19,9 @@ class WorkoutPage extends StatelessWidget {
 
     var isWorkoutInProgress = workoutProvider.isWorkoutInProgress();
     return isWorkoutInProgress
-        ? const TrackedExerciseList()
-        : const WorkoutHistory();
+        ? TrackedExerciseList(
+            navigateToWorkoutHistory: navigateToWorkoutHistory,
+          )
+        : const StartNewWorkout();
   }
 }

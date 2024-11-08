@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 import 'package:provider/provider.dart';
+import 'package:workout_tracker/widgets/general/confetti_default.dart';
+import 'package:workout_tracker/widgets/workout/workout_history_list_item_breakdown.dart';
+import 'package:workout_tracker/widgets/workout/workout_history_list_item_summary.dart';
 import '../../providers/config_provider.dart';
 
 import '../../providers/workout_provider.dart';
@@ -12,7 +17,11 @@ import '../general/overlay_content.dart';
 import 'workout_history_list_item.dart';
 
 class WorkoutHistory extends StatefulWidget {
-  const WorkoutHistory({super.key});
+  final void Function() navigateToWorkout;
+  const WorkoutHistory({
+    super.key,
+    required this.navigateToWorkout,
+  });
 
   @override
   State<WorkoutHistory> createState() => _WorkoutHistoryState();
@@ -23,7 +32,7 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
-      // showCompletedWorkout();
+      showCompletedWorkout();
     });
   }
 
@@ -33,12 +42,27 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
       print("showCompletedWorkout");
       var workout = workoutProvider.latestWorkoutHistoryEntry;
       if (workout != null) {
+        workoutProvider.resetShowLatestWorkoutHistoryEntryAsFinished();
+        var title = DateFormat(ConfigProvider.defaultDateStampFormat)
+            .format(workout.endTime!)
+            .toUpperCase();
         Helper.showPopUp(
           context: context,
-          title: "Workout Completed",
+          title: title,
           content: Center(
-            child: WorkoutHistoryListItem(
-              workout: workout,
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    WorkoutHistoryListItemSummary(workout: workout),
+                    WorkoutHistoryListItemBreakdown(workout: workout)
+                  ],
+                ),
+                const Align(
+                  alignment: Alignment.topCenter,
+                  child: ConfettiDefault(),
+                ),
+              ],
             ),
           ),
         );
@@ -57,32 +81,12 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
           Padding(
             padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
             child: Text(
-              "Workout History",
+              "History",
               style: TextStyleTemplates.mediumBoldTextStyle(
                   ConfigProvider.mainTextColor),
             ),
           ),
           const Spacer(),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
-              child: TextButton(
-                onPressed: () {
-                  workoutProvider.startWorkout();
-                },
-                style: TextButton.styleFrom(
-                  backgroundColor: ConfigProvider.mainColor,
-                ),
-                child: Text(
-                  "START WORKOUT",
-                  style: TextStyleTemplates.smallBoldTextStyle(
-                    Utility.getTextColorBasedOnBackground(),
-                  ),
-                ),
-              ),
-            ),
-          ),
         ],
       ),
       content: workoutProvider.workoutHistory.isNotEmpty
@@ -92,12 +96,13 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
                 return WorkoutHistoryListItem(
                   workout: workoutProvider.workoutHistory[
                       workoutProvider.workoutHistory.length - index - 1],
+                  navigateToWorkout: widget.navigateToWorkout,
                 );
               },
             )
           : Center(
               child: Text(
-                "No workout history",
+                "No Workout History",
                 style: TextStyleTemplates.defaultTextStyle(
                   ConfigProvider.mainTextColor,
                 ),

@@ -19,11 +19,14 @@ class Helper {
     return configProvider.topPadding;
   }
 
-  static double getMaxContentWidth(BuildContext context) {
+  static double getMaxContentWidth(
+    BuildContext context, {
+    double? maxContentWidthOverride,
+  }) {
     var width = MediaQuery.of(context).size.width;
-    return width <= ConfigProvider.maxContentWidth
-        ? width
-        : ConfigProvider.maxContentWidth;
+    var maxContentWidth =
+        maxContentWidthOverride ?? ConfigProvider.maxContentWidth;
+    return width <= maxContentWidth ? width : maxContentWidth;
   }
 
   static void navigateToYoutube({
@@ -45,6 +48,7 @@ class Helper {
     required String title,
     required Widget content,
     bool hasPadding = true,
+    double heightPercentage = .95,
   }) async {
     final mediaQuery = MediaQuery.of(context);
     return await showModalBottomSheet(
@@ -63,8 +67,8 @@ class Helper {
         ),
         builder: (ctx) {
           return SizedBox(
-            height:
-                (mediaQuery.size.height - Helper.getTopPadding(context)) * 1,
+            height: (mediaQuery.size.height - Helper.getTopPadding(context)) *
+                heightPercentage,
             // padding: hasPadding ? const EdgeInsets.all(8.0) : EdgeInsets.zero,
             child: SafeArea(
               bottom: true,
@@ -171,7 +175,7 @@ class Helper {
     ).show(context);
   }
 
-  static Future<bool> showConfirmationDialogForm({
+  static Future<bool?> showConfirmationDialogForm({
     required BuildContext context,
     required String message,
     required String confimationButtonLabel,
@@ -185,19 +189,22 @@ class Helper {
         builder: (BuildContext context) {
           return AlertDialog(
             scrollable: true,
-            content: Text(
-              message,
-              style: TextStyleTemplates.defaultTextStyle(
-                ConfigProvider.mainTextColor,
+            content: SizedBox(
+              width: getMaxContentWidth(context, maxContentWidthOverride: 400),
+              child: Text(
+                message,
+                style: TextStyleTemplates.defaultTextStyle(
+                  ConfigProvider.mainTextColor,
+                ),
               ),
             ),
             backgroundColor: ConfigProvider.backgroundColor,
             actionsAlignment: MainAxisAlignment.end,
+            actionsOverflowButtonSpacing: ConfigProvider.defaultSpace,
             alignment: Alignment.center,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(ConfigProvider.defaultSpace),
             ),
-            // buttonPadding: const EdgeInsets.all(ConfigProvider.defaultSpace),
             actions: <Widget>[
               TextButton(
                 style: TextButton.styleFrom(
@@ -212,9 +219,6 @@ class Helper {
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 },
-              ),
-              const SizedBox(
-                width: ConfigProvider.defaultSpace,
               ),
               TextButton(
                 style: TextButton.styleFrom(
@@ -234,7 +238,7 @@ class Helper {
           );
         });
 
-    return response ?? false;
+    return response;
   }
 
   static Future<dynamic> showDialogForm({

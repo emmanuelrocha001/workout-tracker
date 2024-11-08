@@ -22,7 +22,11 @@ import '../helper.dart';
 import '../../utility.dart';
 
 class TrackedExerciseList extends StatefulWidget {
-  const TrackedExerciseList({super.key});
+  final void Function() navigateToWorkoutHistory;
+  const TrackedExerciseList({
+    super.key,
+    required this.navigateToWorkoutHistory,
+  });
 
   @override
   State<TrackedExerciseList> createState() => _TrackedExerciseListState();
@@ -238,7 +242,7 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                                   ConfigProvider.slightContrastBackgroundColor,
                               cancelButtonLabel: 'RESUME');
 
-                          if (res) {
+                          if (res ?? false) {
                             workoutProvider.cancelInProgressWorkout();
                           }
                         },
@@ -298,6 +302,7 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
         } else {
           workoutProvider.finishUpdatingWorkoutHistoryEntry();
         }
+        widget.navigateToWorkoutHistory();
       },
     );
   }

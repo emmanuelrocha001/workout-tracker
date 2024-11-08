@@ -6,11 +6,13 @@ class RowItem extends StatelessWidget {
   final bool isCompact;
   final double minWidth;
   final Alignment alignment;
+  final bool hasCompactPadding;
 
   const RowItem({
     super.key,
     required this.child,
     this.isCompact = false,
+    this.hasCompactPadding = false,
     this.alignment = Alignment.center,
     this.minWidth = 50.0,
   });
@@ -18,14 +20,14 @@ class RowItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return isCompact
-        ? Align(
-            alignment: alignment,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 1),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minWidth: minWidth,
-                ),
+        ? Padding(
+            padding: const EdgeInsets.only(top: 1),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: minWidth,
+              ),
+              child: Align(
+                alignment: alignment,
                 child: child,
               ),
             ),
@@ -35,7 +37,9 @@ class RowItem extends StatelessWidget {
             child: Align(
               alignment: alignment,
               child: Padding(
-                padding: const EdgeInsets.all(ConfigProvider.defaultSpace / 2),
+                padding: hasCompactPadding
+                    ? const EdgeInsets.only(top: 1)
+                    : const EdgeInsets.all(ConfigProvider.defaultSpace / 2),
                 child: child,
               ),
             ),

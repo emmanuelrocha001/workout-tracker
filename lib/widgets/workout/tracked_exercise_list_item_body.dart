@@ -75,7 +75,7 @@ class _TrackedExerciseListItemBodyState
     String hintText = '',
   }) {
     return TextField(
-      keyboardType: const TextInputType.numberWithOptions(signed: true),
+      keyboardType: TextInputType.numberWithOptions(decimal: allowDecimal),
       textInputAction: TextInputAction.done,
       cursorColor: ConfigProvider.mainColor,
       onTap: () {},
@@ -203,7 +203,7 @@ class _TrackedExerciseListItemBodyState
           children: [
             RowItem(
                 child: Text(
-              '$index',
+              '${index + 1}',
               style: TextStyleTemplates.defaultTextStyle(
                 ConfigProvider.mainTextColor,
               ),
