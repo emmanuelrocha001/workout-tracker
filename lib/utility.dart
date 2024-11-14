@@ -8,9 +8,13 @@ class Utility {
   static String getElapsedTimeString({
     required TimeDiff timeDiff,
     bool includeTimeUnits = false,
+    bool includeHours = true,
   }) {
     var formatter = NumberFormat(ConfigProvider.twoDigitFormat);
-    return '${timeDiff.isNegativeTimeDiff ? "-" : ""} ${formatter.format(timeDiff.hours)}${includeTimeUnits ? "h" : ""}:${formatter.format(timeDiff.minutes)}${includeTimeUnits ? "m" : ""}:${formatter.format(timeDiff.seconds)}${includeTimeUnits ? "s" : ""}';
+    var hoursString = includeHours
+        ? "${formatter.format(timeDiff.hours)}${includeTimeUnits ? "h" : ""}:"
+        : "";
+    return '${timeDiff.isNegativeTimeDiff ? "-" : ""} $hoursString${formatter.format(timeDiff.minutes)}${includeTimeUnits ? "m" : ""}:${formatter.format(timeDiff.seconds)}${includeTimeUnits ? "s" : ""}';
   }
 
   static TimeDiff getTimeDifference({

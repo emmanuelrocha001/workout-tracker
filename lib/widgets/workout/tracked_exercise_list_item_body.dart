@@ -54,7 +54,6 @@ class _TrackedExerciseListItemBodyState
 
   List<Widget> generateHeaderRow() {
     var headers = ['SET', 'WEIGHT', 'REPS', 'LOG'];
-    var textStyleTemplates = TextStyleTemplates();
     return headers
         .map((text) => RowItem(
               child: Text(
@@ -167,7 +166,6 @@ class _TrackedExerciseListItemBodyState
   }
 
   List<Widget> generateSetRows() {
-    var textStyleTemplates = TextStyleTemplates();
     _weightControllers = sets.mapIndexed((index, set) {
       return TextEditingController(
         text: set.weight != null ? set.weight.toString() : '',

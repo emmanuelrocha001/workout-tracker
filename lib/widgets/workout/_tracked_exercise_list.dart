@@ -11,6 +11,7 @@ import '../../providers/config_provider.dart';
 import '../../providers/exercise_provider.dart';
 import '../../providers/workout_provider.dart';
 
+import '../../widgets/workout/rest_timer.dart';
 import '../exercise/_exercise_list.dart';
 import 'tracked_exercise_list_item.dart';
 import 'tracked_exercise_list_item_header.dart';
@@ -124,10 +125,8 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
       var diff = Utility.getTimeDifference(
           startTime: workoutProvider.inProgressWorkoutStartTime!,
           endTime: workoutProvider.inProgressWorkoutEndTime!);
-      elapsedTimeString = Utility.getElapsedTimeString(
-        timeDiff: diff,
-        includeTimeUnits: true,
-      );
+      elapsedTimeString =
+          Utility.getElapsedTimeString(timeDiff: diff, includeTimeUnits: true);
     }
     return OverlayContent(
       content: ReorderableListView(
@@ -167,7 +166,7 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
             ),
         ],
       ),
-      padding: 100.0,
+      padding: 105.0,
       overLayContent: Column(
         children: [
           Row(
@@ -280,16 +279,47 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
             ],
           ),
           if (workoutProvider.inProgressWorkoutStartTime != null)
-            Align(
+            Stack(
               alignment: Alignment.center,
-              child: elapsedTimeString.isNotEmpty
-                  ? Text(
-                      elapsedTimeString,
-                      style: TextStyleTemplates.mediumBoldTextStyle(
-                          ConfigProvider.mainTextColor),
-                    )
-                  : ElapsedTimeTimer(
-                      startTime: workoutProvider.inProgressWorkoutStartTime!),
+              children: [
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    // color: Colors.purple,
+                    child: elapsedTimeString.isNotEmpty
+                        ? Text(
+                            elapsedTimeString,
+                            style: TextStyleTemplates.mediumBoldTextStyle(
+                                ConfigProvider.mainTextColor),
+                          )
+                        : ElapsedTimeTimer(
+                            startTime:
+                                workoutProvider.inProgressWorkoutStartTime!),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      right: ConfigProvider.defaultSpace,
+                    ),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.timer_outlined,
+                        color: ConfigProvider.mainColor,
+                        size: ConfigProvider.defaultIconSize,
+                      ),
+                      onPressed: () {
+                        Helper.showDialogForm(
+                          context: context,
+                          barrierDismissible: false,
+                          content: Center(child: const RestTimer()),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
         ],
       ),

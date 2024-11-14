@@ -245,10 +245,12 @@ class Helper {
     required BuildContext context,
     required Widget content,
     bool hasPadding = true,
+    bool barrierDismissible = true,
   }) async {
     return await showDialog<dynamic>(
         context: context,
         useRootNavigator: false,
+        barrierDismissible: barrierDismissible,
         builder: (BuildContext alertDialogContext) {
           return AlertDialog(
             scrollable: true,

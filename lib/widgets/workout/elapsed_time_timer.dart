@@ -1,10 +1,8 @@
 import 'dart:math';
 import 'dart:async';
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 import '../../utility.dart';
-import '../../models/aux_models.dart';
 
 import '../../providers/config_provider.dart';
 import '../general/text_style_templates.dart';

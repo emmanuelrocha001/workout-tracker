@@ -8,6 +8,8 @@ import '../providers/workout_provider.dart';
 import '../widgets/workout/_workout_page_.dart';
 import '../widgets/general/text_style_templates.dart';
 
+import '../widgets/helper.dart';
+
 class MainContentNavigator extends StatefulWidget {
   static const routeName = '/main';
   const MainContentNavigator({super.key});
