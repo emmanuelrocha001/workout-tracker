@@ -7,14 +7,21 @@ import './../../widgets/general/row_item.dart';
 import '../../widgets/workout/elapsed_time_timer.dart';
 import '../helper.dart';
 import '../general/text_style_templates.dart';
+import '../general/labeled_row.dart';
+
+import '../general/edit_text_field_form.dart';
 
 class AdjustWorkoutTimeForm extends StatefulWidget {
   final AdjustWorkoutTimesDto initial;
   final bool canEnableAutoTiming;
+  final bool isUpdatingWorkout;
+  final double maxFormWidth;
   const AdjustWorkoutTimeForm({
     super.key,
     required this.initial,
     required this.canEnableAutoTiming,
+    required this.isUpdatingWorkout,
+    required this.maxFormWidth,
   });
 
   @override
@@ -23,6 +30,9 @@ class AdjustWorkoutTimeForm extends StatefulWidget {
 
 class _AdjustWorkoutTimeFormState extends State<AdjustWorkoutTimeForm> {
   bool autoTimingSelected = true;
+  bool showRestTimerAfterEachSet = true;
+  bool isEditingWorkoutNickName = false;
+  String workoutNickName = "";
   DateTime? startDate;
   DateTime? endDate;
 
@@ -33,6 +43,8 @@ class _AdjustWorkoutTimeFormState extends State<AdjustWorkoutTimeForm> {
     endDate = widget.initial.endTime ??
         DateTime.now().add(const Duration(minutes: 1));
     autoTimingSelected = widget.initial.autoTimingSelected;
+    showRestTimerAfterEachSet = widget.initial.showRestTimerAfterEachSet;
+    workoutNickName = widget.initial.workoutNickName;
   }
 
   void _onStartTimeUpdate() async {
@@ -115,21 +127,81 @@ class _AdjustWorkoutTimeFormState extends State<AdjustWorkoutTimeForm> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (widget.canEnableAutoTiming)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+        LabeledRow(
+          label: 'NICKNAME',
+          children: [
+            RowItem(
+              isCompact: false,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                workoutNickName,
+                style: TextStyleTemplates.defaultTextStyle(
+                  ConfigProvider.mainTextColor,
+                ),
+              ),
+            ),
+            RowItem(
+              isCompact: true,
+              child: IconButton(
+                icon: const Icon(
+                  Icons.edit,
+                  size: ConfigProvider.smallIconSize,
+                  color: ConfigProvider.mainColor,
+                ),
+                onPressed: () async {
+                  var input = await Helper.showPopUp(
+                    title: 'Edit Nickname',
+                    context: context,
+                    specificHeight: 180.0,
+                    content: EditTextFieldForm(
+                      initialValue: workoutNickName,
+                    ),
+                  );
+                  if (input != null && input is String) {
+                    setState(() {
+                      workoutNickName = input;
+                    });
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+        if (!widget.isUpdatingWorkout)
+          LabeledRow(
+            label: 'AUTO REST TIMER',
             children: [
               RowItem(
                 isCompact: true,
-                child: Text(
-                  "AUTO TIMING",
-                  style: TextStyleTemplates.defaultBoldTextStyle(
-                      ConfigProvider.mainTextColor),
+                alignment: Alignment.centerLeft,
+                child: Switch(
+                  activeColor: ConfigProvider.mainColor,
+                  thumbIcon: WidgetStatePropertyAll(
+                    Icon(
+                      showRestTimerAfterEachSet ? Icons.check : Icons.close,
+                      color: ConfigProvider.backgroundColor,
+                    ),
+                  ),
+                  value: showRestTimerAfterEachSet,
+                  onChanged: (bool value) {
+                    setState(() {
+                      showRestTimerAfterEachSet = value;
+                    });
+                  },
                 ),
               ),
-              const SizedBox(
-                width: ConfigProvider.defaultSpace,
-              ),
+            ],
+          ),
+        if (!widget.isUpdatingWorkout)
+          const Divider(
+            height: ConfigProvider.defaultSpace / 2,
+            color: ConfigProvider.slightContrastBackgroundColor,
+            // thickness: 1.0,
+          ),
+        if (widget.canEnableAutoTiming)
+          LabeledRow(
+            label: 'AUTO TIMING',
+            children: [
               RowItem(
                 isCompact: true,
                 child: Switch(
@@ -150,91 +222,69 @@ class _AdjustWorkoutTimeFormState extends State<AdjustWorkoutTimeForm> {
               ),
             ],
           ),
-        Row(
+        LabeledRow(
+          label: 'START TIME',
           children: [
             RowItem(
-              alignment: Alignment.centerRight,
-              child: Text(
-                "START TIME",
-                style: TextStyleTemplates.defaultBoldTextStyle(
-                    ConfigProvider.mainTextColor),
-              ),
-            ),
-            const SizedBox(
-              width: ConfigProvider.defaultSpace,
-            ),
-            RowItem(
               isCompact: true,
-              child: Row(
-                children: [
-                  TextButton(
-                    style: const ButtonStyle(
-                      padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(
-                        EdgeInsets.zero,
-                      ),
-                    ),
-                    onPressed: null,
-                    child: Text(
-                      startDateString,
-                      style: TextStyleTemplates.defaultBoldTextStyle(
-                          ConfigProvider.mainTextColor),
-                    ),
+              child: TextButton(
+                style: const ButtonStyle(
+                  padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(
+                    EdgeInsets.zero,
                   ),
-                  TextButton(
-                    onPressed: _onStartTimeUpdate,
-                    child: Text(
-                      startTimeString,
-                      style: TextStyleTemplates.defaultBoldTextStyle(
-                          ConfigProvider.mainColor),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        if (!autoTimingSelected)
-          Row(
-            children: [
-              RowItem(
-                alignment: Alignment.centerRight,
+                ),
+                onPressed: null,
                 child: Text(
-                  "END TIME",
+                  startDateString,
                   style: TextStyleTemplates.defaultBoldTextStyle(
                       ConfigProvider.mainTextColor),
                 ),
               ),
-              const SizedBox(
-                width: ConfigProvider.defaultSpace,
+            ),
+            RowItem(
+              isCompact: true,
+              child: TextButton(
+                onPressed: _onStartTimeUpdate,
+                child: Text(
+                  startTimeString,
+                  style: TextStyleTemplates.defaultBoldTextStyle(
+                      ConfigProvider.mainColor),
+                ),
+              ),
+            )
+          ],
+        ),
+        if (!autoTimingSelected)
+          LabeledRow(
+            label: "END TIME",
+            children: [
+              RowItem(
+                isCompact: true,
+                child: TextButton(
+                  style: const ButtonStyle(
+                    padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(
+                      EdgeInsets.zero,
+                    ),
+                  ),
+                  onPressed: null,
+                  child: Text(
+                    startDateString,
+                    style: TextStyleTemplates.defaultBoldTextStyle(
+                        ConfigProvider.mainTextColor),
+                  ),
+                ),
               ),
               RowItem(
                 isCompact: true,
-                child: Row(
-                  children: [
-                    TextButton(
-                      style: const ButtonStyle(
-                        padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(
-                          EdgeInsets.zero,
-                        ),
-                      ),
-                      onPressed: null,
-                      child: Text(
-                        startDateString,
-                        style: TextStyleTemplates.defaultBoldTextStyle(
-                            ConfigProvider.mainTextColor),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: _onEndTimeUpdate,
-                      child: Text(
-                        endTimeString,
-                        style: TextStyleTemplates.defaultBoldTextStyle(
-                            ConfigProvider.mainColor),
-                      ),
-                    ),
-                  ],
+                child: TextButton(
+                  onPressed: _onEndTimeUpdate,
+                  child: Text(
+                    endTimeString,
+                    style: TextStyleTemplates.defaultBoldTextStyle(
+                        ConfigProvider.mainColor),
+                  ),
                 ),
-              ),
+              )
             ],
           ),
         Padding(
@@ -261,6 +311,9 @@ class _AdjustWorkoutTimeFormState extends State<AdjustWorkoutTimeForm> {
               style: TextStyleTemplates.smallTextStyle(Colors.red),
             ),
           ),
+        const SizedBox(
+          height: ConfigProvider.defaultSpace,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -292,6 +345,8 @@ class _AdjustWorkoutTimeFormState extends State<AdjustWorkoutTimeForm> {
                         autoTimingSelected: autoTimingSelected,
                         startTime: startDate!,
                         endTime: autoTimingSelected ? null : endDate!,
+                        showRestTimerAfterEachSet: showRestTimerAfterEachSet,
+                        workoutNickName: workoutNickName,
                       );
                       Navigator.of(context).pop(update);
                     },

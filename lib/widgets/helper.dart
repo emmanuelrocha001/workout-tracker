@@ -49,10 +49,13 @@ class Helper {
     required Widget content,
     bool hasPadding = true,
     double heightPercentage = .95,
+    double? specificHeight,
   }) async {
     final mediaQuery = MediaQuery.of(context);
+    print('specified height: $specificHeight');
     return await showModalBottomSheet(
         context: context,
+        useSafeArea: true,
         isScrollControlled: true,
         backgroundColor: ConfigProvider.backgroundColor,
         shape: const RoundedRectangleBorder(
@@ -66,84 +69,91 @@ class Helper {
           ),
         ),
         builder: (ctx) {
-          return SizedBox(
-            height: (mediaQuery.size.height - Helper.getTopPadding(context)) *
-                heightPercentage,
-            // padding: hasPadding ? const EdgeInsets.all(8.0) : EdgeInsets.zero,
-            child: SafeArea(
-              bottom: true,
-              child: Column(
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: ConfigProvider.backgroundColor,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(ConfigProvider.defaultSpace),
-                        topRight: Radius.circular(ConfigProvider.defaultSpace),
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(ctx).viewInsets.bottom,
+            ),
+            child: SizedBox(
+              height: specificHeight ??
+                  (mediaQuery.size.height - Helper.getTopPadding(context)) *
+                      heightPercentage,
+              // padding: hasPadding ? const EdgeInsets.all(8.0) : EdgeInsets.zero,
+              child: SafeArea(
+                bottom: true,
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: ConfigProvider.backgroundColor,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(ConfigProvider.defaultSpace),
+                          topRight:
+                              Radius.circular(ConfigProvider.defaultSpace),
+                        ),
                       ),
-                    ),
-                    child: Stack(
-                      children: [
-                        // DefaultTextIconButton(onPressed: () {}),
-                        Align(
-                          alignment: Alignment.topCenter,
-                          child: Container(
-                            width: 50.0,
-                            margin: const EdgeInsets.only(
-                              top: ConfigProvider.defaultSpace / 2,
-                            ),
-                            height: ConfigProvider.defaultSpace * .75,
-                            decoration: const BoxDecoration(
-                              color:
-                                  ConfigProvider.slightContrastBackgroundColor,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(ConfigProvider.defaultSpace),
+                      child: Stack(
+                        children: [
+                          // DefaultTextIconButton(onPressed: () {}),
+                          Align(
+                            alignment: Alignment.topCenter,
+                            child: Container(
+                              width: 50.0,
+                              margin: const EdgeInsets.only(
+                                top: ConfigProvider.defaultSpace / 2,
+                              ),
+                              height: ConfigProvider.defaultSpace / 2,
+                              decoration: const BoxDecoration(
+                                color: ConfigProvider
+                                    .slightContrastBackgroundColor,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(ConfigProvider.defaultSpace),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        // const Spacer(),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.close,
-                              // color: ConfigProvider.backgroundColor,
-                              color: ConfigProvider.mainColor,
-                              size: ConfigProvider.defaultIconSize,
+                          // const Spacer(),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.close,
+                                // color: ConfigProvider.backgroundColor,
+                                color: ConfigProvider.mainColor,
+                                size: ConfigProvider.defaultIconSize,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
                             ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    color: ConfigProvider.backgroundColor,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: ConfigProvider.defaultSpace),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          title,
-                          style: TextStyleTemplates.largeBoldTextStyle(
-                            ConfigProvider.mainTextColor,
+                    Container(
+                      color: ConfigProvider.backgroundColor,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: ConfigProvider.defaultSpace),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            title,
+                            style: TextStyleTemplates.mediumBoldTextStyle(
+                              ConfigProvider.mainTextColor,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                      child: Padding(
-                    padding: hasPadding
-                        ? const EdgeInsets.all(ConfigProvider.defaultSpace)
-                        : EdgeInsets.zero,
-                    child: content,
-                  )),
-                ],
+                    Expanded(
+                        child: Padding(
+                      padding: hasPadding
+                          ? const EdgeInsets.all(ConfigProvider.defaultSpace)
+                          : EdgeInsets.zero,
+                      child: content,
+                    )),
+                  ],
+                ),
               ),
             ),
           );
@@ -246,6 +256,7 @@ class Helper {
     required Widget content,
     bool hasPadding = true,
     bool barrierDismissible = true,
+    double? maxContentWidth,
   }) async {
     return await showDialog<dynamic>(
         context: context,
@@ -254,7 +265,10 @@ class Helper {
         builder: (BuildContext alertDialogContext) {
           return AlertDialog(
             scrollable: true,
-            content: content,
+            content: SizedBox(
+              width: maxContentWidth,
+              child: content,
+            ),
             backgroundColor: ConfigProvider.backgroundColor,
             actionsAlignment: MainAxisAlignment.center,
             alignment: Alignment.center,

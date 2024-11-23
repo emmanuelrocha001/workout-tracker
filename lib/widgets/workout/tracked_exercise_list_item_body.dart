@@ -10,6 +10,8 @@ import '../../providers/workout_provider.dart';
 import '../general/custom_number_input_formatter.dart';
 import '../general/row_item.dart';
 
+import '../helper.dart';
+import './rest_timer.dart';
 import '../../utility.dart';
 import '../general/text_style_templates.dart';
 
@@ -137,11 +139,34 @@ class _TrackedExerciseListItemBodyState
     required int setReps,
   }) {
     if (index >= 0 && index < sets.length) {
+      var timerAlreadyShown = sets[index].restTimerShown;
       var tSet = SetDto.getCopy(sets[index]);
       tSet.weight = setWeight;
       tSet.reps = setReps;
       tSet.isLogged = val;
+      tSet.restTimerShown = true;
       _onUpdateSet(trackedExerciseId, index, tSet);
+      // erocha todo - need to check if timer has already been shown and if setting is enabled
+      var workoutProvider =
+          Provider.of<WorkoutProvider>(context, listen: false);
+
+      /**
+       * Show rest timer after each set if
+       * - not updating a logged workout
+       * - setting is enabled for this workout instance
+       * - set isLogged to true
+       * - timer has not already been shown
+       */
+      if (!workoutProvider.updatingLoggedWorkout &&
+          workoutProvider.showRestTimerAfterEachSet &&
+          tSet.isLogged &&
+          !timerAlreadyShown) {
+        Helper.showDialogForm(
+          context: context,
+          barrierDismissible: false,
+          content: const Center(child: RestTimer()),
+        );
+      }
     }
   }
 
@@ -265,6 +290,7 @@ class _TrackedExerciseListItemBodyState
 
                     var canLog = weight != null && reps != null;
                     if (canLog) {
+                      print("logging set $index");
                       _onLog(
                         trackedExerciseId: widget.trackedExerciseId,
                         index: index,

@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import 'dart:async';
 
 import '../../providers/config_provider.dart';
@@ -13,7 +14,7 @@ class RestTimer extends StatefulWidget {
   final int timeLenghtInSeconds;
   const RestTimer({
     super.key,
-    this.timeLenghtInSeconds = 180,
+    this.timeLenghtInSeconds = 90,
   });
 
   @override
@@ -21,17 +22,18 @@ class RestTimer extends StatefulWidget {
 }
 
 class _RestTimerState extends State<RestTimer> with WidgetsBindingObserver {
+  final int _millisecondInterval = 100;
   Timer? timer;
   DateTime? endTime;
-  int timeLenghtInSeconds = 0;
-  int elapsedSeconds = 0;
+  int timeLenghtInMilliseconds = 0;
+  int elapsedMilliseconds = 0;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    timeLenghtInSeconds = widget.timeLenghtInSeconds;
-    endTime = DateTime.now().add(Duration(seconds: timeLenghtInSeconds));
+    timeLenghtInMilliseconds = widget.timeLenghtInSeconds * 1000;
+    endTime = DateTime.now().add(Duration(seconds: widget.timeLenghtInSeconds));
     // startTime = DateTime.now();
     startElapsedTimer();
   }
@@ -49,8 +51,9 @@ class _RestTimerState extends State<RestTimer> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      if (elapsedSeconds <= timeLenghtInSeconds) {
-        print('seconds remaining ${timeLenghtInSeconds - elapsedSeconds}');
+      if (elapsedMilliseconds <= timeLenghtInMilliseconds) {
+        print(
+            'seconds remaining ${timeLenghtInMilliseconds - elapsedMilliseconds}');
         reInitializeTimer();
       } else {
         print("timer already done. not reinitializing");
@@ -79,24 +82,27 @@ class _RestTimerState extends State<RestTimer> with WidgetsBindingObserver {
 
   void startElapsedTimer() {
     print("starting timer");
-    print('timeLenghtInSeconds: $timeLenghtInSeconds');
+    print('timeLenghtInSeconds: $timeLenghtInMilliseconds');
     print('endTime: $endTime');
 
-    var secondsRemaining = DateTime.now().difference(endTime!).inSeconds;
-    print('secondsRemaining: $secondsRemaining');
-    elapsedSeconds = (timeLenghtInSeconds + secondsRemaining);
-    print('elapsedSeconds: $elapsedSeconds');
+    var timeRemainingInMilliseconds =
+        DateTime.now().difference(endTime!).inMilliseconds;
+    print('remaining: $timeRemainingInMilliseconds');
+    elapsedMilliseconds =
+        (timeLenghtInMilliseconds + timeRemainingInMilliseconds);
+    print('elapsed: $elapsedMilliseconds');
     var id = Random().nextInt(100000);
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    timer =
+        Timer.periodic(Duration(milliseconds: _millisecondInterval), (timer) {
       // might need to do millisecond timer for smoother animation
-      if (elapsedSeconds >= timeLenghtInSeconds) {
+      if (elapsedMilliseconds >= timeLenghtInMilliseconds) {
         print("timer done.cancelling timer $id");
         timer.cancel();
       }
       setState(() {
         // print("increasing elapsed time from $id timer");
         // print("elapsedSeconds: $elapsedSeconds");
-        elapsedSeconds++;
+        elapsedMilliseconds += _millisecondInterval;
       });
     });
   }
@@ -105,13 +111,15 @@ class _RestTimerState extends State<RestTimer> with WidgetsBindingObserver {
     if (endTime == null || endTime!.isBefore(DateTime.now())) {
       return;
     }
+    final milliseconds = seconds * 1000;
+
     setState(() {
       endTime = endTime!.subtract(Duration(seconds: seconds));
 
-      if (timeLenghtInSeconds - seconds < 0) {
-        timeLenghtInSeconds = 0;
+      if (timeLenghtInMilliseconds - milliseconds < 0) {
+        timeLenghtInMilliseconds = 0;
       } else {
-        timeLenghtInSeconds -= seconds;
+        timeLenghtInMilliseconds -= milliseconds;
       }
     });
   }
@@ -120,14 +128,15 @@ class _RestTimerState extends State<RestTimer> with WidgetsBindingObserver {
     if (endTime == null) {
       return;
     }
-    if (elapsedSeconds >= timeLenghtInSeconds) {
+    final milliseconds = seconds * 1000;
+    if (elapsedMilliseconds >= timeLenghtInMilliseconds) {
       endTime = DateTime.now().add(Duration(seconds: seconds));
-      timeLenghtInSeconds = seconds;
+      timeLenghtInMilliseconds = milliseconds;
       reInitializeTimer();
     } else {
       setState(() {
         endTime = endTime!.add(Duration(seconds: seconds));
-        timeLenghtInSeconds += seconds;
+        timeLenghtInMilliseconds += milliseconds;
       });
     }
   }
@@ -135,7 +144,14 @@ class _RestTimerState extends State<RestTimer> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     // TODO easier to init date time from seconds and then format it?
-    var timeRemainingInSeconds = timeLenghtInSeconds - elapsedSeconds;
+    var timeRemainingInMilliseconds =
+        timeLenghtInMilliseconds - elapsedMilliseconds;
+    var timeRemainingInSeconds = (timeRemainingInMilliseconds / 1000).floor();
+    // var formatter = NumberFormat(ConfigProvider.twoDigitFormat);
+    // var centiSeconds = formatter.format(
+    //     ((timeRemainingInMilliseconds - (timeRemainingInSeconds * 1000))));
+    // print('millisecondsRemainder: $centiSeconds');
+    // print('centiSeconds: $centiSeconds');
     return Column(
       children: [
         const SizedBox(
@@ -149,8 +165,8 @@ class _RestTimerState extends State<RestTimer> with WidgetsBindingObserver {
               width: 200.0,
               child: CircularProgressIndicator(
                 // color: ConfigProvider.backgroundColor,
-                value: timeRemainingInSeconds > 0
-                    ? timeRemainingInSeconds / timeLenghtInSeconds
+                value: timeRemainingInMilliseconds > 0
+                    ? timeRemainingInMilliseconds / timeLenghtInMilliseconds
                     : 0,
                 backgroundColor: ConfigProvider.slightContrastBackgroundColor,
                 valueColor: const AlwaysStoppedAnimation<Color>(
@@ -162,11 +178,8 @@ class _RestTimerState extends State<RestTimer> with WidgetsBindingObserver {
             Column(
               children: [
                 Text(
-                  timeRemainingInSeconds >= 0
-                      ? Utility.getElapsedTimeString(
-                          timeDiff: Utility.getTimeDifferenceAsTimeDiff(
-                              timeRemainingInSeconds, false),
-                          includeHours: false)
+                  timeRemainingInMilliseconds >= 0
+                      ? '${Utility.getElapsedTimeString(timeDiff: Utility.getTimeDifferenceAsTimeDiff(timeRemainingInSeconds, false), includeHours: false)}'
                       : "00:00",
                   style: TextStyleTemplates.xLargeBoldTextStyle(
                       ConfigProvider.mainTextColor),
@@ -174,7 +187,7 @@ class _RestTimerState extends State<RestTimer> with WidgetsBindingObserver {
                 Text(
                   Utility.getElapsedTimeString(
                       timeDiff: Utility.getTimeDifferenceAsTimeDiff(
-                          timeLenghtInSeconds, false),
+                          (timeLenghtInMilliseconds / 1000).floor(), false),
                       includeHours: false),
                   style: TextStyleTemplates.mediumBoldTextStyle(Colors.grey),
                 ),

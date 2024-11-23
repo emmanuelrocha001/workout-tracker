@@ -188,6 +188,15 @@ class WorkoutHistoryListItem extends StatelessWidget {
       child: Center(
         child: Column(
           children: [
+            if (workout.title != null && workout.title!.isNotEmpty)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  workout.title!,
+                  style: TextStyleTemplates.defaultBoldTextStyle(
+                      ConfigProvider.mainTextColor),
+                ),
+              ),
             Row(
               children: [
                 Text(
@@ -207,10 +216,28 @@ class WorkoutHistoryListItem extends StatelessWidget {
                   onPressed: () {
                     Helper.showPopUp(
                       context: context,
-                      title: title,
+                      title: workout.title != null && workout.title!.isNotEmpty
+                          ? workout.title!
+                          : title,
                       content: Center(
                         child: Column(
                           children: [
+                            if (workout.title != null &&
+                                workout.title!.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.all(
+                                    ConfigProvider.defaultSpace),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    title,
+                                    style:
+                                        TextStyleTemplates.defaultBoldTextStyle(
+                                      ConfigProvider.mainTextColor,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             WorkoutHistoryListItemSummary(workout: workout),
                             WorkoutHistoryListItemBreakdown(workout: workout)
                           ],

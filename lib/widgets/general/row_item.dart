@@ -5,6 +5,7 @@ class RowItem extends StatelessWidget {
   final Widget child;
   final bool isCompact;
   final double minWidth;
+  final double? maxWidth;
   final Alignment alignment;
   final bool hasCompactPadding;
 
@@ -15,6 +16,7 @@ class RowItem extends StatelessWidget {
     this.hasCompactPadding = false,
     this.alignment = Alignment.center,
     this.minWidth = 50.0,
+    this.maxWidth,
   });
 
   @override
@@ -25,6 +27,7 @@ class RowItem extends StatelessWidget {
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 minWidth: minWidth,
+                maxWidth: maxWidth ?? double.infinity,
               ),
               child: Align(
                 alignment: alignment,

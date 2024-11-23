@@ -133,6 +133,9 @@ class WorkoutProvider extends ChangeNotifier {
     _inProgressWorkout!.startTime = update.startTime;
     _inProgressWorkout!.endTime = update.endTime;
     _inProgressWorkout!.autoTimingSelected = update.autoTimingSelected;
+    _inProgressWorkout!.showRestTimerAfterEachSet =
+        update.showRestTimerAfterEachSet;
+    _inProgressWorkout!.title = update.workoutNickName;
     _inProgressWorkout!.setAreTrackedExercisesLogged();
     _saveInProgressWorkout();
     notifyListeners();
@@ -198,6 +201,14 @@ class WorkoutProvider extends ChangeNotifier {
 
   bool isWorkoutInProgress() {
     return _inProgressWorkout != null;
+  }
+
+  bool get showRestTimerAfterEachSet {
+    return _inProgressWorkout?.showRestTimerAfterEachSet ?? false;
+  }
+
+  String get inProgressWorkoutNickName {
+    return _inProgressWorkout?.title ?? '';
   }
 
   bool isInProgressWorkoutReadyTofinish() {

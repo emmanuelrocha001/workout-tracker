@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_tracker/providers/config_provider.dart';
@@ -7,12 +8,18 @@ import 'providers/workout_provider.dart';
 import './screens/main_content_navigator.dart';
 import './screens/initial_screen.dart';
 import './screens/splash_screen.dart';
-import './widgets/exercise_selection_button.dart';
 import './providers/config_provider.dart';
 import './utility.dart';
 
 void main() {
-  runApp(const WorkoutTracker());
+  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_) {
+    runApp(const WorkoutTracker());
+  });
 }
 
 class WorkoutTracker extends StatelessWidget {

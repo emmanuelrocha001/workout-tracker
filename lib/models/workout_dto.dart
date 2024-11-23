@@ -11,6 +11,7 @@ class WorkoutDto {
   List<TrackedExerciseDto> exercises = [];
   bool areTrackedExercisesLogged = false;
   bool autoTimingSelected = false;
+  bool showRestTimerAfterEachSet = false;
 
   WorkoutDto({
     required this.id,
@@ -22,6 +23,7 @@ class WorkoutDto {
     required this.lastUpdated,
     this.areTrackedExercisesLogged = false,
     this.autoTimingSelected = false,
+    this.showRestTimerAfterEachSet = false,
   });
 
   WorkoutDto.newInstance({this.title = ""}) {
@@ -49,6 +51,7 @@ class WorkoutDto {
       exercises: (json['exercises'] as List)
           .map((exercise) => TrackedExerciseDto.fromJson(exercise))
           .toList(),
+      showRestTimerAfterEachSet: json['showRestTimerAfterExercise'] ?? false,
     );
     workout.setAreTrackedExercisesLogged();
     return workout;
@@ -66,6 +69,7 @@ class WorkoutDto {
         var updatedSet = SetDto.getCopy(y);
         if (shouldCreateAsNew) {
           updatedSet.isLogged = false;
+          updatedSet.restTimerShown = false;
         }
         return updatedSet;
       }).toList();
@@ -81,6 +85,8 @@ class WorkoutDto {
       endTime: shouldCreateAsNew ? null : workout.endTime,
       lastUpdated: shouldCreateAsNew ? null : workout.lastUpdated,
       autoTimingSelected: shouldCreateAsNew,
+      // needs to be set manually or in user preferences.
+      showRestTimerAfterEachSet: false,
     );
   }
 
@@ -93,6 +99,7 @@ class WorkoutDto {
       'startTime': startTime?.toIso8601String(),
       'endTime': endTime?.toIso8601String(),
       'lastUpdated': lastUpdated?.toIso8601String(),
+      'showRestTimerAfterExercise': showRestTimerAfterEachSet,
     };
   }
 

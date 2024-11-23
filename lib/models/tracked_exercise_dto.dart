@@ -57,6 +57,7 @@ class SetDto {
   double? weight;
   int? restTime;
   bool isLogged;
+  bool restTimerShown;
   // final int? duration;
 
   SetDto({
@@ -64,6 +65,7 @@ class SetDto {
     this.weight,
     this.restTime,
     this.isLogged = false,
+    this.restTimerShown = false,
   });
 
   factory SetDto.getCopy(SetDto set) {
@@ -72,6 +74,7 @@ class SetDto {
       weight: set.weight,
       restTime: set.restTime,
       isLogged: set.isLogged,
+      restTimerShown: set.restTimerShown,
     );
   }
 
@@ -83,6 +86,7 @@ class SetDto {
       weight: json['weight'],
       restTime: json['restTime'],
       isLogged: json['isLogged'],
+      restTimerShown: json['restTimerShown'],
     );
   }
 
@@ -92,11 +96,12 @@ class SetDto {
       'weight': weight,
       'restTime': restTime,
       'isLogged': isLogged,
+      'restTimerShown': restTimerShown,
     };
   }
 
   @override
   String toString() {
-    return '\nSetDto{\nreps: $reps, \nweight: $weight, \nrestTime: $restTime, \nisLogged: $isLogged}';
+    return '\nSetDto{\nreps: $reps, \nweight: $weight, \nrestTime: $restTime, \nisLogged: $isLogged} ';
   }
 }

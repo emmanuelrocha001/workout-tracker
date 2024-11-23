@@ -25,6 +25,7 @@ class ConfigProvider extends ChangeNotifier {
   static const mainTextColorWithOpacityPercent = .75;
   // static const mainColor = Color.fromARGB(255, 255, 62, 62);
   static const mainColor = Color(0xff0F4C75);
+  // static const mainColor = Color(0xff556E53);
   static const backgroundColorSolid = Colors.white;
   static const backgroundColor = Color.fromARGB(255, 246, 246, 246);
   static const slightContrastBackgroundColor =

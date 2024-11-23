@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+
 import '../../models/adjust_workout_times_dto.dart';
 import './adjust_workout_time_form.dart';
 
@@ -73,16 +74,23 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
 
   void _adjustWorkoutTimes() async {
     var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
+    var maxContentWidth =
+        Helper.getMaxContentWidth(context, maxContentWidthOverride: 400.0);
     var update = await Helper.showDialogForm(
       context: context,
+      maxContentWidth: maxContentWidth,
       content: AdjustWorkoutTimeForm(
+        maxFormWidth: maxContentWidth,
         initial: AdjustWorkoutTimesDto(
           startTime: workoutProvider.inProgressWorkoutStartTime,
           endTime: workoutProvider.inProgressWorkoutEndTime,
           autoTimingSelected:
               workoutProvider.inProgressWorkoutAutoTimingSelected,
+          showRestTimerAfterEachSet: workoutProvider.showRestTimerAfterEachSet,
+          workoutNickName: workoutProvider.inProgressWorkoutNickName,
         ),
         canEnableAutoTiming: !workoutProvider.updatingLoggedWorkout,
+        isUpdatingWorkout: workoutProvider.updatingLoggedWorkout,
       ),
     );
     if (update != null && update is AdjustWorkoutTimesDto) {
@@ -166,7 +174,7 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
             ),
         ],
       ),
-      padding: 105.0,
+      padding: 115.0,
       overLayContent: Column(
         children: [
           Row(
@@ -219,7 +227,7 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                         ),
                         onPressed: _adjustWorkoutTimes,
                         child: Text(
-                          "ADJUST TIME",
+                          "ADJUST DETAILS",
                           style: TextStyleTemplates.defaultBoldTextStyle(
                               ConfigProvider.mainColor),
                         ),
@@ -313,7 +321,7 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                         Helper.showDialogForm(
                           context: context,
                           barrierDismissible: false,
-                          content: Center(child: const RestTimer()),
+                          content: const Center(child: RestTimer()),
                         );
                       },
                     ),
