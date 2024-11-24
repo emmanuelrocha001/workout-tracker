@@ -38,6 +38,7 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
 
   void showCompletedWorkout() {
     var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
+    var configProvider = Provider.of<ConfigProvider>(context, listen: false);
     if (workoutProvider.showLatestWorkoutHistoryEntryAsFinished) {
       print("showCompletedWorkout");
       var workout = workoutProvider.latestWorkoutHistoryEntry;
@@ -55,7 +56,11 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
                 Column(
                   children: [
                     WorkoutHistoryListItemSummary(workout: workout),
-                    WorkoutHistoryListItemBreakdown(workout: workout)
+                    WorkoutHistoryListItemBreakdown(
+                      isMetricSystemSelected:
+                          configProvider.isMetricSystemSelected,
+                      workout: workout,
+                    )
                   ],
                 ),
                 const Align(
@@ -75,6 +80,7 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
     var workoutProvider = Provider.of<WorkoutProvider>(
       context,
     );
+    var configProvider = Provider.of<ConfigProvider>(context, listen: false);
     return OverlayContent(
       overLayContent: Row(
         children: [
@@ -94,6 +100,7 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
               itemCount: workoutProvider.workoutHistory.length,
               itemBuilder: (context, index) {
                 return WorkoutHistoryListItem(
+                  isMetricSystemSelected: configProvider.isMetricSystemSelected,
                   workout: workoutProvider.workoutHistory[
                       workoutProvider.workoutHistory.length - index - 1],
                   navigateToWorkout: widget.navigateToWorkout,

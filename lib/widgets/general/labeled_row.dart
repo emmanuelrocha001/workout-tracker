@@ -6,11 +6,15 @@ import './row_item.dart';
 class LabeledRow extends StatelessWidget {
   static const double defaultLabelWidth = 100.0;
   final String label;
+  final double labelWidth;
   final List<Widget> children;
+  final MainAxisAlignment mainAxisAlignment;
   const LabeledRow({
     super.key,
     required this.label,
     required this.children,
+    this.labelWidth = defaultLabelWidth,
+    this.mainAxisAlignment = MainAxisAlignment.start,
   });
 
   @override
@@ -18,13 +22,13 @@ class LabeledRow extends StatelessWidget {
     // center left . set max label width
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: mainAxisAlignment,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         RowItem(
           isCompact: true,
-          minWidth: defaultLabelWidth,
-          maxWidth: defaultLabelWidth,
+          minWidth: labelWidth,
+          maxWidth: labelWidth,
           alignment: Alignment.centerLeft,
           child: Text(
             overflow: TextOverflow.fade,

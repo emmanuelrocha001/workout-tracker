@@ -1,7 +1,55 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/user_preferences_dto.dart';
 
 class ConfigProvider extends ChangeNotifier {
-  ConfigProvider() {}
+  SharedPreferencesWithCache? _cache;
+  UserPreferenceDto? _userPreferences;
+  ConfigProvider() {
+    setupCache();
+  }
+
+  void setupCache() async {
+    _cache = await SharedPreferencesWithCache.create(
+        cacheOptions: SharedPreferencesWithCacheOptions(
+            // This cache will only accept the key 'inProgressWorkout'.
+            allowList: <String>{preferencesKey}));
+    // await clearCache();
+    if (_cache != null) {
+      loadPreferencesFromCache();
+    }
+  }
+
+  String get preferencesKey => '${ConfigProvider.cachePrefix}_preferences';
+
+  Future<void> clearCache() async {
+    _cache?.clear();
+  }
+
+  void loadPreferencesFromCache() async {
+    try {
+      var cachedEncodedValue = _cache?.getString(preferencesKey);
+      if (cachedEncodedValue != null) {
+        print(cachedEncodedValue);
+        _userPreferences =
+            UserPreferenceDto.fromJson(jsonDecode(cachedEncodedValue));
+        notifyListeners();
+      } else {
+        print('No preferences found in cache');
+        _userPreferences = UserPreferenceDto();
+        notifyListeners();
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void _savePreferencesToCache() {
+    if (_userPreferences != null) {
+      _cache?.setString(preferencesKey, jsonEncode(_userPreferences));
+    }
+  }
 
   double _topPadding = 0.0;
   double get topPadding => _topPadding;
@@ -10,6 +58,36 @@ class ConfigProvider extends ChangeNotifier {
     if (topPadding > 0.0) _topPadding = topPadding;
   }
 
+  String get username => _userPreferences?.userName ?? '';
+
+  void setUsername(String value) {
+    _userPreferences?.userName = value;
+    notifyListeners();
+    _savePreferencesToCache();
+  }
+
+  bool get showRestTimerAfterEachSet =>
+      _userPreferences?.showRestTimerAfterEachSet ?? false;
+
+  void setShowRestTimerAfterEachSet(bool value) {
+    print('setShowRestTimerAfterEachSet $value');
+    _userPreferences?.showRestTimerAfterEachSet = value;
+
+    print(jsonEncode(_userPreferences));
+    notifyListeners();
+    _savePreferencesToCache();
+  }
+
+  bool get isMetricSystemSelected =>
+      _userPreferences?.isMetricSystemSelected ?? false;
+
+  void setIsMetricSystemSelected(bool value) {
+    _userPreferences?.isMetricSystemSelected = value;
+    notifyListeners();
+    _savePreferencesToCache();
+  }
+
+  static const cachePrefix = 'weito_cache_2aa91e4e-24ac-4197-baaf-23ef40a0b918';
   static const decimalRegexPattern = r'^\d{0,4}$|^\d{0,4}\.{1}\d{0,2}$';
   static const digitRegexPattern = r'^\d{0,4}$';
 

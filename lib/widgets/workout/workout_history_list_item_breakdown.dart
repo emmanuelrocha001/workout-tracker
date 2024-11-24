@@ -11,8 +11,10 @@ import '../../models/tracked_exercise_dto.dart';
 
 class WorkoutHistoryListItemBreakdown extends StatelessWidget {
   final WorkoutDto workout;
+  final bool isMetricSystemSelected;
   const WorkoutHistoryListItemBreakdown({
     super.key,
+    required this.isMetricSystemSelected,
     required this.workout,
   });
 
@@ -33,7 +35,7 @@ class WorkoutHistoryListItemBreakdown extends StatelessWidget {
           RowItem(
             isCompact: true,
             child: Text(
-              '${set.weight}',
+              '${set.weight} ${isMetricSystemSelected ? 'kg' : 'lb'}',
               style: TextStyleTemplates.defaultTextStyle(
                 ConfigProvider.mainTextColor,
               ),

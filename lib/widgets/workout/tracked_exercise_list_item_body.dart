@@ -41,7 +41,6 @@ class _TrackedExerciseListItemBodyState
   void initState() {
     super.initState();
     sets = [...widget.sets];
-    print("init state");
     // _repsControllers = widget.sets.mapIndexed((index, set) {
     //   return TextEditingController(
     //     text: set.reps != null ? set.reps.toString() : '',

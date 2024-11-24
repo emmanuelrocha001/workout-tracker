@@ -305,28 +305,29 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                                 workoutProvider.inProgressWorkoutStartTime!),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      right: ConfigProvider.defaultSpace,
-                    ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.timer_outlined,
-                        color: ConfigProvider.mainColor,
-                        size: ConfigProvider.defaultIconSize,
+                if (!workoutProvider.updatingLoggedWorkout)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        right: ConfigProvider.defaultSpace,
                       ),
-                      onPressed: () {
-                        Helper.showDialogForm(
-                          context: context,
-                          barrierDismissible: false,
-                          content: const Center(child: RestTimer()),
-                        );
-                      },
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.timer_outlined,
+                          color: ConfigProvider.mainColor,
+                          size: ConfigProvider.defaultIconSize,
+                        ),
+                        onPressed: () {
+                          Helper.showDialogForm(
+                            context: context,
+                            barrierDismissible: false,
+                            content: const Center(child: RestTimer()),
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
         ],

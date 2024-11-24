@@ -18,15 +18,18 @@ import '../helper.dart';
 
 class WorkoutHistoryListItem extends StatelessWidget {
   final WorkoutDto workout;
+  final bool isMetricSystemSelected;
   final void Function() navigateToWorkout;
   const WorkoutHistoryListItem({
     super.key,
     required this.workout,
     required this.navigateToWorkout,
+    required this.isMetricSystemSelected,
   });
 
   List<Widget> _generateSimplifiedCompletedExerciseList(
-      List<TrackedExerciseDto> trackedExercises) {
+      {required BuildContext context,
+      required List<TrackedExerciseDto> trackedExercises}) {
     return trackedExercises.map((
       trackedExercise,
     ) {
@@ -57,7 +60,7 @@ class WorkoutHistoryListItem extends StatelessWidget {
             alignment: Alignment.centerLeft,
             minWidth: 70.0,
             child: Text(
-              '${trackedExercise.sets.last.weight} lbs x ',
+              '${trackedExercise.sets.last.weight} ${isMetricSystemSelected ? "kg" : "lb"} x ',
               style: TextStyleTemplates.defaultTextStyle(
                 ConfigProvider.mainTextColor,
               ),
@@ -138,6 +141,7 @@ class WorkoutHistoryListItem extends StatelessWidget {
     required bool startAsNew,
   }) async {
     var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
+    var configProvider = Provider.of<ConfigProvider>(context, listen: false);
     var isUpdate = workoutProvider.updatingLoggedWorkout;
     var messge =
         'Are you sure you want to ${startAsNew ? "start from a past workout" : "start an update"}? There is ${!isUpdate ? "a workout" : "an update"} in progress. All progress will be lost.';
@@ -160,12 +164,14 @@ class WorkoutHistoryListItem extends StatelessWidget {
         workoutProvider.startWorkoutFromHistory(
           workout: workout,
           shouldStartAsNew: startAsNew,
+          showRestTimerAfterEachSet: configProvider.showRestTimerAfterEachSet,
         );
       }
     } else {
       workoutProvider.startWorkoutFromHistory(
         workout: workout,
         shouldStartAsNew: startAsNew,
+        showRestTimerAfterEachSet: configProvider.showRestTimerAfterEachSet,
       );
     }
     navigateToWorkout();
@@ -239,7 +245,10 @@ class WorkoutHistoryListItem extends StatelessWidget {
                                 ),
                               ),
                             WorkoutHistoryListItemSummary(workout: workout),
-                            WorkoutHistoryListItemBreakdown(workout: workout)
+                            WorkoutHistoryListItemBreakdown(
+                              workout: workout,
+                              isMetricSystemSelected: isMetricSystemSelected,
+                            )
                           ],
                         ),
                       ),
@@ -324,7 +333,8 @@ class WorkoutHistoryListItem extends StatelessWidget {
             WorkoutHistoryListItemSummary(workout: workout),
             _simplifiedCompletedExerciseListHeader(),
             ..._generateSimplifiedCompletedExerciseList(
-              workout.exercises,
+              context: context,
+              trackedExercises: workout.exercises,
             ),
             const SizedBox(height: ConfigProvider.defaultSpace),
           ],

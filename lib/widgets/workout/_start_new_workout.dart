@@ -15,6 +15,7 @@ class StartNewWorkout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
+    var configProvider = Provider.of<ConfigProvider>(context, listen: false);
     return OverlayContent(
       overLayContent: Row(
         children: [
@@ -33,7 +34,9 @@ class StartNewWorkout extends StatelessWidget {
               padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
               child: TextButton(
                 onPressed: () {
-                  workoutProvider.startWorkout();
+                  workoutProvider.startWorkout(
+                      showRestTimerAfterEachSet:
+                          configProvider.showRestTimerAfterEachSet);
                 },
                 style: TextButton.styleFrom(
                   backgroundColor: ConfigProvider.mainColor,

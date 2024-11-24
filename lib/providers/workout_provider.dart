@@ -103,19 +103,24 @@ class WorkoutProvider extends ChangeNotifier {
     await _cache!.setString(_inProgressWorkoutKey, encodedValue);
   }
 
-  void startWorkout() {
+  void startWorkout({bool showRestTimerAfterEachSet = false}) {
     _inProgressWorkout = WorkoutDto.newInstance();
+    _inProgressWorkout!.showRestTimerAfterEachSet = showRestTimerAfterEachSet;
     notifyListeners();
   }
 
   void startWorkoutFromHistory({
     required WorkoutDto workout,
     required bool shouldStartAsNew,
+    bool showRestTimerAfterEachSet = false,
   }) {
     _inProgressWorkout = WorkoutDto.fromWorkoutDto(
       workout: workout,
       shouldCreateAsNew: shouldStartAsNew,
     );
+    if (shouldStartAsNew) {
+      _inProgressWorkout!.showRestTimerAfterEachSet = showRestTimerAfterEachSet;
+    }
     notifyListeners();
   }
 

@@ -6,6 +6,7 @@ import '../providers/config_provider.dart';
 import '../providers/workout_provider.dart';
 
 import '../widgets/workout/_workout_page_.dart';
+import '../widgets/preferences/preferences_page.dart';
 import '../widgets/general/text_style_templates.dart';
 
 import '../widgets/helper.dart';
@@ -94,24 +95,20 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
               ),
               label: 'History',
             ),
-            // NavigationDestination(
-            //   icon: Badge(
-            //     label: Text(
-            //       '2',
-            //     ),
-            //     child: Icon(
-            //       Icons.folder_copy_rounded,
-            //       color: currentPageIndex == 2
-            //           ? ConfigProvider.backgroundColor
-            //           : Colors.black,
-            //     ),
-            //   ),
-            //   label: 'Templates',
-            // ),
+            NavigationDestination(
+              icon: Icon(
+                Icons.person_2_rounded,
+                color: currentPageIndex == 2
+                    ? ConfigProvider.backgroundColor
+                    : Colors.black,
+              ),
+              label: 'Preferences',
+            ),
           ],
         ),
       ),
       body: <Widget>[
+        /// Workout
         WorkoutPage(
           navigateToWorkoutHistory: () {
             navigateToPage(1);
@@ -125,19 +122,8 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
           },
         ),
 
-        /// Track page
-
-        /// Messages page
-        // const Card(
-        //   shadowColor: Colors.transparent,
-        //   child: SizedBox.expand(
-        //     child: Center(
-        //       child: Text(
-        //         'Templates',
-        //       ),
-        //     ),
-        //   ),
-        // ),
+        // Preferences
+        const PreferencesPage(),
       ][currentPageIndex],
     );
   }
