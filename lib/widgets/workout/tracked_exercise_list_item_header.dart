@@ -65,6 +65,17 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
                 ),
               ),
               const Spacer(),
+              // if (!showAsSimplified)
+              //   IconButton(
+              //     icon: const Icon(
+              //       // Icons.auto_graph_rounded,
+              //       Icons.info_outline_rounded,
+              //       color: ConfigProvider.mainColor,
+              //       size: ConfigProvider.defaultIconSize,
+              //     ),
+              //     // style: _theme.iconButtonTheme.style,
+              //     onPressed: () {},
+              //   ),
               if (!showAsSimplified)
                 MenuAnchor(
                   style: const MenuStyle(

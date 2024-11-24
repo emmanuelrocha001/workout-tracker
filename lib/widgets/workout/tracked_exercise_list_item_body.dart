@@ -41,6 +41,7 @@ class _TrackedExerciseListItemBodyState
   void initState() {
     super.initState();
     sets = [...widget.sets];
+    print("init state");
     // _repsControllers = widget.sets.mapIndexed((index, set) {
     //   return TextEditingController(
     //     text: set.reps != null ? set.reps.toString() : '',
@@ -221,88 +222,91 @@ class _TrackedExerciseListItemBodyState
         onDismissed: (direction) {
           _onRemoveSet(widget.trackedExerciseId, index);
         },
-        child: Row(
-          children: [
-            RowItem(
-                child: Text(
-              '${index + 1}',
-              style: TextStyleTemplates.defaultTextStyle(
-                ConfigProvider.mainTextColor,
-              ),
-            )),
-            RowItem(
-              child: getNumberInput(
-                controller: _weightControllers[index],
-                save: (double number) {
-                  print("saving weight for index $index");
-                  var weightBeforeUpdate = sets[index].weight;
-                  sets[index].weight = number;
-                  var isUpdated =
-                      Provider.of<WorkoutProvider>(context, listen: false)
-                          .updateSetInTrackedExercise(
-                              widget.trackedExerciseId, index, sets[index]);
+        child: Container(
+          // color: set.isLogged ? Colors.green : Colors.transparent,
+          child: Row(
+            children: [
+              RowItem(
+                  child: Text(
+                '${index + 1}',
+                style: TextStyleTemplates.defaultTextStyle(
+                  ConfigProvider.mainTextColor,
+                ),
+              )),
+              RowItem(
+                child: getNumberInput(
+                  controller: _weightControllers[index],
+                  save: (double number) {
+                    print("saving weight for index $index");
+                    var weightBeforeUpdate = sets[index].weight;
+                    sets[index].weight = number;
+                    var isUpdated =
+                        Provider.of<WorkoutProvider>(context, listen: false)
+                            .updateSetInTrackedExercise(
+                                widget.trackedExerciseId, index, sets[index]);
 
-                  if (!isUpdated) {
-                    sets[index].weight = weightBeforeUpdate;
-                  }
-                },
-                allowDecimal: true,
-                canEdit: !set.isLogged,
-                hintText: previousSetWeight,
-              ),
-            ),
-            RowItem(
-              child: getNumberInput(
-                controller: _repsControllers[index],
-                save: (double number) {
-                  print("saving reps for index $index");
-                  var repsBeforeUpdate = sets[index].reps;
-                  sets[index].reps = number.toInt();
-                  var isUpdated =
-                      Provider.of<WorkoutProvider>(context, listen: false)
-                          .updateSetInTrackedExercise(
-                              widget.trackedExerciseId, index, sets[index]);
-
-                  if (!isUpdated) {
-                    sets[index].reps = repsBeforeUpdate;
-                  }
-                },
-                allowDecimal: false,
-                canEdit: !set.isLogged,
-                hintText: previousSetReps,
-              ),
-            ),
-            RowItem(
-              child: Checkbox(
-                  value: set.isLogged,
-                  activeColor: Colors.green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(ConfigProvider.defaultSpace / 2),
-                  ),
-                  onChanged: (val) {
-                    // can log based on current values
-                    var weight = sets[index].weight ??
-                        double.tryParse(previousSetWeight);
-                    var reps =
-                        sets[index].reps ?? int.tryParse(previousSetReps);
-
-                    var canLog = weight != null && reps != null;
-                    if (canLog) {
-                      print("logging set $index");
-                      _onLog(
-                        trackedExerciseId: widget.trackedExerciseId,
-                        index: index,
-                        val: val ?? false,
-                        setWeight: weight,
-                        setReps: reps,
-                      );
-                    } else {
-                      print("Cannot log set $index");
+                    if (!isUpdated) {
+                      sets[index].weight = weightBeforeUpdate;
                     }
-                  }),
-            ),
-          ],
+                  },
+                  allowDecimal: true,
+                  canEdit: !set.isLogged,
+                  hintText: previousSetWeight,
+                ),
+              ),
+              RowItem(
+                child: getNumberInput(
+                  controller: _repsControllers[index],
+                  save: (double number) {
+                    print("saving reps for index $index");
+                    var repsBeforeUpdate = sets[index].reps;
+                    sets[index].reps = number.toInt();
+                    var isUpdated =
+                        Provider.of<WorkoutProvider>(context, listen: false)
+                            .updateSetInTrackedExercise(
+                                widget.trackedExerciseId, index, sets[index]);
+
+                    if (!isUpdated) {
+                      sets[index].reps = repsBeforeUpdate;
+                    }
+                  },
+                  allowDecimal: false,
+                  canEdit: !set.isLogged,
+                  hintText: previousSetReps,
+                ),
+              ),
+              RowItem(
+                child: Checkbox(
+                    value: set.isLogged,
+                    activeColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          ConfigProvider.defaultSpace / 2),
+                    ),
+                    onChanged: (val) {
+                      // can log based on current values
+                      var weight = sets[index].weight ??
+                          double.tryParse(previousSetWeight);
+                      var reps =
+                          sets[index].reps ?? int.tryParse(previousSetReps);
+
+                      var canLog = weight != null && reps != null;
+                      if (canLog) {
+                        print("logging set $index");
+                        _onLog(
+                          trackedExerciseId: widget.trackedExerciseId,
+                          index: index,
+                          val: val ?? false,
+                          setWeight: weight,
+                          setReps: reps,
+                        );
+                      } else {
+                        print("Cannot log set $index");
+                      }
+                    }),
+              ),
+            ],
+          ),
         ),
       );
     }).toList();

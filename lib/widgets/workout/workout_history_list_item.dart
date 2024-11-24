@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,18 +37,41 @@ class WorkoutHistoryListItem extends StatelessWidget {
         children: [
           RowItem(
             isCompact: true,
-            child: Text(
-              '${trackedExercise.sets.length} x',
-              style: TextStyleTemplates.defaultTextStyle(
-                ConfigProvider.mainTextColor,
+            alignment: Alignment.centerRight,
+            maxWidth: 50,
+            minWidth: 50,
+            child: Padding(
+              padding:
+                  const EdgeInsets.only(right: ConfigProvider.defaultSpace),
+              child: Text(
+                '${trackedExercise.sets.length} x',
+                style: TextStyleTemplates.defaultTextStyle(
+                  ConfigProvider.mainTextColor,
+                ),
               ),
             ),
           ),
           RowItem(
             hasCompactPadding: true,
             alignment: Alignment.centerLeft,
+            child: Padding(
+              padding:
+                  const EdgeInsets.only(right: ConfigProvider.defaultSpace),
+              child: Text(
+                trackedExercise.exercise.name,
+                style: TextStyleTemplates.defaultTextStyle(
+                  ConfigProvider.mainTextColor,
+                ),
+              ),
+            ),
+          ),
+          RowItem(
+            isCompact: true,
+            alignment: Alignment.centerLeft,
+            minWidth: 45.0,
+            maxWidth: 45.0,
             child: Text(
-              trackedExercise.exercise.name,
+              '${trackedExercise.sets.last.weight}',
               style: TextStyleTemplates.defaultTextStyle(
                 ConfigProvider.mainTextColor,
               ),
@@ -58,9 +80,10 @@ class WorkoutHistoryListItem extends StatelessWidget {
           RowItem(
             isCompact: true,
             alignment: Alignment.centerLeft,
-            minWidth: 70.0,
+            minWidth: 35.0,
+            maxWidth: 35.0,
             child: Text(
-              '${trackedExercise.sets.last.weight} ${isMetricSystemSelected ? "kg" : "lb"} x ',
+              '${isMetricSystemSelected ? "kg" : "lb"} x ',
               style: TextStyleTemplates.defaultTextStyle(
                 ConfigProvider.mainTextColor,
               ),
@@ -68,7 +91,7 @@ class WorkoutHistoryListItem extends StatelessWidget {
           ),
           RowItem(
             isCompact: true,
-            minWidth: 70.0,
+            minWidth: 45.0,
             alignment: Alignment.centerLeft,
             child: Text(
               '${trackedExercise.sets.last.reps}',
@@ -88,6 +111,8 @@ class WorkoutHistoryListItem extends StatelessWidget {
       children: [
         RowItem(
           isCompact: true,
+          minWidth: 50.0,
+          maxWidth: 50.0,
           child: Text(
             '',
             style: TextStyleTemplates.defaultBoldTextStyle(
@@ -109,7 +134,8 @@ class WorkoutHistoryListItem extends StatelessWidget {
           isCompact: true,
           alignment: Alignment.centerLeft,
           hasCompactPadding: true,
-          minWidth: 140.0,
+          minWidth: 125.0,
+          maxWidth: 125.0,
           child: Text(
             'Last Set',
             style: TextStyleTemplates.defaultBoldTextStyle(
@@ -179,9 +205,10 @@ class WorkoutHistoryListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var title = DateFormat(ConfigProvider.defaultDateStampFormat)
-        .format(workout.endTime!)
-        .toUpperCase();
+    var endTimeString =
+        DateFormat(ConfigProvider.defaulDateStampWithDayOfWeekFormat)
+            .format(workout.endTime!)
+            .toUpperCase();
     return Card(
       color: ConfigProvider.backgroundColor,
       elevation: 0,
@@ -194,19 +221,12 @@ class WorkoutHistoryListItem extends StatelessWidget {
       child: Center(
         child: Column(
           children: [
-            if (workout.title != null && workout.title!.isNotEmpty)
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  workout.title!,
-                  style: TextStyleTemplates.defaultBoldTextStyle(
-                      ConfigProvider.mainTextColor),
-                ),
-              ),
             Row(
               children: [
                 Text(
-                  title,
+                  workout.title != null && workout.title!.isNotEmpty
+                      ? workout.title!
+                      : endTimeString,
                   style: TextStyleTemplates.defaultBoldTextStyle(
                     ConfigProvider.mainTextColor,
                   ),
@@ -224,8 +244,8 @@ class WorkoutHistoryListItem extends StatelessWidget {
                       context: context,
                       title: workout.title != null && workout.title!.isNotEmpty
                           ? workout.title!
-                          : title,
-                      content: Center(
+                          : endTimeString,
+                      content: SingleChildScrollView(
                         child: Column(
                           children: [
                             if (workout.title != null &&
@@ -236,7 +256,7 @@ class WorkoutHistoryListItem extends StatelessWidget {
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    title,
+                                    endTimeString,
                                     style:
                                         TextStyleTemplates.defaultBoldTextStyle(
                                       ConfigProvider.mainTextColor,

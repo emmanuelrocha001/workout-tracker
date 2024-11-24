@@ -44,9 +44,10 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
       var workout = workoutProvider.latestWorkoutHistoryEntry;
       if (workout != null) {
         workoutProvider.resetShowLatestWorkoutHistoryEntryAsFinished();
-        var title = DateFormat(ConfigProvider.defaultDateStampFormat)
-            .format(workout.endTime!)
-            .toUpperCase();
+        var title =
+            DateFormat(ConfigProvider.defaulDateStampWithDayOfWeekFormat)
+                .format(workout.endTime!)
+                .toUpperCase();
         Helper.showPopUp(
           context: context,
           title: title,

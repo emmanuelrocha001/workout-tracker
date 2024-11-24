@@ -9,6 +9,8 @@ import '../general/text_style_templates.dart';
 import '../../models/workout_dto.dart';
 import '../../models/tracked_exercise_dto.dart';
 
+import './workout_history_list_item_breakdown_exercise_item.dart';
+
 class WorkoutHistoryListItemBreakdown extends StatelessWidget {
   final WorkoutDto workout;
   final bool isMetricSystemSelected;
@@ -18,70 +20,16 @@ class WorkoutHistoryListItemBreakdown extends StatelessWidget {
     required this.workout,
   });
 
-  List<Widget> _generateSetRows(List<SetDto> sets) {
-    return sets.mapIndexed((index, set) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          RowItem(
-            isCompact: true,
-            child: Text(
-              '${index + 1}',
-              style: TextStyleTemplates.defaultTextStyle(
-                ConfigProvider.mainTextColor,
-              ),
-            ),
-          ),
-          RowItem(
-            isCompact: true,
-            child: Text(
-              '${set.weight} ${isMetricSystemSelected ? 'kg' : 'lb'}',
-              style: TextStyleTemplates.defaultTextStyle(
-                ConfigProvider.mainTextColor,
-              ),
-            ),
-          ),
-          RowItem(
-            isCompact: true,
-            child: Text(
-              'x ${set.reps}',
-              style: TextStyleTemplates.defaultTextStyle(
-                ConfigProvider.mainTextColor,
-              ),
-            ),
-          ),
-        ],
-      );
-    }).toList();
-  }
-
-  List<Widget> _generateCompletedExerciseList(
-      List<TrackedExerciseDto> trackedExercises) {
-    return trackedExercises.map((trackedExercise) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            trackedExercise.exercise.name,
-            style: TextStyleTemplates.defaultTextStyle(
-              ConfigProvider.mainTextColor,
-            ),
-          ),
-          ..._generateSetRows(trackedExercise.sets),
-          const SizedBox(height: ConfigProvider.defaultSpace / 2),
-        ],
-      );
-    }).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
-        ..._generateCompletedExerciseList(
-          workout.exercises,
-        ),
-      ],
+      children: workout.exercises
+          .map(
+            (trackedExercise) => WorkoutHistoryListItemBreakdownExerciseItem(
+                trackedExercise: trackedExercise,
+                isMetricSystemSelected: isMetricSystemSelected),
+          )
+          .toList(),
     );
   }
 }
