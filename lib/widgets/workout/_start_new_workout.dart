@@ -35,8 +35,11 @@ class StartNewWorkout extends StatelessWidget {
               child: TextButton(
                 onPressed: () {
                   workoutProvider.startWorkout(
-                      showRestTimerAfterEachSet:
-                          configProvider.showRestTimerAfterEachSet);
+                    showRestTimerAfterEachSet:
+                        configProvider.showRestTimerAfterEachSet,
+                    autoPopulateWorkoutFromSetsHistory:
+                        configProvider.autoPopulateWorkoutFromSetsHistory,
+                  );
                 },
                 style: TextButton.styleFrom(
                   backgroundColor: ConfigProvider.mainColor,

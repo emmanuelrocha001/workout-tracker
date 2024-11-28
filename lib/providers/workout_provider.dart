@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import './config_provider.dart';
 import '../models/exercise_dto.dart';
 import '../models/workout_dto.dart';
 import '../models/tracked_exercise_dto.dart';
@@ -9,9 +10,12 @@ import '../models/adjust_workout_times_dto.dart';
 class WorkoutProvider extends ChangeNotifier {
   static const String _inProgressWorkoutKey = 'inProgressWorkout';
   static const String _workoutHistoryKey = 'workoutHistory';
+  String get exerciseSetsHistoryKey =>
+      '${ConfigProvider.cachePrefix}_exercises_sets_history';
 
   WorkoutDto? _inProgressWorkout;
   List<WorkoutDto> _workoutHistory = [];
+  Map<String, List<List<SetDtoSimplified>>> _exerciseSetsHistory = {};
   SharedPreferencesWithCache? _cache;
   bool _showLatestWorkoutHistoryEntryAsFinished = false;
 
@@ -23,13 +27,29 @@ class WorkoutProvider extends ChangeNotifier {
 
   void setupCache() async {
     _cache = await SharedPreferencesWithCache.create(
-        cacheOptions: const SharedPreferencesWithCacheOptions(
+        cacheOptions: SharedPreferencesWithCacheOptions(
             // This cache will only accept the key 'inProgressWorkout'.
-            allowList: <String>{_inProgressWorkoutKey, _workoutHistoryKey}));
+            allowList: <String>{
+          _inProgressWorkoutKey,
+          _workoutHistoryKey,
+          exerciseSetsHistoryKey
+        }));
     // await clearCache();
     if (_cache != null) {
       loadInProgressWorkoutFromCache();
-      loadWorkoutHistoryFromCache();
+
+      _cache!.containsKey(exerciseSetsHistoryKey);
+
+      var containsExerciseSetsHistoryKey =
+          _cache!.containsKey(exerciseSetsHistoryKey);
+
+      loadWorkoutHistoryFromCache(
+          shouldBuildExerciseSetsHistoryFromWorkoutHistory:
+              !containsExerciseSetsHistoryKey);
+
+      if (containsExerciseSetsHistoryKey) {
+        loadExerciseSetsHistory();
+      }
     }
   }
 
@@ -53,12 +73,16 @@ class WorkoutProvider extends ChangeNotifier {
     }
   }
 
-  void loadWorkoutHistoryFromCache() async {
+  void loadWorkoutHistoryFromCache({
+    bool shouldBuildExerciseSetsHistoryFromWorkoutHistory = false,
+  }) async {
     try {
+      print(
+          'attempting to build sets history from workout history $shouldBuildExerciseSetsHistoryFromWorkoutHistory');
       List<String>? cachedEncodedValueList =
           _cache?.getStringList(_workoutHistoryKey);
 
-      print('\ncached workout history:\n\n $cachedEncodedValueList\n\n');
+      // print('\ncached workout history:\n\n $cachedEncodedValueList\n\n');
 
       if (cachedEncodedValueList != null) {
         _workoutHistory = (cachedEncodedValueList).map((workout) {
@@ -68,8 +92,71 @@ class WorkoutProvider extends ChangeNotifier {
           tempWorkout.lastUpdated ??= tempWorkout.endTime;
           return tempWorkout;
         }).toList();
+
+        if (shouldBuildExerciseSetsHistoryFromWorkoutHistory &&
+            _workoutHistory.isNotEmpty) {
+          print('\n attempting to build sets history from workout history');
+          for (var workout in _workoutHistory) {
+            _updateExerciseSetsHistory(workout);
+          }
+          saveExerciseSetsHistory();
+        }
         notifyListeners();
       }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void loadExerciseSetsHistory() async {
+    try {
+      String? cachedEncodedValue = _cache?.getString(exerciseSetsHistoryKey);
+
+      print('\ncached workout history:\n\n $exerciseSetsHistoryKey\n\n');
+
+      if (cachedEncodedValue != null) {
+        (jsonDecode(cachedEncodedValue) as Map<String, dynamic>)
+            .forEach((key, value) {
+          _exerciseSetsHistory[key] = List<List<SetDtoSimplified>>.from(
+            (value as List).map(
+              (x) =>
+                  (x as List).map((y) => SetDtoSimplified.fromJson(y)).toList(),
+            ),
+          );
+        });
+        notifyListeners();
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void _updateExerciseSetsHistory(WorkoutDto workout) {
+    for (var trackedExercise in workout.exercises) {
+      var simplifiedSets = trackedExercise.sets
+          .map((x) => SetDtoSimplified.fromSetDto(x))
+          .toList();
+      if (_exerciseSetsHistory.containsKey(trackedExercise.exercise.id)) {
+        _exerciseSetsHistory[trackedExercise.exercise.id]!.add(simplifiedSets);
+      } else {
+        _exerciseSetsHistory[trackedExercise.exercise.id] = [simplifiedSets];
+      }
+    }
+  }
+
+  List<ISetDto>? getExerciseSetsHistoryLatestEntry(String exerciseId) {
+    print(exerciseId);
+    if (_exerciseSetsHistory.containsKey(exerciseId)) {
+      return _exerciseSetsHistory[exerciseId]![
+          _exerciseSetsHistory[exerciseId]!.length - 1];
+    }
+    return null;
+  }
+
+  void saveExerciseSetsHistory() async {
+    try {
+      await _cache?.setString(
+          exerciseSetsHistoryKey, jsonEncode(_exerciseSetsHistory));
     } catch (e) {
       print(e);
     }
@@ -103,10 +190,28 @@ class WorkoutProvider extends ChangeNotifier {
     await _cache!.setString(_inProgressWorkoutKey, encodedValue);
   }
 
-  void startWorkout({bool showRestTimerAfterEachSet = false}) {
+  void startWorkout({
+    bool showRestTimerAfterEachSet = false,
+    bool autoPopulateWorkoutFromSetsHistory = false,
+  }) {
     _inProgressWorkout = WorkoutDto.newInstance();
     _inProgressWorkout!.showRestTimerAfterEachSet = showRestTimerAfterEachSet;
+
+    // this would only apply if new workout is some sort of template
+    // if (autoPopulateWorkoutFromSetsHistory) {
+    //   for (var trackedExercise in _inProgressWorkout!.exercises) {
+    //     var latestSets =
+    //         getExerciseSetsHistoryLatestEntry(trackedExercise.exercise.id);
+    //     if (latestSets != null) {
+    //       trackedExercise.sets = latestSets
+    //           .map((x) => SetDto(reps: x.reps, weight: x.weight))
+    //           .toList();
+    //     }
+    //   }
+    // }
+
     notifyListeners();
+    _saveInProgressWorkout();
   }
 
   void startWorkoutFromHistory({
@@ -122,6 +227,7 @@ class WorkoutProvider extends ChangeNotifier {
       _inProgressWorkout!.showRestTimerAfterEachSet = showRestTimerAfterEachSet;
     }
     notifyListeners();
+    _saveInProgressWorkout();
   }
 
   void cancelInProgressWorkout() {
@@ -158,6 +264,9 @@ class WorkoutProvider extends ChangeNotifier {
 
     // save to history
     _workoutHistory.add(_inProgressWorkout!);
+    // update exercoise sets history
+    _updateExerciseSetsHistory(_inProgressWorkout!);
+    saveExerciseSetsHistory();
     _inProgressWorkout = null;
 
     notifyListeners();
@@ -166,6 +275,7 @@ class WorkoutProvider extends ChangeNotifier {
     _cache!.remove(_inProgressWorkoutKey);
     _cache!.setStringList(_workoutHistoryKey,
         _workoutHistory.map((workout) => jsonEncode(workout)).toList());
+    _cache!.setString(exerciseSetsHistoryKey, jsonEncode(_exerciseSetsHistory));
   }
 
   void finishUpdatingWorkoutHistoryEntry() {
@@ -256,7 +366,10 @@ class WorkoutProvider extends ChangeNotifier {
     return [..._inProgressWorkout!.exercises];
   }
 
-  void addTrackedExercise(ExerciseDto exercise) {
+  void addTrackedExercise({
+    required ExerciseDto exercise,
+    bool autoPopulateWorkoutFromSetsHistory = false,
+  }) {
     if (_inProgressWorkout == null) {
       return;
     }
@@ -265,6 +378,16 @@ class WorkoutProvider extends ChangeNotifier {
     var trackedExercise = TrackedExerciseDto.newInstance(
       exercise: exercise,
     );
+
+    if (autoPopulateWorkoutFromSetsHistory) {
+      print("attempting to auto populate tracked exercise");
+      var latestSets = getExerciseSetsHistoryLatestEntry(exercise.id);
+      if (latestSets != null) {
+        trackedExercise.sets = latestSets
+            .map((x) => SetDto(reps: x.reps, weight: x.weight))
+            .toList();
+      }
+    }
 
     _inProgressWorkout!.exercises.add(trackedExercise);
     print("from add exercise ${trackedExercise.id}");

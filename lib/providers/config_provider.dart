@@ -87,7 +87,16 @@ class ConfigProvider extends ChangeNotifier {
     _savePreferencesToCache();
   }
 
-  static const cachePrefix = 'weito_cache_2aa91e4e-24ac-4197-baaf-23ef40a0b918';
+  bool get autoPopulateWorkoutFromSetsHistory =>
+      _userPreferences?.autoPopulateWorkoutFromSetsHistory ?? false;
+
+  void setAutoPopulateWorkoutFromSetsHistory(bool value) {
+    _userPreferences?.autoPopulateWorkoutFromSetsHistory = value;
+    notifyListeners();
+    _savePreferencesToCache();
+  }
+
+  static const cachePrefix = 'erp_cache_2aa91e4e-24ac-4197-baaf-23ef40a0b918';
   static const decimalRegexPattern = r'^\d{0,4}$|^\d{0,4}\.{1}\d{0,2}$';
   static const digitRegexPattern = r'^\d{0,4}$';
 
@@ -125,6 +134,7 @@ class ConfigProvider extends ChangeNotifier {
   static const xLargeFontSize = 32.0;
   static const xxLargeFontSize = 64.0;
   static const defaultIconSize = 28.0;
+  static const mediumIconSize = 22.0;
   static const smallIconSize = 18.0;
 
   // SPACING
@@ -141,4 +151,18 @@ class ConfigProvider extends ChangeNotifier {
 
   static const deleteWorkoutEntryText =
       'Are you sure you want to delete this workout entry? This action cannot be undone.';
+
+  static const autoRestTimerToolTip =
+      'Automatically start a rest timer after each set.';
+
+  static const autoPopulateWorkoutFromSetsHistoryToolTip =
+      'Automatically populate exercises from latest tracked sets. This applies to any exercise that is manually added during a workout.';
+
+  static const unitsToggleToolTip =
+      "Toggle between imperial and metric units. Note, this will not translate existing data.";
+
+  static const autoTimingToggleToolTip =
+      'Workout duration will be calculated automatically based on the specified start time.';
+
+  static const workoutNickNameInputToolTip = 'Friendly name for this workout.';
 }

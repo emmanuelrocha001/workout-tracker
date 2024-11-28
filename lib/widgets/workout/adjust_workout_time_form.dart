@@ -51,7 +51,7 @@ class _AdjustWorkoutTimeFormState extends State<AdjustWorkoutTimeForm> {
     var newTime = await Helper.showTimePickerDefault(
       context: context,
       initialTime: TimeOfDay.fromDateTime(startDate!),
-      prompt: "SELECT START TIME",
+      prompt: "Select Start Time",
     );
 
     print(newTime.toString());
@@ -74,7 +74,7 @@ class _AdjustWorkoutTimeFormState extends State<AdjustWorkoutTimeForm> {
     var newTime = await Helper.showTimePickerDefault(
       context: context,
       initialTime: TimeOfDay.fromDateTime(endDate!),
-      prompt: "SELECT END TIME",
+      prompt: "Select End Time",
     );
 
     print(newTime.toString());
@@ -128,7 +128,8 @@ class _AdjustWorkoutTimeFormState extends State<AdjustWorkoutTimeForm> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         LabeledRow(
-          label: 'NICKNAME',
+          label: 'Nickname',
+          tooltip: ConfigProvider.workoutNickNameInputToolTip,
           children: [
             RowItem(
               isCompact: false,
@@ -169,7 +170,9 @@ class _AdjustWorkoutTimeFormState extends State<AdjustWorkoutTimeForm> {
         ),
         if (!widget.isUpdatingWorkout)
           LabeledRow(
-            label: 'AUTO REST TIMER',
+            label: 'Auto Rest Timer',
+            tooltip:
+                '${ConfigProvider.autoRestTimerToolTip} This overrides the global setting for this workout.',
             children: [
               RowItem(
                 isCompact: true,
@@ -200,7 +203,8 @@ class _AdjustWorkoutTimeFormState extends State<AdjustWorkoutTimeForm> {
           ),
         if (widget.canEnableAutoTiming)
           LabeledRow(
-            label: 'AUTO TIMING',
+            label: 'Auto Timing',
+            tooltip: ConfigProvider.autoTimingToggleToolTip,
             children: [
               RowItem(
                 isCompact: true,
@@ -223,7 +227,7 @@ class _AdjustWorkoutTimeFormState extends State<AdjustWorkoutTimeForm> {
             ],
           ),
         LabeledRow(
-          label: 'START TIME',
+          label: 'Start Time',
           children: [
             RowItem(
               isCompact: true,
@@ -256,7 +260,7 @@ class _AdjustWorkoutTimeFormState extends State<AdjustWorkoutTimeForm> {
         ),
         if (!autoTimingSelected)
           LabeledRow(
-            label: "END TIME",
+            label: "End Time",
             children: [
               RowItem(
                 isCompact: true,

@@ -32,7 +32,7 @@ class SplashScreen extends StatelessWidget {
                     //   color: ConfigProvider.mainColor,
                     // ),
                     Text(
-                      'weito',
+                      'erp',
                       style: TextStyleTemplates.largeBoldTextStyle(
                         ConfigProvider.mainColor,
                       ),

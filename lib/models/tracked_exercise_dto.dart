@@ -1,5 +1,4 @@
 import 'package:uuid/uuid.dart';
-import 'dart:convert';
 
 import './exercise_dto.dart';
 
@@ -52,8 +51,10 @@ class TrackedExerciseDto {
   }
 }
 
-class SetDto {
+class SetDto implements ISetDto {
+  @override
   int? reps;
+  @override
   double? weight;
   int? restTime;
   bool isLogged;
@@ -103,5 +104,43 @@ class SetDto {
   @override
   String toString() {
     return '\nSetDto{\nreps: $reps, \nweight: $weight, \nrestTime: $restTime, \nisLogged: $isLogged} ';
+  }
+}
+
+abstract class ISetDto {
+  int? get reps;
+  double? get weight;
+}
+
+class SetDtoSimplified implements ISetDto {
+  @override
+  final int reps;
+  @override
+  final double weight;
+
+  SetDtoSimplified({
+    required this.reps,
+    required this.weight,
+  });
+
+  factory SetDtoSimplified.fromJson(Map<String, dynamic> json) {
+    return SetDtoSimplified(
+      reps: json['reps'],
+      weight: json['weight'],
+    );
+  }
+
+  factory SetDtoSimplified.fromSetDto(SetDto set) {
+    return SetDtoSimplified(
+      reps: set.reps ?? 0,
+      weight: set.weight ?? 0.0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'reps': reps,
+      'weight': weight,
+    };
   }
 }

@@ -248,22 +248,6 @@ class WorkoutHistoryListItem extends StatelessWidget {
                       content: SingleChildScrollView(
                         child: Column(
                           children: [
-                            if (workout.title != null &&
-                                workout.title!.isNotEmpty)
-                              Padding(
-                                padding: const EdgeInsets.all(
-                                    ConfigProvider.defaultSpace),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    endTimeString,
-                                    style:
-                                        TextStyleTemplates.defaultBoldTextStyle(
-                                      ConfigProvider.mainTextColor,
-                                    ),
-                                  ),
-                                ),
-                              ),
                             WorkoutHistoryListItemSummary(workout: workout),
                             WorkoutHistoryListItemBreakdown(
                               workout: workout,
@@ -303,13 +287,10 @@ class WorkoutHistoryListItem extends StatelessWidget {
                   },
                   menuChildren: [
                     MenuItemButton(
-                      child: const Tooltip(
-                        message: 'Start from past workout',
-                        child: Icon(
-                          Icons.restart_alt_rounded,
-                          color: ConfigProvider.mainColor,
-                          size: ConfigProvider.defaultIconSize,
-                        ),
+                      child: const Icon(
+                        Icons.restart_alt_rounded,
+                        color: ConfigProvider.mainColor,
+                        size: ConfigProvider.defaultIconSize,
                       ),
                       onPressed: () async {
                         startWorkoutFromHistory(
@@ -319,13 +300,10 @@ class WorkoutHistoryListItem extends StatelessWidget {
                       },
                     ),
                     MenuItemButton(
-                      child: const Tooltip(
-                        message: 'Update workout entry',
-                        child: Icon(
-                          Icons.edit_rounded,
-                          color: ConfigProvider.mainColor,
-                          size: ConfigProvider.defaultIconSize,
-                        ),
+                      child: const Icon(
+                        Icons.edit_rounded,
+                        color: ConfigProvider.mainColor,
+                        size: ConfigProvider.defaultIconSize,
                       ),
                       onPressed: () async {
                         startWorkoutFromHistory(
@@ -335,13 +313,10 @@ class WorkoutHistoryListItem extends StatelessWidget {
                       },
                     ),
                     MenuItemButton(
-                        child: const Tooltip(
-                          message: 'Delete workout entry',
-                          child: Icon(
-                            Icons.delete_outline_rounded,
-                            color: Colors.red,
-                            size: ConfigProvider.defaultIconSize,
-                          ),
+                        child: const Icon(
+                          Icons.delete_outline_rounded,
+                          color: Colors.red,
+                          size: ConfigProvider.defaultIconSize,
                         ),
                         onPressed: () {
                           _deleteWorkoutEntry(context);

@@ -26,7 +26,9 @@ class WorkoutDto {
     this.showRestTimerAfterEachSet = false,
   });
 
-  WorkoutDto.newInstance({this.title = ""}) {
+  WorkoutDto.newInstance({
+    this.title = "",
+  }) {
     id = Utility.generateId();
     createTime = DateTime.now();
     startTime = DateTime.now();

@@ -97,7 +97,7 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
             ),
             NavigationDestination(
               icon: Icon(
-                Icons.person_2_rounded,
+                Icons.settings_rounded,
                 color: currentPageIndex == 2
                     ? ConfigProvider.backgroundColor
                     : Colors.black,

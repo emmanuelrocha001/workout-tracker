@@ -344,7 +344,7 @@ class _TrackedExerciseListItemBodyState
                 ),
                 child: Text(
                   "ADD SET",
-                  style: TextStyleTemplates.smallTextStyle(
+                  style: TextStyleTemplates.smallBoldTextStyle(
                     Utility.getTextColorBasedOnBackground(),
                   ),
                 ),

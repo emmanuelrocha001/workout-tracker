@@ -51,11 +51,20 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
         var exerciseProvider =
             // ignore: use_build_context_synchronously
             Provider.of<ExerciseProvider>(context, listen: false);
+
+        var configProvider =
+            // ignore: use_build_context_synchronously
+            Provider.of<ConfigProvider>(context, listen: false);
+
         var exercise = exerciseProvider.getExerciseById(exerciseId);
 
         if (exercise == null) return;
 
-        workoutProvider.addTrackedExercise(exercise);
+        workoutProvider.addTrackedExercise(
+          exercise: exercise,
+          autoPopulateWorkoutFromSetsHistory:
+              configProvider.autoPopulateWorkoutFromSetsHistory,
+        );
         print('FROM selector ${exerciseId}');
       }
     }
@@ -228,7 +237,7 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                         onPressed: _adjustWorkoutTimes,
                         child: Text(
                           "ADJUST DETAILS",
-                          style: TextStyleTemplates.defaultBoldTextStyle(
+                          style: TextStyleTemplates.smallBoldTextStyle(
                               ConfigProvider.mainColor),
                         ),
                       ),
@@ -257,7 +266,7 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                           !workoutProvider.updatingLoggedWorkout
                               ? "CANCEL WORKOUT"
                               : "CANCEL UPDATE",
-                          style: TextStyleTemplates.defaultBoldTextStyle(
+                          style: TextStyleTemplates.smallBoldTextStyle(
                               ConfigProvider.backgroundColor),
                         ),
                       ),

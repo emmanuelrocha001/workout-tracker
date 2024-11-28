@@ -29,60 +29,61 @@ class PreferencesPage extends StatelessWidget {
           ),
           child: SizedBox(
             width: Helper.getMaxContentWidth(context,
-                maxContentWidthOverride: 300.0),
+                maxContentWidthOverride: 350.0),
             child: Column(
               children: [
-                LabeledRow(
-                  labelWidth: labelSize,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  label: 'USERNAME',
-                  children: [
-                    RowItem(
-                      isCompact: false,
-                      alignment: Alignment.centerLeft,
-                      child: SizedBox(
-                        // width: 200.0,
-                        child: Text(
-                          configProvider.username,
-                          style: TextStyleTemplates.defaultTextStyle(
-                            ConfigProvider.mainTextColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                    RowItem(
-                      isCompact: true,
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.edit,
-                          size: ConfigProvider.smallIconSize,
-                          color: ConfigProvider.mainColor,
-                        ),
-                        onPressed: () async {
-                          var input = await Helper.showPopUp(
-                            title: 'Edit Username',
-                            context: context,
-                            specificHeight: 180.0,
-                            content: EditTextFieldForm(
-                              initialValue: configProvider.username,
-                            ),
-                          );
-                          if (input != null &&
-                              input is String &&
-                              input.isNotEmpty &&
-                              input != configProvider.username) {
-                            configProvider.setUsername(input);
-                          }
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+                // LabeledRow(
+                //   labelWidth: labelSize,
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   label: 'USERNAME',
+                //   children: [
+                //     RowItem(
+                //       isCompact: false,
+                //       alignment: Alignment.centerLeft,
+                //       child: SizedBox(
+                //         // width: 200.0,
+                //         child: Text(
+                //           configProvider.username,
+                //           style: TextStyleTemplates.defaultTextStyle(
+                //             ConfigProvider.mainTextColor,
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //     RowItem(
+                //       isCompact: true,
+                //       child: IconButton(
+                //         icon: const Icon(
+                //           Icons.edit,
+                //           size: ConfigProvider.smallIconSize,
+                //           color: ConfigProvider.mainColor,
+                //         ),
+                //         onPressed: () async {
+                //           var input = await Helper.showPopUp(
+                //             title: 'Edit Username',
+                //             context: context,
+                //             specificHeight: 180.0,
+                //             content: EditTextFieldForm(
+                //               initialValue: configProvider.username,
+                //             ),
+                //           );
+                //           if (input != null &&
+                //               input is String &&
+                //               input.isNotEmpty &&
+                //               input != configProvider.username) {
+                //             configProvider.setUsername(input);
+                //           }
+                //         },
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 const SizedBox(
                   height: ConfigProvider.defaultSpace,
                 ),
                 LabeledRow(
-                  label: 'AUTO REST TIMER',
+                  label: 'Auto Rest Timer',
+                  tooltip: ConfigProvider.autoRestTimerToolTip,
                   labelWidth: labelSize,
                   children: [
                     RowItem(
@@ -106,12 +107,43 @@ class PreferencesPage extends StatelessWidget {
                     ),
                   ],
                 ),
+                LabeledRow(
+                  label: 'Auto Populate Sets',
+                  tooltip:
+                      ConfigProvider.autoPopulateWorkoutFromSetsHistoryToolTip,
+                  labelWidth: labelSize,
+                  children: [
+                    RowItem(
+                      isCompact: true,
+                      alignment: Alignment.centerLeft,
+                      child: Switch(
+                        activeColor: ConfigProvider.mainColor,
+                        thumbIcon: WidgetStatePropertyAll(
+                          Icon(
+                            configProvider.autoPopulateWorkoutFromSetsHistory
+                                ? Icons.check
+                                : Icons.close,
+                            color: ConfigProvider.backgroundColor,
+                          ),
+                        ),
+                        value:
+                            configProvider.autoPopulateWorkoutFromSetsHistory,
+                        onChanged: (bool value) {
+                          configProvider
+                              .setAutoPopulateWorkoutFromSetsHistory(value);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+
                 const SizedBox(
                   height: ConfigProvider.defaultSpace,
                 ),
                 LabeledRow(
-                  label: 'UNITS',
+                  label: 'Units',
                   labelWidth: labelSize,
+                  tooltip: ConfigProvider.unitsToggleToolTip,
                   children: [
                     RowItem(
                       isCompact: true,

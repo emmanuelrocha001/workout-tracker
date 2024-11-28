@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 
 import 'package:provider/provider.dart';
+import '../../models/tracked_exercise_dto.dart';
 import '../../providers/config_provider.dart';
 
 import '../general/row_item.dart';
 import '../general/text_style_templates.dart';
-import '../../models/workout_dto.dart';
-import '../../models/tracked_exercise_dto.dart';
+import '../../models/exercise_dto.dart';
 
 class WorkoutHistoryListItemBreakdownExerciseItem extends StatelessWidget {
-  final TrackedExerciseDto trackedExercise;
+  final ExerciseDto exercise;
+  final List<ISetDto> sets;
   final bool isMetricSystemSelected;
   const WorkoutHistoryListItemBreakdownExerciseItem({
     super.key,
-    required this.trackedExercise,
+    required this.exercise,
+    required this.sets,
     required this.isMetricSystemSelected,
   });
 
@@ -64,7 +66,7 @@ class WorkoutHistoryListItemBreakdownExerciseItem extends StatelessWidget {
     );
   }
 
-  List<Widget> _generateSetRows(List<SetDto> sets) {
+  List<Widget> _generateSetRows(List<ISetDto> sets) {
     return sets.mapIndexed((index, set) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -119,14 +121,14 @@ class WorkoutHistoryListItemBreakdownExerciseItem extends StatelessWidget {
           padding:
               const EdgeInsets.symmetric(vertical: ConfigProvider.defaultSpace),
           child: Text(
-            trackedExercise.exercise.name,
+            exercise.name,
             style: TextStyleTemplates.defaultTextStyle(
               ConfigProvider.mainTextColor,
             ),
           ),
         ),
         _getRowHeader(),
-        ..._generateSetRows(trackedExercise.sets),
+        ..._generateSetRows(sets),
         const SizedBox(height: ConfigProvider.defaultSpace / 2),
       ],
     );
