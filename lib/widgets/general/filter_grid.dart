@@ -81,7 +81,7 @@ class FilterGrid extends StatelessWidget {
               ),
             );
           },
-          childCount: exerciseTypes.length,
+          childCount: cFilter.filters.length,
         ),
       );
 

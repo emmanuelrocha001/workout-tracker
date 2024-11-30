@@ -65,28 +65,23 @@ class FilteredBy extends StatelessWidget {
                 TextButton(
                   onPressed: onClearFilters,
                   style: TextButton.styleFrom(
-                    backgroundColor:
-                        ConfigProvider.slightContrastBackgroundColor,
+                    backgroundColor: Colors.red,
                   ),
                   child: Text(
                     "CLEAR",
                     style: TextStyleTemplates.smallBoldTextStyle(
-                      ConfigProvider.mainColor,
+                      ConfigProvider.backgroundColor,
                     ),
                   ),
                 ),
               const SizedBox(width: ConfigProvider.defaultSpace),
-              TextButton(
+              IconButton(
+                icon: const Icon(
+                  size: ConfigProvider.defaultIconSize,
+                  Icons.filter_list_outlined,
+                  color: ConfigProvider.mainColor,
+                ),
                 onPressed: onFilter,
-                style: TextButton.styleFrom(
-                  backgroundColor: ConfigProvider.mainColor,
-                ),
-                child: Text(
-                  "FILTER",
-                  style: TextStyleTemplates.smallBoldTextStyle(
-                    Utility.getTextColorBasedOnBackground(),
-                  ),
-                ),
               ),
             ],
           ),

@@ -27,6 +27,7 @@ class _ExerciseFiltersGridState extends State<ExerciseFiltersGrid> {
         Provider.of<ExerciseProvider>(context, listen: false);
     var muscleGroups =
         MuscleGroupDto.toFiltersDto(MuscleGroupDto.getMuscleGroups());
+    print('muscle group length: ${muscleGroups.filters.length}');
     if (exerciseProvider.appliedMuscleGroupIdFilter.isNotEmpty) {
       muscleGroups.selectedValue = exerciseProvider.appliedMuscleGroupIdFilter;
       muscleGroups.tempSelectedValue = muscleGroups.selectedValue;

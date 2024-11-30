@@ -165,4 +165,14 @@ class ConfigProvider extends ChangeNotifier {
       'Workout duration will be calculated automatically based on the specified start time.';
 
   static const workoutNickNameInputToolTip = 'Friendly name for this workout.';
+
+  static const exercisesPageToolTip =
+      'Add new exercises, review existing ones, and make edits. Note: System defined exercises cannot be modified or deleted.';
+  static const workoutPageToolTip = 'Start a new workout.';
+
+  static const workoutHistoryToolTip =
+      'Review your workout history, edit past entries, and start workouts based on previous sessions';
+
+  static const preferencesPageToolTip =
+      'Customize your settings to tailor the app experience to your preferences and needs.';
 }

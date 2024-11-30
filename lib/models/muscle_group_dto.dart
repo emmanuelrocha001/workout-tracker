@@ -14,7 +14,10 @@ const muscleGroups = {
   "9": {"name": "Calves", "startingSets": 2, "deloadSets": 2},
   "10": {"name": "Traps", "startingSets": 2, "deloadSets": 0},
   "11": {"name": "Forearms", "startingSets": 3, "deloadSets": 0},
-  "12": {"name": "Abs", "startingSets": 2, "deloadSets": 2}
+  "12": {"name": "Abs", "startingSets": 2, "deloadSets": 2},
+  "13": {"name": "Full Body", "startingSets": 2, "deloadSets": 2},
+  "14": {"name": "Cardio", "startingSets": 2, "deloadSets": 2},
+  "15": {"name": "Other", "startingSets": 2, "deloadSets": 2},
 };
 
 class MuscleGroupDto {

@@ -1,4 +1,5 @@
-import "package:workout_tracker/models/muscle_group_dto.dart";
+import 'dart:convert';
+import "../../models/muscle_group_dto.dart";
 
 import "../class_extensions.dart";
 
@@ -7,10 +8,11 @@ class ExerciseDto {
   final String name;
   final String muscleGroupId;
   final String exerciseType;
-  final String createdAt;
-  final String updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
   final String? youtubeId;
   final String? description;
+  bool isCustom = false;
   String searchableString = "";
 
   ExerciseDto({
@@ -26,24 +28,25 @@ class ExerciseDto {
 
   @override
   String toString() {
-    return '\nExerciseDto{\nid: $id, \nname: $name, \nmuscleGroupId: $muscleGroupId, \nexerciseType: $exerciseType, \ncreatedAt: $createdAt, \nupdatedAt: $updatedAt, \nyoutubeId: $youtubeId, \ndescription: $description}';
+    return jsonEncode(toJson());
   }
 
-  factory ExerciseDto.fromJson(Map<String, dynamic> value) {
-    String id = value['id'].toString();
-    String name = value['name'].toString();
-    String muscleGroupId = value['muscleGroupId'].toString();
-    String exerciseType = value['exerciseType'].toString();
-    String createdAt = value['createdAt'].toString();
-    String updatedAt = value['updatedAt'].toString();
-    String? youtubeId = value['youtubeId']?.toString();
-    String? description = value['description']?.toString();
+  factory ExerciseDto.fromJson(Map<String, dynamic> json) {
+    String id = json['id'].toString();
+    String name = json['name'].toString();
+    String muscleGroupId = json['muscleGroupId'].toString();
+    String exerciseType = json['exerciseType'].toString();
+    DateTime? createdAt =
+        json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null;
+    DateTime? updatedAt = json['updatedAt'] != null
+        ? DateTime.parse(json['updatedAt'])
+        : createdAt;
+    String? youtubeId = json['youtubeId']?.toString();
+    String? description = json['description']?.toString();
     if (id.isNullOrEmpty ||
         name.isNullOrEmpty ||
         muscleGroupId.isNullOrEmpty ||
-        exerciseType.isNullOrEmpty ||
-        createdAt.isNullOrEmpty ||
-        updatedAt.isNullOrEmpty) {
+        exerciseType.isNullOrEmpty) {
       throw Exception("Invalid Exercise data");
     }
 
@@ -65,8 +68,8 @@ class ExerciseDto {
       'name': name,
       'muscleGroupId': muscleGroupId,
       'exerciseType': exerciseType,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
       'youtubeId': youtubeId,
       'description': description,
     };

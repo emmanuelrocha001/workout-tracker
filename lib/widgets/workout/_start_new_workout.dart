@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../general/overlay_content.dart';
+import '../general/default_tooltip.dart';
 import '../../providers/config_provider.dart';
 import '../../providers/workout_provider.dart';
 
@@ -27,6 +28,12 @@ class StartNewWorkout extends StatelessWidget {
                   ConfigProvider.mainTextColor),
             ),
           ),
+          // const Padding(
+          //   padding: EdgeInsets.only(right: ConfigProvider.defaultSpace),
+          //   child: DefaultTooltip(
+          //     message: ConfigProvider.workoutPageToolTip,
+          //   ),
+          // ),
           const Spacer(),
           Align(
             alignment: Alignment.centerRight,

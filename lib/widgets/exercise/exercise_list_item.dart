@@ -13,13 +13,18 @@ import '../helper.dart';
 
 class ExerciseListItem extends StatelessWidget {
   final ExerciseDto data;
-  final String selectedId;
-  final void Function(String?) onSelect;
+  final String? selectedId;
+  final void Function(String?)? onSelect;
+  final void Function({
+    required ExerciseDto exercise,
+    required bool inEditMode,
+  })? showDetails;
   const ExerciseListItem({
     super.key,
     required this.data,
-    required this.selectedId,
-    required this.onSelect,
+    this.selectedId,
+    this.onSelect,
+    this.showDetails,
   });
 
   @override
@@ -34,21 +39,25 @@ class ExerciseListItem extends StatelessWidget {
         ),
       ),
       child: ListTile(
-        onTap: () => onSelect(data.id),
-        leading: Radio(
-          value: data.id,
-          groupValue: selectedId,
-          // activeColor: const Color.fromARGB(255, 44, 78, 128),
-          fillColor: WidgetStateProperty.resolveWith<Color>(
-            (Set<WidgetState> states) {
-              return ConfigProvider.mainColor;
-            },
-          ),
-          onChanged: null,
-          toggleable: false,
-
-          // onChanged: onSelect,
-        ),
+        onTap: () => onSelect != null
+            ? onSelect!(data.id)
+            : showDetails != null
+                ? showDetails!(exercise: data, inEditMode: false)
+                : null,
+        leading: onSelect != null
+            ? Radio(
+                value: data.id,
+                groupValue: selectedId,
+                // activeColor: const Color.fromARGB(255, 44, 78, 128),
+                fillColor: WidgetStateProperty.resolveWith<Color>(
+                  (Set<WidgetState> states) {
+                    return ConfigProvider.mainColor;
+                  },
+                ),
+                onChanged: null,
+                toggleable: false,
+              )
+            : null,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -81,18 +90,39 @@ class ExerciseListItem extends StatelessWidget {
             ),
           ),
         ),
-        trailing: IconButton(
-          icon: const Icon(
-            Icons.play_circle_fill_rounded,
-          ),
-          style: Theme.of(context).iconButtonTheme.style,
-          onPressed: () {
-            Helper.navigateToYoutube(
-              youtubeId: data.youtubeId,
-              searchQuery: data.name,
-            );
-          },
-        ),
+        trailing: onSelect != null
+            ? IconButton(
+                icon: const Icon(
+                  Icons.play_circle_fill_rounded,
+                ),
+                style: Theme.of(context).iconButtonTheme.style,
+                onPressed: () {
+                  Helper.navigateToYoutube(
+                    youtubeId: data.youtubeId,
+                    searchQuery: data.name,
+                  );
+                },
+              )
+            : data.isCustom && showDetails != null // temp for testing
+                ? IconButton(
+                    icon: const Icon(
+                      Icons.edit,
+                      size: ConfigProvider.smallIconSize,
+                      color: ConfigProvider.mainColor,
+                    ),
+                    onPressed: () {
+                      showDetails!(exercise: data, inEditMode: true);
+                    },
+                  )
+                : PillContainer(
+                    color: ConfigProvider.slightContrastBackgroundColor,
+                    child: Text(
+                      'SYSTEM',
+                      style: TextStyleTemplates.smallTextStyle(
+                        ConfigProvider.mainTextColor,
+                      ),
+                    ),
+                  ),
       ),
     );
   }

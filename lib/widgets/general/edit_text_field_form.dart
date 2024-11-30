@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../providers/config_provider.dart';
 import './row_item.dart';
 import './text_style_templates.dart';
+import './default_text_field.dart';
 
 class EditTextFieldForm extends StatefulWidget {
   final String initialValue;
@@ -46,33 +47,9 @@ class _EditTextFieldFormState extends State<EditTextFieldForm> {
             ),
             RowItem(
               isCompact: false,
-              child: TextField(
+              child: DefaultTextField(
                 controller: _controller,
                 focusNode: _focusNode,
-                style: TextStyleTemplates.defaultTextStyle(
-                  ConfigProvider.mainTextColor,
-                ),
-                decoration: InputDecoration(
-                  hintStyle: TextStyleTemplates.defaultTextStyle(
-                    ConfigProvider.mainTextColor,
-                  ),
-                  fillColor: ConfigProvider.backgroundColor,
-                  filled: true,
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: ConfigProvider.mainColor,
-                      width: 2.0,
-                    ),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: ConfigProvider.slightContrastBackgroundColor,
-                      width: 2.0,
-                    ),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
               ),
             ),
             RowItem(

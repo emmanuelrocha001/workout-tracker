@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workout_tracker/widgets/workout/_workout_history_.dart';
+import '../providers/exercise_provider.dart';
+import '../widgets/workout/_workout_history_.dart';
 
 import '../providers/config_provider.dart';
 import '../providers/workout_provider.dart';
 
 import '../widgets/workout/_workout_page_.dart';
 import '../widgets/preferences/preferences_page.dart';
+import '../widgets/exercise/_exercises_page.dart';
 import '../widgets/general/text_style_templates.dart';
 
 import '../widgets/helper.dart';
@@ -71,6 +73,9 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
           backgroundColor: ConfigProvider.backgroundColorSolid,
           elevation: 2.0,
           onDestinationSelected: (int index) {
+            var exerciseProvider =
+                Provider.of<ExerciseProvider>(context, listen: false);
+            exerciseProvider.clearFilters();
             setState(() {
               currentPageIndex = index;
             });
@@ -97,8 +102,17 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
             ),
             NavigationDestination(
               icon: Icon(
-                Icons.settings_rounded,
+                Icons.build_outlined,
                 color: currentPageIndex == 2
+                    ? ConfigProvider.backgroundColor
+                    : Colors.black,
+              ),
+              label: 'Exercises',
+            ),
+            NavigationDestination(
+              icon: Icon(
+                Icons.settings_rounded,
+                color: currentPageIndex == 3
                     ? ConfigProvider.backgroundColor
                     : Colors.black,
               ),
@@ -121,6 +135,9 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
             navigateToPage(0);
           },
         ),
+
+        /// Exercises
+        const ExercisesPage(),
 
         // Preferences
         const PreferencesPage(),

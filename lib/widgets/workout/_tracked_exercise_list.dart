@@ -13,7 +13,7 @@ import '../../providers/exercise_provider.dart';
 import '../../providers/workout_provider.dart';
 
 import '../../widgets/workout/rest_timer.dart';
-import '../exercise/_exercise_list.dart';
+import '../exercise/_selectable_exercise_list.dart';
 import 'tracked_exercise_list_item.dart';
 import 'tracked_exercise_list_item_header.dart';
 import 'elapsed_time_timer.dart';
@@ -41,7 +41,7 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
     dynamic exerciseId = await Helper.showPopUp(
       context: context,
       title: 'Exercises',
-      content: const ExerciseList(),
+      content: const SelectableExerciseList(),
     );
     if (exerciseId != null && exerciseId.isNotEmpty) {
       if (context.mounted) {
@@ -87,7 +87,6 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
         Helper.getMaxContentWidth(context, maxContentWidthOverride: 400.0);
     var update = await Helper.showDialogForm(
       context: context,
-      maxContentWidth: maxContentWidth,
       content: AdjustWorkoutTimeForm(
         maxFormWidth: maxContentWidth,
         initial: AdjustWorkoutTimesDto(

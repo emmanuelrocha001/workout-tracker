@@ -1,21 +1,25 @@
 import 'filters_dto.dart';
 
 const exerciseTypes = {
-  'barbell': {'id': 'barbell', 'name': 'barbell'},
+  'barbell': {'id': 'barbell', 'name': 'Barbell'},
   'bodyweight-loadable': {
     'id': 'bodyweight-loadable',
-    'name': 'bodyweight-loadable'
+    'name': 'Bodyweight-Loadable'
   },
-  'bodyweight-only': {'id': 'bodyweight-only', 'name': 'bodyweight-only'},
-  'cable': {'id': '4', 'name': 'cable'},
-  'dumbbell': {'id': 'dumbbell', 'name': 'dumbbell'},
-  'freemotion': {'id': 'freemotion', 'name': 'freemotion'},
-  'machine': {'id': 'machine', 'name': 'machine'},
+  'bodyweight-only': {'id': 'bodyweight-only', 'name': 'Bodyweight-Only'},
+  'cable': {'id': 'cable', 'name': 'Cable'},
+  'dumbbell': {'id': 'dumbbell', 'name': 'Dumbbell'},
+  'freemotion': {'id': 'freemotion', 'name': 'Freemotion'},
+  'machine': {'id': 'machine', 'name': 'Machine'},
   'machine-assistance': {
     'id': 'machine-assistance',
-    'name': 'machine-assistance'
+    'name': 'Machine-Assistance'
   },
-  'smith-machine': {'id': 'smith-machine', 'name': 'smith-machine'}
+  'smith-machine': {'id': 'smith-machine', 'name': 'Smith-Machine'},
+  'standard': {'id': 'standard', 'name': 'Standard'},
+  'reps-only': {'id': 'reps-only', 'name': 'Reps-Only'},
+  'timed': {'id': 'timed', 'name': 'Timed'},
+  'distance': {'id': 'distance', 'name': 'Distance'},
 };
 
 class ExerciseTypeDto {

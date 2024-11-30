@@ -256,7 +256,7 @@ class Helper {
     required Widget content,
     bool hasPadding = true,
     bool barrierDismissible = true,
-    double? maxContentWidth,
+    double? maxContentWidthOverride = 400,
   }) async {
     return await showDialog<dynamic>(
         context: context,
@@ -266,7 +266,10 @@ class Helper {
           return AlertDialog(
             scrollable: true,
             content: SizedBox(
-              width: maxContentWidth,
+              width: getMaxContentWidth(
+                context,
+                maxContentWidthOverride: maxContentWidthOverride,
+              ),
               child: content,
             ),
             backgroundColor: ConfigProvider.backgroundColor,

@@ -13,6 +13,7 @@ import '../helper.dart';
 
 import '../general/text_style_templates.dart';
 import '../general/overlay_content.dart';
+import '../general/default_tooltip.dart';
 
 import 'workout_history_list_item.dart';
 
@@ -91,6 +92,12 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
               "History",
               style: TextStyleTemplates.mediumBoldTextStyle(
                   ConfigProvider.mainTextColor),
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(right: ConfigProvider.defaultSpace),
+            child: DefaultTooltip(
+              message: ConfigProvider.workoutHistoryToolTip,
             ),
           ),
           const Spacer(),

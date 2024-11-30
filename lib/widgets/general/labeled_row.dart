@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../providers/config_provider.dart';
 import './text_style_templates.dart';
 import './row_item.dart';
+import './default_tooltip.dart';
 
 class LabeledRow extends StatelessWidget {
   static const double defaultLabelWidth = 100.0;
@@ -40,20 +41,7 @@ class LabeledRow extends StatelessWidget {
                   ),
                 ),
               ),
-              if (tooltip != null)
-                Tooltip(
-                  message: tooltip!,
-                  triggerMode: TooltipTriggerMode.tap,
-                  textStyle: TextStyleTemplates.smallTextStyle(
-                      ConfigProvider.backgroundColor),
-                  enableFeedback: true,
-                  showDuration: const Duration(seconds: 10),
-                  child: const Icon(
-                    Icons.info_outline_rounded,
-                    color: ConfigProvider.mainColor,
-                    size: ConfigProvider.mediumIconSize,
-                  ),
-                ),
+              if (tooltip != null) DefaultTooltip(message: tooltip!),
             ],
           ),
         Row(
