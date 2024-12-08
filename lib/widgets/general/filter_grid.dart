@@ -27,8 +27,8 @@ class FilterGrid extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            cFilter.name.toLowerCase(),
-            style: TextStyleTemplates.mediumTextStyle(
+            cFilter.name,
+            style: TextStyleTemplates.defaultBoldTextStyle(
               ConfigProvider.mainTextColor,
             ),
           ),

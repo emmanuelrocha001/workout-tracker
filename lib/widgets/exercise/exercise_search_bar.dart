@@ -9,6 +9,7 @@ import '../../models/muscle_group_dto.dart';
 
 class ExerciseSearchBar extends StatelessWidget {
   final void Function() onFilter;
+
   const ExerciseSearchBar({super.key, required this.onFilter});
 
   @override
@@ -36,6 +37,7 @@ class ExerciseSearchBar extends StatelessWidget {
                     : MuscleGroupDto.getMuscleGroupName(
                         exerciseProvider.appliedMuscleGroupIdFilter),
                 exerciseProvider.appliedExerciseType,
+                exerciseProvider.appliedAuthor,
               ],
               onClearFilters: () {
                 exerciseProvider.clearFilters();

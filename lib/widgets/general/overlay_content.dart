@@ -71,7 +71,7 @@ class OverlayContent extends StatelessWidget {
                   color: Colors.black.withOpacity(.1),
                   child: Center(
                     child: SizedBox(
-                      width: ConfigProvider.maxButtonSize,
+                      width: ConfigProvider.maxButtonWidth,
                       child: TextButton(
                         onPressed: onActionButtonPressed,
                         style: TextButton.styleFrom(

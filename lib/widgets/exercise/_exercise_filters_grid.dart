@@ -19,6 +19,7 @@ class ExerciseFiltersGrid extends StatefulWidget {
 class _ExerciseFiltersGridState extends State<ExerciseFiltersGrid> {
   List<FiltersDto> filters = [];
   bool filtersUpdated = false;
+  static const String authorFiltersName = "Author";
 
   @override
   void initState() {
@@ -40,12 +41,28 @@ class _ExerciseFiltersGridState extends State<ExerciseFiltersGrid> {
       exerciseTypes.tempSelectedValue = exerciseTypes.selectedValue;
     }
 
+    var authorFilters = getAuthorFilters();
+    if (exerciseProvider.appliedAuthor.isNotEmpty) {
+      authorFilters.selectedValue = exerciseProvider.appliedAuthor;
+      authorFilters.tempSelectedValue = authorFilters.selectedValue;
+    }
     setState(() {
-      filters = [
-        muscleGroups,
-        exerciseTypes,
-      ];
+      filters = [authorFilters, muscleGroups, exerciseTypes];
     });
+  }
+
+  FiltersDto getAuthorFilters() {
+    return FiltersDto(
+      name: authorFiltersName,
+      filters: ["System", "User"]
+          .map(
+            (value) => FilterDto(
+              displayValue: value,
+              value: value,
+            ),
+          )
+          .toList(),
+    );
   }
 
   void onSelect(String filterName, FilterDto value) {
@@ -73,6 +90,10 @@ class _ExerciseFiltersGridState extends State<ExerciseFiltersGrid> {
             break;
           case ExerciseTypeDto.filterName:
             exerciseProvider.setAppliedExerciseType(filter.tempSelectedValue);
+            break;
+          case authorFiltersName:
+            exerciseProvider.setAppliedAuthor(filter.tempSelectedValue);
+            break;
           default:
             print("filter not supported");
         }

@@ -1,19 +1,21 @@
 import 'dart:convert';
+import '../utility.dart';
 import "../../models/muscle_group_dto.dart";
-
+import './exercise_type_dto.dart';
 import "../class_extensions.dart";
 
 class ExerciseDto {
-  final String id;
-  final String name;
-  final String muscleGroupId;
-  final String exerciseType;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-  final String? youtubeId;
-  final String? description;
+  late String id;
+  String name;
+  String muscleGroupId;
+  String exerciseType;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  String? youtubeId;
+  String? description;
   bool isCustom = false;
   String searchableString = "";
+  ExerciseDimensionsDto? dimensions;
 
   ExerciseDto({
     required this.id,
@@ -22,6 +24,7 @@ class ExerciseDto {
     required this.exerciseType,
     required this.createdAt,
     required this.updatedAt,
+    this.dimensions,
     this.youtubeId,
     this.description,
   });
@@ -29,6 +32,21 @@ class ExerciseDto {
   @override
   String toString() {
     return jsonEncode(toJson());
+  }
+
+  ExerciseDto.newInstance({
+    required this.name,
+    required this.muscleGroupId,
+    required this.exerciseType,
+    this.description,
+    this.youtubeId,
+  }) {
+    id = Utility.generateId();
+    dimensions = ExerciseDimensionsDto.getDimensions(exerciseType);
+    createdAt = DateTime.now();
+    updatedAt = createdAt;
+    isCustom = true;
+    setSearchableString();
   }
 
   factory ExerciseDto.fromJson(Map<String, dynamic> json) {
@@ -59,6 +77,7 @@ class ExerciseDto {
       updatedAt: updatedAt,
       youtubeId: youtubeId,
       description: description,
+      dimensions: ExerciseDimensionsDto.getDimensions(exerciseType),
     );
   }
 
@@ -72,6 +91,7 @@ class ExerciseDto {
       'updatedAt': updatedAt?.toIso8601String(),
       'youtubeId': youtubeId,
       'description': description,
+      'dimensions': dimensions,
     };
   }
 

@@ -64,6 +64,10 @@ class MuscleGroupDto {
     );
   }
 
+  static bool isValidMuscleGroupId(String muscleGroupId) {
+    return muscleGroups.containsKey(muscleGroupId);
+  }
+
   factory MuscleGroupDto.fromJson(String key, Map<String, dynamic> value) {
     String id = key;
     String name = value['name']!.toString();

@@ -2,8 +2,7 @@ import 'dart:convert';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import '../models/tracked_exercise_dto.dart';
-
+import '../models/create_update_exercise_dto.dart';
 import '../models/exercise_dto.dart';
 
 class ExerciseProvider with ChangeNotifier {
@@ -13,6 +12,7 @@ class ExerciseProvider with ChangeNotifier {
   String? _appliedSearchFilter;
   String? _appliedMuscleGroupIdFilter;
   String? _appliedExerciseType;
+  String? _appliedAuthor;
 
   ExerciseProvider() {
     loadExcercises();
@@ -22,8 +22,10 @@ class ExerciseProvider with ChangeNotifier {
   Future<void> loadExcercises() async {
     // Load exercises from asset
     try {
-      List<dynamic> tempExercises =
-          json.decode((await rootBundle.loadString(_exercisesFilePath)));
+      var exercisesEncodedString =
+          await rootBundle.loadString(_exercisesFilePath);
+
+      List<dynamic> tempExercises = json.decode(exercisesEncodedString);
       _exercises = tempExercises.map((x) {
         var temp = ExerciseDto.fromJson(x);
         temp.setSearchableString();
@@ -60,6 +62,10 @@ class ExerciseProvider with ChangeNotifier {
 
   String get appliedExerciseType {
     return _appliedExerciseType ?? "";
+  }
+
+  String get appliedAuthor {
+    return _appliedAuthor ?? "";
   }
 
   List<ExerciseDto> _applySearchFilter(List<ExerciseDto> tList) {
@@ -103,7 +109,11 @@ class ExerciseProvider with ChangeNotifier {
                     _appliedExerciseType!.isEmpty ||
                     x.exerciseType.toLowerCase().contains(
                           _appliedExerciseType!.toLowerCase(),
-                        )),
+                        )) &&
+                (_appliedAuthor == null ||
+                    _appliedAuthor!.isEmpty ||
+                    (x.isCustom && _appliedAuthor!.toLowerCase() == "user") ||
+                    (!x.isCustom && _appliedAuthor!.toLowerCase() == "system")),
           )
           .toList();
       if (_appliedSearchFilter == null) {
@@ -120,6 +130,7 @@ class ExerciseProvider with ChangeNotifier {
   void clearFilters() {
     _appliedMuscleGroupIdFilter = "";
     _appliedExerciseType = "";
+    _appliedAuthor = "";
     _applyFilters();
     notifyListeners();
   }
@@ -148,7 +159,23 @@ class ExerciseProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void setAppliedAuthor(String value) {
+    _appliedAuthor = value;
+    _applyFilters();
+    notifyListeners();
+  }
+
   ExerciseDto? getExerciseById(String id) {
     return _exercises.firstWhere((x) => x.id == id);
+  }
+
+  bool createUpdateExercise(ExerciseDto exercise) {
+    _exercises.insert(0, exercise);
+    _appliedMuscleGroupIdFilter = "";
+    _appliedExerciseType = "";
+    setAppliedAuthor("User");
+    _applyFilters();
+    notifyListeners();
+    return true;
   }
 }

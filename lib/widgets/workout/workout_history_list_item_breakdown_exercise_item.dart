@@ -7,6 +7,7 @@ import '../../providers/config_provider.dart';
 
 import '../general/row_item.dart';
 import '../general/text_style_templates.dart';
+import '../general/default_tooltip.dart';
 import '../../models/exercise_dto.dart';
 
 class WorkoutHistoryListItemBreakdownExerciseItem extends StatelessWidget {
@@ -36,32 +37,73 @@ class WorkoutHistoryListItemBreakdownExerciseItem extends StatelessWidget {
             ),
           ),
         ),
-        RowItem(
-          isCompact: true,
-          hasCompactPadding: true,
-          minWidth: 100.0,
-          maxWidth: 100.0,
-          alignment: Alignment.centerLeft,
-          child: Text(
-            'Weight(${isMetricSystemSelected ? "kg" : "lb"})',
-            style: TextStyleTemplates.defaultBoldTextStyle(
-              ConfigProvider.mainTextColor,
+        if (exercise.dimensions?.isWeightEnabled ?? true)
+          RowItem(
+            isCompact: true,
+            hasCompactPadding: true,
+            minWidth: 100.0,
+            maxWidth: 100.0,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Weight(${isMetricSystemSelected ? "kg" : "lb"})',
+              style: TextStyleTemplates.defaultBoldTextStyle(
+                ConfigProvider.mainTextColor,
+              ),
             ),
           ),
-        ),
-        RowItem(
-          isCompact: true,
-          alignment: Alignment.centerLeft,
-          hasCompactPadding: true,
-          minWidth: 45.0,
-          maxWidth: 45.0,
-          child: Text(
-            'Reps',
-            style: TextStyleTemplates.defaultBoldTextStyle(
-              ConfigProvider.mainTextColor,
+        if (exercise.dimensions?.isRepEnabled ?? true)
+          RowItem(
+            isCompact: true,
+            alignment: Alignment.centerLeft,
+            hasCompactPadding: true,
+            minWidth: 45.0,
+            maxWidth: 45.0,
+            child: Text(
+              'Reps',
+              style: TextStyleTemplates.defaultBoldTextStyle(
+                ConfigProvider.mainTextColor,
+              ),
             ),
           ),
-        ),
+        if (exercise.dimensions?.isDistanceEnabled ?? true)
+          RowItem(
+            isCompact: true,
+            alignment: Alignment.centerLeft,
+            hasCompactPadding: true,
+            minWidth: 125.0,
+            maxWidth: 125.0,
+            child: Text(
+              'Distance(${isMetricSystemSelected ? "km" : "mi"})',
+              style: TextStyleTemplates.defaultBoldTextStyle(
+                ConfigProvider.mainTextColor,
+              ),
+            ),
+          ),
+        if (exercise.dimensions?.isTimeEnabled ?? true)
+          RowItem(
+            isCompact: true,
+            alignment: Alignment.centerLeft,
+            hasCompactPadding: true,
+            minWidth: 100.0,
+            maxWidth: 100.0,
+            child: Row(
+              children: [
+                Text(
+                  'Time',
+                  style: TextStyleTemplates.defaultBoldTextStyle(
+                    ConfigProvider.mainTextColor,
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: ConfigProvider.defaultSpace / 2),
+                  child: DefaultTooltip(
+                    message: 'hh:mm:ss',
+                  ),
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }
@@ -83,30 +125,58 @@ class WorkoutHistoryListItemBreakdownExerciseItem extends StatelessWidget {
               ),
             ),
           ),
-          RowItem(
-            isCompact: true,
-            alignment: Alignment.centerLeft,
-            minWidth: 100.0,
-            maxWidth: 100.0,
-            child: Text(
-              '${set.weight}',
-              style: TextStyleTemplates.defaultTextStyle(
-                ConfigProvider.mainTextColor,
+          if (exercise.dimensions?.isWeightEnabled ?? true)
+            RowItem(
+              isCompact: true,
+              alignment: Alignment.centerLeft,
+              minWidth: 100.0,
+              maxWidth: 100.0,
+              child: Text(
+                '${set.weight}',
+                style: TextStyleTemplates.defaultTextStyle(
+                  ConfigProvider.mainTextColor,
+                ),
               ),
             ),
-          ),
-          RowItem(
-            isCompact: true,
-            minWidth: 45.0,
-            maxWidth: 45.0,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'x ${set.reps}',
-              style: TextStyleTemplates.defaultTextStyle(
-                ConfigProvider.mainTextColor,
+          if (exercise.dimensions?.isRepEnabled ?? true)
+            RowItem(
+              isCompact: true,
+              minWidth: 45.0,
+              maxWidth: 45.0,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'x ${set.reps}',
+                style: TextStyleTemplates.defaultTextStyle(
+                  ConfigProvider.mainTextColor,
+                ),
               ),
             ),
-          ),
+          if (exercise.dimensions?.isDistanceEnabled ?? true)
+            RowItem(
+              isCompact: true,
+              minWidth: 125.0,
+              maxWidth: 125.0,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                set.distance.toString(),
+                style: TextStyleTemplates.defaultTextStyle(
+                  ConfigProvider.mainTextColor,
+                ),
+              ),
+            ),
+          if (exercise.dimensions?.isTimeEnabled ?? true)
+            RowItem(
+              isCompact: true,
+              minWidth: 100.0,
+              maxWidth: 100.0,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                set.time ?? "",
+                style: TextStyleTemplates.defaultTextStyle(
+                  ConfigProvider.mainTextColor,
+                ),
+              ),
+            ),
         ],
       );
     }).toList();

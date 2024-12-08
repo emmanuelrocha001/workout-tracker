@@ -3,37 +3,29 @@ import 'package:flutter/services.dart';
 import '../../providers/config_provider.dart';
 import '../../models/filters_dto.dart';
 import '../general/text_style_templates.dart';
+import '../custom/DropDownMenuFormfield.dart';
 
 class DefaultDropDownMenu extends StatelessWidget {
   final FiltersDto selection;
   final FocusNode? focusNode;
   final FocusNode? nextFocusNode;
   final Function(String) onSelected;
-  const DefaultDropDownMenu({
-    super.key,
-    required this.selection,
-    required this.onSelected,
-    this.focusNode,
-    this.nextFocusNode,
-  });
+  final String? Function(String?)? validator;
+  const DefaultDropDownMenu(
+      {super.key,
+      required this.selection,
+      required this.onSelected,
+      this.focusNode,
+      this.nextFocusNode,
+      this.validator});
 
   @override
   Widget build(BuildContext context) {
     print("building");
     print(selection.selectedValue);
-    return DropdownMenu<String>(
+    return DropdownMenuFormField<String>(
+      validator: validator,
       initialSelection: selection.selectedValue,
-      inputFormatters: [
-        TextInputFormatter.withFunction(
-          (oldValue, newValue) {
-            print("old value: ${oldValue.text}");
-            print("new value: ${newValue.text}");
-            return newValue.copyWith(
-              text: newValue.text,
-            );
-          },
-        ),
-      ],
       focusNode: focusNode,
       menuHeight: 250.0,
       inputDecorationTheme: InputDecorationTheme(
@@ -46,6 +38,23 @@ class DefaultDropDownMenu extends StatelessWidget {
             width: 2.0,
           ),
           borderRadius: BorderRadius.circular(5),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: Colors.red,
+            width: 1.0,
+          ),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: Colors.red,
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        errorStyle: TextStyleTemplates.smallTextStyle(
+          Colors.red,
         ),
         enabledBorder: OutlineInputBorder(
           borderSide: const BorderSide(
@@ -96,11 +105,6 @@ class DefaultDropDownMenu extends StatelessWidget {
                 ConfigProvider.mainTextColor,
               ),
             ),
-            // foregroundColor: WidgetStatePropertyAll<Color>(
-            //   selection.selectedValue == value.value
-            //       ? ConfigProvider.mainColor
-            //       : ConfigProvider.mainTextColor,
-            // ),
           ),
         );
       }).toList(),

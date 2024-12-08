@@ -6,25 +6,29 @@ class DefaultTextField extends StatelessWidget {
   final TextEditingController? controller;
   final FocusNode? focusNode;
   final FocusNode? nextFocusNode;
+  final String? Function(String?)? validator;
+
   const DefaultTextField({
     super.key,
     this.controller,
     this.focusNode,
     this.nextFocusNode,
+    this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       focusNode: focusNode,
       textInputAction:
           nextFocusNode != null ? TextInputAction.next : TextInputAction.done,
-      onSubmitted: (value) {
+      onFieldSubmitted: (value) {
         if (nextFocusNode != null) {
           FocusScope.of(context).requestFocus(nextFocusNode);
         }
       },
+      validator: validator,
       cursorColor: ConfigProvider.mainColor,
       style: TextStyleTemplates.defaultTextStyle(
         ConfigProvider.mainTextColor,
@@ -48,6 +52,23 @@ class DefaultTextField extends StatelessWidget {
             width: 2.0,
           ),
           borderRadius: BorderRadius.circular(5),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: Colors.red,
+            width: 1.0,
+          ),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: Colors.red,
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        errorStyle: TextStyleTemplates.smallTextStyle(
+          Colors.red,
         ),
       ),
     );

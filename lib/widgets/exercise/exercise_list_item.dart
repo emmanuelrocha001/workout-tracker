@@ -42,7 +42,10 @@ class ExerciseListItem extends StatelessWidget {
         onTap: () => onSelect != null
             ? onSelect!(data.id)
             : showDetails != null
-                ? showDetails!(exercise: data, inEditMode: false)
+                ? showDetails!(
+                    exercise: data,
+                    inEditMode: false,
+                  )
                 : null,
         leading: onSelect != null
             ? Radio(
@@ -111,7 +114,10 @@ class ExerciseListItem extends StatelessWidget {
                       color: ConfigProvider.mainColor,
                     ),
                     onPressed: () {
-                      showDetails!(exercise: data, inEditMode: true);
+                      showDetails!(
+                        exercise: data,
+                        inEditMode: true,
+                      );
                     },
                   )
                 : PillContainer(

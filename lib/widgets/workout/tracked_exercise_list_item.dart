@@ -11,11 +11,14 @@ class TrackedExerciseListItem extends StatelessWidget {
   final TrackedExerciseDto trackedExercise;
   final bool showAsSimplified;
   final Function(int) onReorder;
-  const TrackedExerciseListItem(
-      {super.key,
-      required this.trackedExercise,
-      required this.onReorder,
-      this.showAsSimplified = false});
+  final bool isMetricSystemSelected;
+  const TrackedExerciseListItem({
+    super.key,
+    required this.trackedExercise,
+    required this.isMetricSystemSelected,
+    required this.showAsSimplified,
+    required this.onReorder,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +49,8 @@ class TrackedExerciseListItem extends StatelessWidget {
           if (!showAsSimplified)
             TrackedExerciseListItemBody(
               trackedExerciseId: trackedExercise.id,
+              isMetricSystemSelected: isMetricSystemSelected,
+              exerciseDimensions: trackedExercise.exercise.dimensions,
               sets: trackedExercise.sets.map((x) => SetDto.getCopy(x)).toList(),
             )
         ],

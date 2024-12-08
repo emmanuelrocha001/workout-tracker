@@ -65,44 +65,109 @@ class WorkoutHistoryListItem extends StatelessWidget {
               ),
             ),
           ),
-          RowItem(
-            isCompact: true,
-            alignment: Alignment.centerLeft,
-            minWidth: 45.0,
-            maxWidth: 45.0,
-            child: Text(
-              '${trackedExercise.sets.last.weight}',
-              style: TextStyleTemplates.defaultTextStyle(
-                ConfigProvider.mainTextColor,
+          if (trackedExercise.exercise.dimensions?.isWeightEnabled ?? true)
+            RowItem(
+              isCompact: true,
+              alignment: Alignment.centerLeft,
+              minWidth: 50.0,
+              maxWidth: 50.0,
+              child: Text(
+                '${trackedExercise.sets.last.weight}',
+                style: TextStyleTemplates.defaultTextStyle(
+                  ConfigProvider.mainTextColor,
+                ),
               ),
             ),
-          ),
-          RowItem(
-            isCompact: true,
-            alignment: Alignment.centerLeft,
-            minWidth: 35.0,
-            maxWidth: 35.0,
-            child: Text(
-              '${isMetricSystemSelected ? "kg" : "lb"} x ',
-              style: TextStyleTemplates.defaultTextStyle(
-                ConfigProvider.mainTextColor,
+          if (trackedExercise.exercise.dimensions?.isWeightEnabled ?? true)
+            RowItem(
+              isCompact: true,
+              alignment: Alignment.centerLeft,
+              minWidth: 25.0,
+              maxWidth: 25.0,
+              child: Text(
+                isMetricSystemSelected ? "kg" : "lb",
+                style: TextStyleTemplates.defaultBoldTextStyle(
+                  ConfigProvider.mainTextColor,
+                ),
               ),
             ),
-          ),
-          RowItem(
-            isCompact: true,
-            minWidth: 45.0,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              '${trackedExercise.sets.last.reps}',
-              style: TextStyleTemplates.defaultTextStyle(
-                ConfigProvider.mainTextColor,
+          if ((trackedExercise.exercise.dimensions?.isRepEnabled ?? true) &&
+              !(trackedExercise.exercise.dimensions?.isWeightEnabled ?? true))
+            const SizedBox(width: 75.0),
+          if (trackedExercise.exercise.dimensions?.isRepEnabled ?? true)
+            RowItem(
+              isCompact: true,
+              minWidth: 60.0,
+              maxWidth: 60.0,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'x ${trackedExercise.sets.last.reps}',
+                style: TextStyleTemplates.defaultTextStyle(
+                  ConfigProvider.mainTextColor,
+                ),
               ),
             ),
-          ),
+          if ((trackedExercise.exercise.dimensions?.isDistanceEnabled ??
+                  false) ||
+              (trackedExercise.exercise.dimensions?.isTimeEnabled ?? false))
+            Row(
+              children: [
+                RowItem(
+                  isCompact: true,
+                  alignment: Alignment.centerLeft,
+                  minWidth: 50.0,
+                  maxWidth: 50.0,
+                  child:
+                      (trackedExercise.exercise.dimensions?.isDistanceEnabled ??
+                              false)
+                          ? Text(
+                              '${trackedExercise.sets.last.distance}',
+                              style: TextStyleTemplates.defaultTextStyle(
+                                ConfigProvider.mainTextColor,
+                              ),
+                            )
+                          : const SizedBox(),
+                ),
+                (trackedExercise.exercise.dimensions?.isDistanceEnabled ??
+                        false)
+                    ? RowItem(
+                        isCompact: true,
+                        alignment: Alignment.centerLeft,
+                        minWidth: 25.0,
+                        maxWidth: 25.0,
+                        child: Text(
+                          ' ${isMetricSystemSelected ? "km" : "mi"} ',
+                          style: TextStyleTemplates.defaultBoldTextStyle(
+                            ConfigProvider.mainTextColor,
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
+                (trackedExercise.exercise.dimensions?.isTimeEnabled ?? false)
+                    ? RowItem(
+                        isCompact: true,
+                        alignment: Alignment.centerLeft,
+                        minWidth: 60.0,
+                        maxWidth: 60.0,
+                        child: Text(
+                          '${trackedExercise.sets.last.time}',
+                          style: TextStyleTemplates.defaultTextStyle(
+                            ConfigProvider.mainTextColor,
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
+              ],
+            ),
         ],
       );
     }).toList();
+    // Text(
+    //               '${trackedExercise.sets.last.distance} ${isMetricSystemSelected ? "km" : "mi"} in ${trackedExercise.sets.last.time}',
+    //               style: TextStyleTemplates.defaultTextStyle(
+    //                 ConfigProvider.mainTextColor,
+    //               ),
+    //             ),
   }
 
   Widget _simplifiedCompletedExerciseListHeader() {
@@ -134,8 +199,8 @@ class WorkoutHistoryListItem extends StatelessWidget {
           isCompact: true,
           alignment: Alignment.centerLeft,
           hasCompactPadding: true,
-          minWidth: 125.0,
-          maxWidth: 125.0,
+          minWidth: 135.0,
+          maxWidth: 135.0,
           child: Text(
             'Last Set',
             style: TextStyleTemplates.defaultBoldTextStyle(

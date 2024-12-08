@@ -183,20 +183,28 @@ class PreferencesPage extends StatelessWidget {
                           ),
                           fillColor: ConfigProvider.mainColor,
                           children: [
-                            Text(
-                              'Lb',
-                              style: TextStyleTemplates.defaultTextStyle(
-                                configProvider.isMetricSystemSelected
-                                    ? ConfigProvider.mainTextColor
-                                    : ConfigProvider.backgroundColor,
+                            Padding(
+                              padding: const EdgeInsets.all(
+                                  ConfigProvider.defaultSpace / 2),
+                              child: Text(
+                                'Imperial',
+                                style: TextStyleTemplates.defaultTextStyle(
+                                  configProvider.isMetricSystemSelected
+                                      ? ConfigProvider.mainTextColor
+                                      : ConfigProvider.backgroundColor,
+                                ),
                               ),
                             ),
-                            Text(
-                              'Kg',
-                              style: TextStyleTemplates.defaultTextStyle(
-                                configProvider.isMetricSystemSelected
-                                    ? ConfigProvider.backgroundColor
-                                    : ConfigProvider.mainTextColor,
+                            Padding(
+                              padding: const EdgeInsets.all(
+                                  ConfigProvider.defaultSpace / 2),
+                              child: Text(
+                                'Metric',
+                                style: TextStyleTemplates.defaultTextStyle(
+                                  configProvider.isMetricSystemSelected
+                                      ? ConfigProvider.backgroundColor
+                                      : ConfigProvider.mainTextColor,
+                                ),
                               ),
                             ),
                           ],

@@ -122,7 +122,8 @@ class ConfigProvider extends ChangeNotifier {
 
   // SIZING -------------------------->
   static const maxContentWidth = 600.0;
-  static const maxButtonSize = 200.0;
+  static const maxButtonWidth = 300.0;
+  static const defaultButtonHeight = 40.0;
   static const double logoZize = 100.0;
 
   // FONT SIZE -------------------------->

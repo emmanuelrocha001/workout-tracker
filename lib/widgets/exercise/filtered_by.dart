@@ -26,6 +26,26 @@ class FilteredBy extends StatelessWidget {
     return false;
   }
 
+  Iterable<Widget> _getFilters() {
+    return filters.map(
+      (filter) => Column(
+        children: [
+          PillContainer(
+            child: Text(
+              filter.toUpperCase(),
+              style: TextStyleTemplates.smallBoldTextStyle(
+                ConfigProvider.mainTextColor,
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: ConfigProvider.defaultSpace,
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -42,25 +62,26 @@ class FilteredBy extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              PillContainer(
-                child: Text(
-                  filters[0].toUpperCase(),
-                  style: TextStyleTemplates.smallBoldTextStyle(
-                    ConfigProvider.mainTextColor,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                width: ConfigProvider.defaultSpace,
-              ),
-              PillContainer(
-                child: Text(
-                  filters[1].toUpperCase(),
-                  style: TextStyleTemplates.smallBoldTextStyle(
-                    ConfigProvider.mainTextColor,
-                  ),
-                ),
-              ),
+              // PillContainer(
+              //   child: Text(
+              //     filters[0].toUpperCase(),
+              //     style: TextStyleTemplates.smallBoldTextStyle(
+              //       ConfigProvider.mainTextColor,
+              //     ),
+              //   ),
+              // ),
+              // const SizedBox(
+              //   width: ConfigProvider.defaultSpace,
+              // ),
+              // PillContainer(
+              //   child: Text(
+              //     filters[1].toUpperCase(),
+              //     style: TextStyleTemplates.smallBoldTextStyle(
+              //       ConfigProvider.mainTextColor,
+              //     ),
+              //   ),
+              // ),
+              ..._getFilters(),
               if (hasAppliedFilter())
                 TextButton(
                   onPressed: onClearFilters,

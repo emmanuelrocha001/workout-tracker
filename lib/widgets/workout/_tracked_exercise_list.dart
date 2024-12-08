@@ -126,6 +126,7 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
 
   @override
   Widget build(BuildContext context) {
+    var configProvider = Provider.of<ConfigProvider>(context, listen: false);
     var workoutProvider = Provider.of<WorkoutProvider>(
       context,
     );
@@ -178,6 +179,7 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                 onReorder(index, index + increment);
               },
               trackedExercise: trackedExercises[index],
+              isMetricSystemSelected: configProvider.isMetricSystemSelected,
               showAsSimplified: onReorderInProgress,
             ),
         ],

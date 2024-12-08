@@ -28,6 +28,8 @@ class TrackedExerciseDto {
           .map((set) => SetDto(
                 reps: set['reps'],
                 weight: set['weight'],
+                distance: set['distance'],
+                time: set['time'],
                 restTime: set['restTime'],
                 isLogged: set['isLogged'],
               ))
@@ -56,6 +58,10 @@ class SetDto implements ISetDto {
   int? reps;
   @override
   double? weight;
+  @override
+  double? distance;
+  @override
+  String? time;
   int? restTime;
   bool isLogged;
   bool restTimerShown;
@@ -64,6 +70,8 @@ class SetDto implements ISetDto {
   SetDto({
     this.reps,
     this.weight,
+    this.distance,
+    this.time,
     this.restTime,
     this.isLogged = false,
     this.restTimerShown = false,
@@ -73,10 +81,17 @@ class SetDto implements ISetDto {
     return SetDto(
       reps: set.reps,
       weight: set.weight,
+      distance: set.distance,
+      time: set.time,
       restTime: set.restTime,
       isLogged: set.isLogged,
       restTimerShown: set.restTimerShown,
     );
+  }
+
+  @override
+  String toString() {
+    return 'SetDto{reps: $reps, weight: $weight, distance: $distance, time: $time, restTime: $restTime, isLogged: $isLogged, restTimerShown: $restTimerShown}';
   }
 
   factory SetDto.fromJson(Map<String, dynamic> json) {
@@ -85,6 +100,8 @@ class SetDto implements ISetDto {
     return SetDto(
       reps: json['reps'],
       weight: json['weight'],
+      distance: json['distance'],
+      time: json['time'],
       restTime: json['restTime'],
       isLogged: json['isLogged'],
       restTimerShown: json['restTimerShown'],
@@ -95,21 +112,20 @@ class SetDto implements ISetDto {
     return {
       'reps': reps,
       'weight': weight,
+      'distance': distance,
+      'time': time,
       'restTime': restTime,
       'isLogged': isLogged,
       'restTimerShown': restTimerShown,
     };
-  }
-
-  @override
-  String toString() {
-    return '\nSetDto{\nreps: $reps, \nweight: $weight, \nrestTime: $restTime, \nisLogged: $isLogged} ';
   }
 }
 
 abstract class ISetDto {
   int? get reps;
   double? get weight;
+  double? get distance;
+  String? get time;
 }
 
 class SetDtoSimplified implements ISetDto {
@@ -117,16 +133,24 @@ class SetDtoSimplified implements ISetDto {
   final int reps;
   @override
   final double weight;
+  @override
+  final double distance;
+  @override
+  final String time;
 
   SetDtoSimplified({
     required this.reps,
     required this.weight,
+    this.distance = 0.0,
+    this.time = "",
   });
 
   factory SetDtoSimplified.fromJson(Map<String, dynamic> json) {
     return SetDtoSimplified(
       reps: json['reps'],
       weight: json['weight'],
+      distance: json['distance'],
+      time: json['time'],
     );
   }
 
@@ -134,6 +158,8 @@ class SetDtoSimplified implements ISetDto {
     return SetDtoSimplified(
       reps: set.reps ?? 0,
       weight: set.weight ?? 0.0,
+      distance: set.distance ?? 0.0,
+      time: set.time ?? "",
     );
   }
 
@@ -141,6 +167,8 @@ class SetDtoSimplified implements ISetDto {
     return {
       'reps': reps,
       'weight': weight,
+      'distance': distance,
+      'time': time,
     };
   }
 }

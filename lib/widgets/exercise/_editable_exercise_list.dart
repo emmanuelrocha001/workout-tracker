@@ -13,7 +13,11 @@ import './exercise_search_bar.dart';
 import '_exercise_details.dart';
 
 class EditableExerciseList extends StatefulWidget {
-  const EditableExerciseList({super.key});
+  final ScrollController scrollController;
+  const EditableExerciseList({
+    super.key,
+    required this.scrollController,
+  });
 
   @override
   State<EditableExerciseList> createState() => _EditableExerciseListState();
@@ -23,15 +27,13 @@ class _EditableExerciseListState extends State<EditableExerciseList> {
   void _showDetails({
     required ExerciseDto exercise,
     required bool inEditMode,
-  }) {
+  }) async {
     Helper.showPopUp(
       title: exercise.name,
       context: context,
-      content: SingleChildScrollView(
-        child: ExerciseDetails(
-          exercise: exercise,
-          inEditMode: inEditMode,
-        ),
+      content: ExerciseDetails(
+        exercise: exercise,
+        inEditMode: inEditMode,
       ),
     );
   }
@@ -49,6 +51,7 @@ class _EditableExerciseListState extends State<EditableExerciseList> {
     var exerciseProvider = Provider.of<ExerciseProvider>(context);
     var exercises = exerciseProvider.exercises;
     return CustomScrollView(
+      controller: widget.scrollController,
       slivers: <Widget>[
         ExerciseSearchBar(
           onFilter: onFilter,
