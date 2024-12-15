@@ -1,10 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/exercise_provider.dart';
-
+import '../../providers/config_provider.dart';
 import "../helper.dart";
 import '../../models/exercise_dto.dart';
+import '../../models/create_update_exercise_dto.dart';
+import './create_update_exercise_form.dart';
 import '../exercise/_exercise_filters_grid.dart';
 import '../../class_extensions.dart';
 import './exercise_list_item.dart';
@@ -24,18 +28,80 @@ class EditableExerciseList extends StatefulWidget {
 }
 
 class _EditableExerciseListState extends State<EditableExerciseList> {
-  void _showDetails({
+  void showDetails({
     required ExerciseDto exercise,
-    required bool inEditMode,
   }) async {
     Helper.showPopUp(
       title: exercise.name,
       context: context,
       content: ExerciseDetails(
         exercise: exercise,
-        inEditMode: inEditMode,
       ),
     );
+  }
+
+  void updateExercise({
+    required ExerciseDto exercise,
+  }) async {
+    var input = await Helper.showPopUp(
+      title: 'Edit ${exercise.name}',
+      context: context,
+      content: SingleChildScrollView(
+        child: CreateUpdateExerciseForm(
+          exercise: exercise,
+        ),
+      ),
+    );
+    if (input != null && input is CreateUpdateExerciseDto && context.mounted) {
+      var exerciseProvider = Provider.of<ExerciseProvider>(
+        // ignore: use_build_context_synchronously
+        context,
+        listen: false,
+      );
+      var res = await exerciseProvider.updateUserDefinedExercise(
+          exercise: exercise, input: input);
+      if (context.mounted) {
+        Helper.showMessageBar(
+            // ignore: use_build_context_synchronously
+            context: context,
+            message: '${res.message}',
+            isError: !res.success);
+      }
+    }
+  }
+
+  void deleteExercise({
+    required ExerciseDto exercise,
+  }) async {
+    var confirm = await Helper.showConfirmationDialogForm(
+        context: context,
+        message:
+            'Are you sure you want to delete "${exercise.name}"? This action cannot be undone.',
+        confimationButtonLabel: "CONFIRM",
+        confirmationButtonColor: Colors.red,
+        cancelButtonColor: ConfigProvider.slightContrastBackgroundColor,
+        cancelButtonLabel: 'CANCEL');
+
+    if (!(confirm ?? false)) {
+      return;
+    }
+
+    var exerciseProvider = Provider.of<ExerciseProvider>(
+      // ignore: use_build_context_synchronously
+      context,
+      listen: false,
+    );
+    var res = await exerciseProvider.deleteUserDefinedExercise(
+      exerciseId: exercise.id,
+    );
+    if (context.mounted) {
+      Helper.showMessageBar(
+        // ignore: use_build_context_synchronously
+        context: context,
+        message: '${res.message}',
+        isError: !res.success,
+      );
+    }
   }
 
   void onFilter() {
@@ -61,7 +127,9 @@ class _EditableExerciseListState extends State<EditableExerciseList> {
             (BuildContext context, int index) {
               return ExerciseListItem(
                 data: exercises[index],
-                showDetails: _showDetails,
+                showDetails: showDetails,
+                updateExercise: updateExercise,
+                deleteExercise: deleteExercise,
               );
             },
             childCount: exercises.length,

@@ -31,12 +31,15 @@ class WorkoutTracker extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ConfigProvider>(
+          lazy: false,
           create: (_) => ConfigProvider(),
         ),
         ChangeNotifierProvider<ExerciseProvider>(
+          lazy: false,
           create: (_) => ExerciseProvider(),
         ),
         ChangeNotifierProvider<WorkoutProvider>(
+          lazy: false,
           create: (_) => WorkoutProvider(),
         )
       ],

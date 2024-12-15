@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -17,14 +19,21 @@ class ExerciseListItem extends StatelessWidget {
   final void Function(String?)? onSelect;
   final void Function({
     required ExerciseDto exercise,
-    required bool inEditMode,
   })? showDetails;
+  final void Function({
+    required ExerciseDto exercise,
+  })? updateExercise;
+  final void Function({
+    required ExerciseDto exercise,
+  })? deleteExercise;
   const ExerciseListItem({
     super.key,
     required this.data,
     this.selectedId,
     this.onSelect,
     this.showDetails,
+    this.updateExercise,
+    this.deleteExercise,
   });
 
   @override
@@ -44,7 +53,6 @@ class ExerciseListItem extends StatelessWidget {
             : showDetails != null
                 ? showDetails!(
                     exercise: data,
-                    inEditMode: false,
                   )
                 : null,
         leading: onSelect != null
@@ -106,19 +114,69 @@ class ExerciseListItem extends StatelessWidget {
                   );
                 },
               )
-            : data.isCustom && showDetails != null // temp for testing
-                ? IconButton(
-                    icon: const Icon(
-                      Icons.edit,
-                      size: ConfigProvider.smallIconSize,
-                      color: ConfigProvider.mainColor,
+            : data.isCustom &&
+                    updateExercise != null &&
+                    deleteExercise != null // temp for testing
+                // ? IconButton(
+                //     icon: const Icon(
+                //       Icons.more_horiz_rounded,
+                //       size: ConfigProvider.smallIconSize,
+                //       color: ConfigProvider.mainColor,
+                //     ),
+                //     onPressed: () {
+                //       updateExercise!(exercise: data);
+                //     },
+                //   )
+                ? MenuAnchor(
+                    style: const MenuStyle(
+                      backgroundColor: WidgetStatePropertyAll<Color>(
+                          ConfigProvider.backgroundColor),
+                      // elevation: WidgetStatePropertyAll<double>(0.0),
                     ),
-                    onPressed: () {
-                      showDetails!(
-                        exercise: data,
-                        inEditMode: true,
+                    builder: (BuildContext context, MenuController controller,
+                        Widget? child) {
+                      return IconButton(
+                        icon: const Icon(
+                          Icons.more_horiz_rounded,
+                          color: ConfigProvider.mainColor,
+                          size: ConfigProvider.defaultIconSize,
+                        ),
+                        // style: _theme.iconButtonTheme.style,
+                        onPressed: () {
+                          if (controller.isOpen) {
+                            controller.close();
+                          } else {
+                            controller.open();
+                          }
+                        },
                       );
                     },
+                    menuChildren: [
+                      MenuItemButton(
+                        child: const Icon(
+                          Icons.edit_rounded,
+                          color: ConfigProvider.mainColor,
+                          size: ConfigProvider.defaultIconSize,
+                        ),
+                        onPressed: () async {
+                          updateExercise!(
+                            exercise: data,
+                          );
+                        },
+                      ),
+                      MenuItemButton(
+                        child: const Icon(
+                          Icons.delete_outline_rounded,
+                          color: Colors.red,
+                          size: ConfigProvider.defaultIconSize,
+                        ),
+                        onPressed: () {
+                          deleteExercise!(
+                            exercise: data,
+                          );
+                        },
+                      ),
+                    ],
                   )
                 : PillContainer(
                     color: ConfigProvider.slightContrastBackgroundColor,

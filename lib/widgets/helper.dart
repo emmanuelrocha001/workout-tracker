@@ -169,11 +169,12 @@ class Helper {
     if (!context.mounted) return;
 
     Flushbar(
+      maxWidth: getMaxContentWidth(context),
       title: title,
       messageText: Text(
         message,
         style: TextStyleTemplates.defaultTextStyle(
-          !isError ? ConfigProvider.mainTextColor : Colors.red,
+          ConfigProvider.backgroundColor,
         ),
       ),
       isDismissible: true,
@@ -181,7 +182,11 @@ class Helper {
       duration: const Duration(seconds: 2),
       animationDuration: const Duration(milliseconds: 500),
       flushbarPosition: FlushbarPosition.TOP,
-      backgroundColor: ConfigProvider.backgroundColor,
+      backgroundColor: (isError ? Colors.red : Colors.green),
+      // borderColor: isError ? Colors.red : Colors.green,
+      borderRadius: BorderRadius.circular(ConfigProvider.defaultSpace),
+      // borderWidth: 2.0,
+      margin: const EdgeInsets.all(ConfigProvider.defaultSpace),
     ).show(context);
   }
 

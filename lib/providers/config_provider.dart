@@ -176,4 +176,7 @@ class ConfigProvider extends ChangeNotifier {
 
   static const preferencesPageToolTip =
       'Customize your settings to tailor the app experience to your preferences and needs.';
+
+  static const deleteUserDefinedExerciseText =
+      'Are you sure you want to delete this exercise? This action cannot be undone.';
 }

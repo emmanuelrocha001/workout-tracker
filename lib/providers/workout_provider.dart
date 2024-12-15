@@ -15,7 +15,7 @@ class WorkoutProvider extends ChangeNotifier {
 
   WorkoutDto? _inProgressWorkout;
   List<WorkoutDto> _workoutHistory = [];
-  Map<String, List<List<SetDtoSimplified>>> _exerciseSetsHistory = {};
+  final Map<String, List<List<SetDtoSimplified>>> _exerciseSetsHistory = {};
   SharedPreferencesWithCache? _cache;
   bool _showLatestWorkoutHistoryEntryAsFinished = false;
 

@@ -115,8 +115,8 @@ class WorkoutHistoryListItem extends StatelessWidget {
                 RowItem(
                   isCompact: true,
                   alignment: Alignment.centerLeft,
-                  minWidth: 50.0,
-                  maxWidth: 50.0,
+                  minWidth: 40.0,
+                  maxWidth: 40.0,
                   child:
                       (trackedExercise.exercise.dimensions?.isDistanceEnabled ??
                               false)
@@ -147,8 +147,8 @@ class WorkoutHistoryListItem extends StatelessWidget {
                     ? RowItem(
                         isCompact: true,
                         alignment: Alignment.centerLeft,
-                        minWidth: 60.0,
-                        maxWidth: 60.0,
+                        minWidth: 70.0,
+                        maxWidth: 70.0,
                         child: Text(
                           '${trackedExercise.sets.last.time}',
                           style: TextStyleTemplates.defaultTextStyle(
@@ -335,7 +335,7 @@ class WorkoutHistoryListItem extends StatelessWidget {
                     return IconButton(
                       icon: const Icon(
                         Icons.more_horiz_rounded,
-                        color: ConfigProvider.mainTextColor,
+                        color: ConfigProvider.mainColor,
                         size: ConfigProvider.defaultIconSize,
                       ),
                       // style: _theme.iconButtonTheme.style,

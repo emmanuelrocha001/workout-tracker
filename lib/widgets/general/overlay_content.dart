@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,16 +15,17 @@ class OverlayContent extends StatelessWidget {
   final bool showActionButton;
   final String? actionButtonLabel;
   final Function()? onActionButtonPressed;
+  final String? blockContentMessage;
 
-  const OverlayContent({
-    super.key,
-    required this.content,
-    required this.overLayContent,
-    this.actionButtonLabel,
-    this.showActionButton = false,
-    this.onActionButtonPressed,
-    this.padding = 60.0,
-  });
+  const OverlayContent(
+      {super.key,
+      required this.content,
+      required this.overLayContent,
+      this.actionButtonLabel,
+      this.showActionButton = false,
+      this.onActionButtonPressed,
+      this.padding = 60.0,
+      this.blockContentMessage});
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +84,23 @@ class OverlayContent extends StatelessWidget {
                           style: TextStyleTemplates.smallBoldTextStyle(
                             Utility.getTextColorBasedOnBackground(),
                           ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            if (blockContentMessage != null)
+              Positioned.fill(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: .1, sigmaY: .1),
+                  child: Container(
+                    color: ConfigProvider.backgroundColor.withOpacity(0.5),
+                    child: Center(
+                      child: Text(
+                        blockContentMessage!,
+                        style: TextStyleTemplates.mediumTextStyle(
+                          ConfigProvider.mainTextColor,
                         ),
                       ),
                     ),
