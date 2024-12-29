@@ -39,7 +39,7 @@ class ExerciseListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: ConfigProvider.backgroundColor,
+      color: ConfigProvider.backgroundColorSolid,
       elevation: 0,
       shape: const BorderDirectional(
         bottom: BorderSide(
@@ -92,7 +92,7 @@ class ExerciseListItem extends StatelessWidget {
         subtitle: Align(
           alignment: Alignment.centerLeft,
           child: PillContainer(
-            color: ConfigProvider.slightContrastBackgroundColor,
+            color: ConfigProvider.backgroundColor,
             child: Text(
               data.exerciseType.toUpperCase(),
               style: TextStyleTemplates.defaultTextStyle(
@@ -130,7 +130,7 @@ class ExerciseListItem extends StatelessWidget {
                 ? MenuAnchor(
                     style: const MenuStyle(
                       backgroundColor: WidgetStatePropertyAll<Color>(
-                          ConfigProvider.backgroundColor),
+                          ConfigProvider.backgroundColorSolid),
                       // elevation: WidgetStatePropertyAll<double>(0.0),
                     ),
                     builder: (BuildContext context, MenuController controller,
@@ -179,7 +179,7 @@ class ExerciseListItem extends StatelessWidget {
                     ],
                   )
                 : PillContainer(
-                    color: ConfigProvider.slightContrastBackgroundColor,
+                    color: ConfigProvider.backgroundColor,
                     child: Text(
                       'SYSTEM',
                       style: TextStyleTemplates.smallTextStyle(

@@ -96,6 +96,8 @@ class ConfigProvider extends ChangeNotifier {
     _savePreferencesToCache();
   }
 
+  static const developerName = "Emmanuel R.";
+  static const developerLinkdin = "https://www.linkedin.com/in/emmanuel-rocha";
   static const cachePrefix = 'erp_cache_2aa91e4e-24ac-4197-baaf-23ef40a0b918';
   static const decimalRegexPattern = r'^\d{0,4}$|^\d{0,4}\.{1}\d{0,2}$';
   static const digitRegexPattern = r'^\d{0,4}$';
@@ -114,7 +116,7 @@ class ConfigProvider extends ChangeNotifier {
   static const mainTextColorWithOpacityPercent = .75;
   // static const mainColor = Color.fromARGB(255, 255, 62, 62);
   static const mainColor = Color(0xff0F4C75);
-  // static const mainColor = Color(0xff556E53);
+  // static const mainColor = Color.fromARGB(255, 227, 37, 12);
   static const backgroundColorSolid = Colors.white;
   static const backgroundColor = Color.fromARGB(255, 246, 246, 246);
   static const slightContrastBackgroundColor =

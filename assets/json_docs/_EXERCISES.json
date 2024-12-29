@@ -1,13 +1,25 @@
 [
   {
-    "id": 49,
-    "name": "Barbell Flexion Row",
-    "muscleGroupId": 2,
-    "youtubeId": "Lt3d1UKq7RQ",
+    "id": 157,
+    "name": "Barbell Squat (Close Stance, Feet Forward)",
+    "muscleGroupId": 6,
+    "youtubeId": "ppluAD4MHK8",
     "exerciseType": "barbell",
     "userId": null,
     "createdAt": "2022-11-21T23:28:14.769Z",
-    "updatedAt": "2023-06-02T18:54:45.288Z",
+    "updatedAt": "2022-11-21T23:28:15.342Z",
+    "deletedAt": null,
+    "notes": []
+  },
+  {
+    "id": 220,
+    "name": "Hanging Knee Raise",
+    "muscleGroupId": 12,
+    "youtubeId": "RD_A-Z15ER4",
+    "exerciseType": "bodyweight-only",
+    "userId": null,
+    "createdAt": "2022-11-21T23:28:14.769Z",
+    "updatedAt": "2022-11-21T23:28:15.342Z",
     "deletedAt": null,
     "notes": []
   },
@@ -96,6 +108,18 @@
     "notes": []
   },
   {
+    "id": 173,
+    "name": "Walking Lunges (Glute-Focused, Barbell)",
+    "muscleGroupId": 7,
+    "youtubeId": "_meXEWq5MOQ",
+    "exerciseType": "barbell",
+    "userId": null,
+    "createdAt": "2022-11-21T23:28:14.769Z",
+    "updatedAt": "2023-01-26T22:06:23.109Z",
+    "deletedAt": null,
+    "notes": []
+  },
+  {
     "id": 214,
     "name": "Barbell Standing Wrist Curl",
     "muscleGroupId": 11,
@@ -144,14 +168,14 @@
     "notes": []
   },
   {
-    "id": 173,
-    "name": "Walking Lunges (Glute-Focused, Barbell)",
-    "muscleGroupId": 7,
-    "youtubeId": "_meXEWq5MOQ",
+    "id": 49,
+    "name": "Barbell Flexion Row",
+    "muscleGroupId": 2,
+    "youtubeId": "Lt3d1UKq7RQ",
     "exerciseType": "barbell",
     "userId": null,
     "createdAt": "2022-11-21T23:28:14.769Z",
-    "updatedAt": "2023-01-26T22:06:23.109Z",
+    "updatedAt": "2023-06-02T18:54:45.288Z",
     "deletedAt": null,
     "notes": []
   },
@@ -216,18 +240,6 @@
     "notes": []
   },
   {
-    "id": 2,
-    "name": "Dumbbell Press (Flat)",
-    "muscleGroupId": 1,
-    "youtubeId": "YQ2s_Y7g5Qk",
-    "exerciseType": "dumbbell",
-    "userId": null,
-    "createdAt": "2022-11-21T23:28:14.769Z",
-    "updatedAt": "2023-02-17T00:34:33.947Z",
-    "deletedAt": null,
-    "notes": []
-  },
-  {
     "id": 1,
     "name": "Pushup (Deficit)",
     "muscleGroupId": 1,
@@ -236,6 +248,18 @@
     "userId": null,
     "createdAt": "2022-11-21T23:28:14.769Z",
     "updatedAt": "2022-11-21T23:28:15.342Z",
+    "deletedAt": null,
+    "notes": []
+  },
+  {
+    "id": 2,
+    "name": "Dumbbell Press (Flat)",
+    "muscleGroupId": 1,
+    "youtubeId": "YQ2s_Y7g5Qk",
+    "exerciseType": "dumbbell",
+    "userId": null,
+    "createdAt": "2022-11-21T23:28:14.769Z",
+    "updatedAt": "2023-02-17T00:34:33.947Z",
     "deletedAt": null,
     "notes": []
   },
@@ -2171,18 +2195,6 @@
     "notes": []
   },
   {
-    "id": 157,
-    "name": "Barbell Squat (Close Stance, Feet Forward)",
-    "muscleGroupId": 6,
-    "youtubeId": "ppluAD4MHK8",
-    "exerciseType": "barbell",
-    "userId": null,
-    "createdAt": "2022-11-21T23:28:14.769Z",
-    "updatedAt": "2022-11-21T23:28:15.342Z",
-    "deletedAt": null,
-    "notes": []
-  },
-  {
     "id": 158,
     "name": "Smith Machine Squat (Feet Forward)",
     "muscleGroupId": 6,
@@ -2722,20 +2734,8 @@
     "notes": []
   },
   {
-    "id": 220,
-    "name": "Hanging Knee Raise",
-    "muscleGroupId": 12,
-    "youtubeId": "RD_A-Z15ER4",
-    "exerciseType": "bodyweight-only",
-    "userId": null,
-    "createdAt": "2022-11-21T23:28:14.769Z",
-    "updatedAt": "2022-11-21T23:28:15.342Z",
-    "deletedAt": null,
-    "notes": []
-  },
-  {
-    "id": 233,
-    "name": "Pullup (Weighted, Parallel Grip)",
+    "id": 232,
+    "name": "Pullup (Weighted, Normal Grip)",
     "muscleGroupId": 2,
     "youtubeId": null,
     "exerciseType": "bodyweight-loadable",
@@ -2866,8 +2866,8 @@
     "notes": []
   },
   {
-    "id": 232,
-    "name": "Pullup (Weighted, Normal Grip)",
+    "id": 233,
+    "name": "Pullup (Weighted, Parallel Grip)",
     "muscleGroupId": 2,
     "youtubeId": null,
     "exerciseType": "bodyweight-loadable",
@@ -2877,6 +2877,7 @@
     "deletedAt": null,
     "notes": []
   },
+
   {
     "id": 500,
     "name": "Running (Outdoor)",
@@ -2962,6 +2963,63 @@
     "userId": null,
     "createdAt": "2024-11-28T22:06:23.109Z",
     "updatedAt": "2024-11-28T22:06:23.109Z",
+    "deletedAt": null,
+    "notes": []
+  },
+  {
+    "id": 508,
+    "name": "Yoga",
+    "muscleGroupId": 15,
+    "exerciseType": "timed",
+    "userId": null,
+    "createdAt": "2024-12-28T22:06:23.109Z",
+    "updatedAt": "2024-12-28T22:06:23.109Z",
+    "deletedAt": null,
+    "notes": []
+  },
+  {
+    "id": 509,
+    "name": "Stretching",
+    "muscleGroupId": 15,
+    "exerciseType": "timed",
+    "userId": null,
+    "createdAt": "2024-12-28T22:06:23.109Z",
+    "updatedAt": "2024-12-28T22:06:23.109Z",
+    "deletedAt": null,
+    "notes": []
+  },
+  {
+    "id": 510,
+    "name": "Bouldering",
+    "muscleGroupId": 15,
+    "exerciseType": "timed",
+    "userId": null,
+    "createdAt": "2024-12-28T22:06:23.109Z",
+    "updatedAt": "2024-12-28T22:06:23.109Z",
+    "deletedAt": null,
+    "notes": []
+  },
+  {
+    "id": 400804,
+    "name": "Lying Down Curl",
+    "muscleGroupId": 4,
+    "youtubeId": null,
+    "exerciseType": "cable",
+    "userId": null,
+    "createdAt": "2024-12-17T00:45:11.097Z",
+    "updatedAt": "2024-12-17T00:45:11.097Z",
+    "deletedAt": null,
+    "notes": []
+  },
+  {
+    "id": 400803,
+    "name": "Lying Biceps Dumbbell Curl",
+    "muscleGroupId": 4,
+    "youtubeId": null,
+    "exerciseType": "dumbbell",
+    "userId": null,
+    "createdAt": "2024-12-17T00:45:11.097Z",
+    "updatedAt": "2024-12-17T00:45:11.097Z",
     "deletedAt": null,
     "notes": []
   }

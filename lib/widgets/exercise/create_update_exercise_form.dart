@@ -170,7 +170,7 @@ class _CreateUpdateExerciseFormState extends State<CreateUpdateExerciseForm> {
                           focusNode: _exerciseTypeFocusNode,
                         )
                       : PillContainer(
-                          color: ConfigProvider.slightContrastBackgroundColor,
+                          color: ConfigProvider.backgroundColor,
                           child: Text(
                             '${widget.exercise?.exerciseType}'.toUpperCase(),
                             style: TextStyleTemplates.defaultTextStyle(

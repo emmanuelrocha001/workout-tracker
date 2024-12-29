@@ -18,49 +18,52 @@ class StartNewWorkout extends StatelessWidget {
     var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
     var configProvider = Provider.of<ConfigProvider>(context, listen: false);
     return OverlayContent(
-      overLayContent: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
-            child: Text(
-              "Workout",
-              style: TextStyleTemplates.mediumBoldTextStyle(
-                  ConfigProvider.mainTextColor),
-            ),
-          ),
-          // const Padding(
-          //   padding: EdgeInsets.only(right: ConfigProvider.defaultSpace),
-          //   child: DefaultTooltip(
-          //     message: ConfigProvider.workoutPageToolTip,
-          //   ),
-          // ),
-          const Spacer(),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
+      overLayContent: Container(
+        color: ConfigProvider.backgroundColorSolid,
+        child: Row(
+          children: [
+            Padding(
               padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
-              child: TextButton(
-                onPressed: () {
-                  workoutProvider.startWorkout(
-                    showRestTimerAfterEachSet:
-                        configProvider.showRestTimerAfterEachSet,
-                    autoPopulateWorkoutFromSetsHistory:
-                        configProvider.autoPopulateWorkoutFromSetsHistory,
-                  );
-                },
-                style: TextButton.styleFrom(
-                  backgroundColor: ConfigProvider.mainColor,
-                ),
-                child: Text(
-                  "START WORKOUT",
-                  style: TextStyleTemplates.smallBoldTextStyle(
-                    Utility.getTextColorBasedOnBackground(),
+              child: Text(
+                "Workout",
+                style: TextStyleTemplates.mediumBoldTextStyle(
+                    ConfigProvider.mainTextColor),
+              ),
+            ),
+            // const Padding(
+            //   padding: EdgeInsets.only(right: ConfigProvider.defaultSpace),
+            //   child: DefaultTooltip(
+            //     message: ConfigProvider.workoutPageToolTip,
+            //   ),
+            // ),
+            const Spacer(),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
+                child: TextButton(
+                  onPressed: () {
+                    workoutProvider.startWorkout(
+                      showRestTimerAfterEachSet:
+                          configProvider.showRestTimerAfterEachSet,
+                      autoPopulateWorkoutFromSetsHistory:
+                          configProvider.autoPopulateWorkoutFromSetsHistory,
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: ConfigProvider.mainColor,
+                  ),
+                  child: Text(
+                    "START WORKOUT",
+                    style: TextStyleTemplates.smallBoldTextStyle(
+                      Utility.getTextColorBasedOnBackground(),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       content: Center(
         child: Text(

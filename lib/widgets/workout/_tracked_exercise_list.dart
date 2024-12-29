@@ -170,6 +170,8 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
 
           onReorder(oldIndex, newIndex);
         },
+        padding: const EdgeInsets.symmetric(
+            vertical: ConfigProvider.defaultSpace / 2),
         children: <Widget>[
           for (int index = 0; index < trackedExercises.length; index += 1)
             TrackedExerciseListItem(
@@ -185,162 +187,165 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
         ],
       ),
       padding: 115.0,
-      overLayContent: Column(
-        children: [
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
-                child: Text(
-                  title,
-                  style: TextStyleTemplates.mediumBoldTextStyle(
-                      ConfigProvider.mainTextColor),
-                ),
-              ),
-              const Spacer(),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
-                  child: MenuAnchor(
-                    style: const MenuStyle(
-                      backgroundColor: WidgetStatePropertyAll<Color>(
-                          ConfigProvider.backgroundColor),
-                      // elevation: WidgetStatePropertyAll<double>(0.0),
-                    ),
-                    builder: (BuildContext context, MenuController controller,
-                        Widget? child) {
-                      return IconButton(
-                        icon: const Icon(
-                          Icons.more_vert_rounded,
-                          color: ConfigProvider.mainTextColor,
-                          size: ConfigProvider.defaultIconSize,
-                        ),
-                        // style: _theme.iconButtonTheme.style,
-                        onPressed: () {
-                          // TODO add more options
-                          if (controller.isOpen) {
-                            controller.close();
-                          } else {
-                            controller.open();
-                          }
-                          // Provider.of<WorkoutProvider>(context, listen: false)
-                          //     .deleteTrackedExercise(trackedExercise.id);
-                        },
-                      );
-                    },
-                    menuChildren: [
-                      MenuItemButton(
-                        style: const ButtonStyle(
-                          backgroundColor: WidgetStatePropertyAll<Color>(
-                              ConfigProvider.backgroundColor),
-                        ),
-                        onPressed: _adjustWorkoutTimes,
-                        child: Text(
-                          "ADJUST DETAILS",
-                          style: TextStyleTemplates.smallBoldTextStyle(
-                              ConfigProvider.mainColor),
-                        ),
-                      ),
-                      MenuItemButton(
-                        style: const ButtonStyle(
-                          backgroundColor:
-                              WidgetStatePropertyAll<Color>(Colors.red),
-                        ),
-                        onPressed: () async {
-                          var res = await Helper.showConfirmationDialogForm(
-                              context: context,
-                              message: !workoutProvider.updatingLoggedWorkout
-                                  ? ConfigProvider.cancelInProgressWorkoutText
-                                  : ConfigProvider.cancelUpdateWorkoutText,
-                              confimationButtonLabel: "CONFIRM",
-                              confirmationButtonColor: Colors.red,
-                              cancelButtonColor:
-                                  ConfigProvider.slightContrastBackgroundColor,
-                              cancelButtonLabel: 'RESUME');
-
-                          if (res ?? false) {
-                            workoutProvider.cancelInProgressWorkout();
-                          }
-                        },
-                        child: Text(
-                          !workoutProvider.updatingLoggedWorkout
-                              ? "CANCEL WORKOUT"
-                              : "CANCEL UPDATE",
-                          style: TextStyleTemplates.smallBoldTextStyle(
-                              ConfigProvider.backgroundColor),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: ConfigProvider.defaultSpace / 4,
-                    right: ConfigProvider.defaultSpace,
-                    bottom: ConfigProvider.defaultSpace,
-                    top: ConfigProvider.defaultSpace),
-                child: TextButton(
-                  onPressed: onAddExercise,
-                  style: TextButton.styleFrom(
-                    backgroundColor: ConfigProvider.mainColor,
-                  ),
-                  child: Text(
-                    "ADD EXERCISE",
-                    style: TextStyleTemplates.smallBoldTextStyle(
-                      Utility.getTextColorBasedOnBackground(),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          if (workoutProvider.inProgressWorkoutStartTime != null)
-            Stack(
-              alignment: Alignment.center,
+      overLayContent: Container(
+        color: ConfigProvider.backgroundColorSolid,
+        child: Column(
+          children: [
+            Row(
               children: [
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    // color: Colors.purple,
-                    child: elapsedTimeString.isNotEmpty
-                        ? Text(
-                            elapsedTimeString,
-                            style: TextStyleTemplates.mediumBoldTextStyle(
-                                ConfigProvider.mainTextColor),
-                          )
-                        : ElapsedTimeTimer(
-                            startTime:
-                                workoutProvider.inProgressWorkoutStartTime!),
+                Padding(
+                  padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
+                  child: Text(
+                    title,
+                    style: TextStyleTemplates.mediumBoldTextStyle(
+                        ConfigProvider.mainTextColor),
                   ),
                 ),
-                if (!workoutProvider.updatingLoggedWorkout)
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        right: ConfigProvider.defaultSpace,
+                const Spacer(),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
+                    child: MenuAnchor(
+                      style: const MenuStyle(
+                        backgroundColor: WidgetStatePropertyAll<Color>(
+                            ConfigProvider.backgroundColorSolid),
+                        // elevation: WidgetStatePropertyAll<double>(0.0),
                       ),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.timer_outlined,
-                          color: ConfigProvider.mainColor,
-                          size: ConfigProvider.defaultIconSize,
+                      builder: (BuildContext context, MenuController controller,
+                          Widget? child) {
+                        return IconButton(
+                          icon: const Icon(
+                            Icons.more_vert_rounded,
+                            color: ConfigProvider.mainTextColor,
+                            size: ConfigProvider.defaultIconSize,
+                          ),
+                          // style: _theme.iconButtonTheme.style,
+                          onPressed: () {
+                            // TODO add more options
+                            if (controller.isOpen) {
+                              controller.close();
+                            } else {
+                              controller.open();
+                            }
+                            // Provider.of<WorkoutProvider>(context, listen: false)
+                            //     .deleteTrackedExercise(trackedExercise.id);
+                          },
+                        );
+                      },
+                      menuChildren: [
+                        MenuItemButton(
+                          style: const ButtonStyle(
+                            backgroundColor: WidgetStatePropertyAll<Color>(
+                                ConfigProvider.backgroundColorSolid),
+                          ),
+                          onPressed: _adjustWorkoutTimes,
+                          child: Text(
+                            "ADJUST DETAILS",
+                            style: TextStyleTemplates.smallBoldTextStyle(
+                                ConfigProvider.mainColor),
+                          ),
                         ),
-                        onPressed: () {
-                          Helper.showDialogForm(
-                            context: context,
-                            barrierDismissible: false,
-                            content: const Center(child: RestTimer()),
-                          );
-                        },
+                        MenuItemButton(
+                          style: const ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll<Color>(Colors.red),
+                          ),
+                          onPressed: () async {
+                            var res = await Helper.showConfirmationDialogForm(
+                                context: context,
+                                message: !workoutProvider.updatingLoggedWorkout
+                                    ? ConfigProvider.cancelInProgressWorkoutText
+                                    : ConfigProvider.cancelUpdateWorkoutText,
+                                confimationButtonLabel: "CONFIRM",
+                                confirmationButtonColor: Colors.red,
+                                cancelButtonColor: ConfigProvider
+                                    .slightContrastBackgroundColor,
+                                cancelButtonLabel: 'RESUME');
+
+                            if (res ?? false) {
+                              workoutProvider.cancelInProgressWorkout();
+                            }
+                          },
+                          child: Text(
+                            !workoutProvider.updatingLoggedWorkout
+                                ? "CANCEL WORKOUT"
+                                : "CANCEL UPDATE",
+                            style: TextStyleTemplates.smallBoldTextStyle(
+                                ConfigProvider.backgroundColor),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: ConfigProvider.defaultSpace / 4,
+                      right: ConfigProvider.defaultSpace,
+                      bottom: ConfigProvider.defaultSpace,
+                      top: ConfigProvider.defaultSpace),
+                  child: TextButton(
+                    onPressed: onAddExercise,
+                    style: TextButton.styleFrom(
+                      backgroundColor: ConfigProvider.mainColor,
+                    ),
+                    child: Text(
+                      "ADD EXERCISE",
+                      style: TextStyleTemplates.smallBoldTextStyle(
+                        Utility.getTextColorBasedOnBackground(),
                       ),
                     ),
                   ),
+                ),
               ],
             ),
-        ],
+            if (workoutProvider.inProgressWorkoutStartTime != null)
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      // color: Colors.purple,
+                      child: elapsedTimeString.isNotEmpty
+                          ? Text(
+                              elapsedTimeString,
+                              style: TextStyleTemplates.mediumBoldTextStyle(
+                                  ConfigProvider.mainTextColor),
+                            )
+                          : ElapsedTimeTimer(
+                              startTime:
+                                  workoutProvider.inProgressWorkoutStartTime!),
+                    ),
+                  ),
+                  if (!workoutProvider.updatingLoggedWorkout)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          right: ConfigProvider.defaultSpace,
+                        ),
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.timer_outlined,
+                            color: ConfigProvider.mainColor,
+                            size: ConfigProvider.defaultIconSize,
+                          ),
+                          onPressed: () {
+                            Helper.showDialogForm(
+                              context: context,
+                              barrierDismissible: false,
+                              content: const Center(child: RestTimer()),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+          ],
+        ),
       ),
       showActionButton: workoutProvider.isInProgressWorkoutReadyTofinish(),
       actionButtonLabel:

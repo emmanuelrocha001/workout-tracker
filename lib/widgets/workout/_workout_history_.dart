@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
-import 'package:workout_tracker/widgets/general/confetti_default.dart';
-import 'package:workout_tracker/widgets/workout/workout_history_list_item_breakdown.dart';
-import 'package:workout_tracker/widgets/workout/workout_history_list_item_summary.dart';
+import '../general/confetti_default.dart';
+import '../general/default_container.dart';
+import '../workout/workout_history_list_item_breakdown.dart';
+import '../workout/workout_history_list_item_summary.dart';
 import '../../providers/config_provider.dart';
 
 import '../../providers/workout_provider.dart';
@@ -84,28 +85,32 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
     );
     var configProvider = Provider.of<ConfigProvider>(context, listen: false);
     return OverlayContent(
-      overLayContent: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
-            child: Text(
-              "History",
-              style: TextStyleTemplates.mediumBoldTextStyle(
-                  ConfigProvider.mainTextColor),
+      overLayContent: Container(
+        color: ConfigProvider.backgroundColorSolid,
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
+              child: Text(
+                "History",
+                style: TextStyleTemplates.mediumBoldTextStyle(
+                    ConfigProvider.mainTextColor),
+              ),
             ),
-          ),
-          const Padding(
-            padding: EdgeInsets.only(right: ConfigProvider.defaultSpace),
-            child: DefaultTooltip(
-              message: ConfigProvider.workoutHistoryToolTip,
+            const Padding(
+              padding: EdgeInsets.only(right: ConfigProvider.defaultSpace),
+              child: DefaultTooltip(
+                message: ConfigProvider.workoutHistoryToolTip,
+              ),
             ),
-          ),
-          const Spacer(),
-        ],
+            const Spacer(),
+          ],
+        ),
       ),
       content: workoutProvider.workoutHistory.isNotEmpty
           ? ListView.builder(
               itemCount: workoutProvider.workoutHistory.length,
+              padding: const EdgeInsets.all(ConfigProvider.defaultSpace / 2),
               itemBuilder: (context, index) {
                 return WorkoutHistoryListItem(
                   isMetricSystemSelected: configProvider.isMetricSystemSelected,

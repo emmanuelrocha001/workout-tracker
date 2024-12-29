@@ -40,7 +40,11 @@ class Helper {
         ? "$baseUrl/watch?v=$youtubeId"
         : "$baseUrl/results?search_query=${Uri.encodeComponent(searchQuery!)}";
 
-    await launchUrlString(url, mode: LaunchMode.externalApplication);
+    await launchUrlString(url, mode: LaunchMode.externalNonBrowserApplication);
+  }
+
+  static void navigateToUrl({required String url}) async {
+    await launchUrlString(url, mode: LaunchMode.externalNonBrowserApplication);
   }
 
   static Future<dynamic> showPopUp({
@@ -57,7 +61,7 @@ class Helper {
         context: context,
         useSafeArea: true,
         isScrollControlled: true,
-        backgroundColor: ConfigProvider.backgroundColor,
+        backgroundColor: ConfigProvider.backgroundColorSolid,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(
@@ -84,7 +88,7 @@ class Helper {
                   children: [
                     Container(
                       decoration: const BoxDecoration(
-                        color: ConfigProvider.backgroundColor,
+                        color: ConfigProvider.backgroundColorSolid,
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(ConfigProvider.defaultSpace),
                           topRight:
@@ -130,7 +134,7 @@ class Helper {
                       ),
                     ),
                     Container(
-                      color: ConfigProvider.backgroundColor,
+                      color: ConfigProvider.backgroundColorSolid,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: ConfigProvider.defaultSpace),
@@ -213,7 +217,7 @@ class Helper {
                 ),
               ),
             ),
-            backgroundColor: ConfigProvider.backgroundColor,
+            backgroundColor: ConfigProvider.backgroundColorSolid,
             actionsAlignment: MainAxisAlignment.end,
             actionsOverflowButtonSpacing: ConfigProvider.defaultSpace,
             alignment: Alignment.center,
@@ -277,7 +281,7 @@ class Helper {
               ),
               child: content,
             ),
-            backgroundColor: ConfigProvider.backgroundColor,
+            backgroundColor: ConfigProvider.backgroundColorSolid,
             actionsAlignment: MainAxisAlignment.center,
             alignment: Alignment.center,
             shape: RoundedRectangleBorder(
@@ -305,8 +309,12 @@ class Helper {
         return Theme(
           data: ThemeData(
             timePickerTheme: TimePickerThemeData(
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(ConfigProvider.defaultSpace / 2),
+              ),
               dialHandColor: ConfigProvider.mainColor,
-              backgroundColor: ConfigProvider.slightContrastBackgroundColor,
+              backgroundColor: ConfigProvider.backgroundColorSolid,
               dialBackgroundColor: ConfigProvider.backgroundColor,
               helpTextStyle: TextStyleTemplates.defaultBoldTextStyle(
                 ConfigProvider.mainTextColor,

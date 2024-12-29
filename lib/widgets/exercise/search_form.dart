@@ -69,22 +69,27 @@ class _SearchFormState extends State<SearchForm> {
       textValue =
           "${exercisesProvider.filteredExercisesCount} of ${exercisesProvider.exercisesCount} results";
     }
-    return TextField(
-      focusNode: _focusNode,
-      controller: _controller,
-      style: TextStyleTemplates.defaultTextStyle(
-        ConfigProvider.mainTextColor,
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: ConfigProvider.defaultSpace,
       ),
-      decoration: InputDecoration(
-        hintText: 'Search',
-        hintStyle: TextStyleTemplates.defaultTextStyle(
+      child: TextField(
+        focusNode: _focusNode,
+        controller: _controller,
+        style: TextStyleTemplates.defaultTextStyle(
           ConfigProvider.mainTextColor,
         ),
-        fillColor: ConfigProvider.slightContrastBackgroundColor,
-        filled: true,
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.circular(5),
+        decoration: InputDecoration(
+          hintText: 'Search',
+          hintStyle: TextStyleTemplates.defaultTextStyle(
+            ConfigProvider.mainTextColor,
+          ),
+          fillColor: ConfigProvider.backgroundColor,
+          filled: true,
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(5),
+          ),
         ),
       ),
     );

@@ -71,7 +71,7 @@ class ExerciseDetails extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               PillContainer(
-                color: ConfigProvider.slightContrastBackgroundColor,
+                color: ConfigProvider.backgroundColor,
                 child: Text(
                   MuscleGroupDto.getMuscleGroupName(exercise!.muscleGroupId)
                       .toUpperCase(),
@@ -87,7 +87,7 @@ class ExerciseDetails extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               PillContainer(
-                color: ConfigProvider.slightContrastBackgroundColor,
+                color: ConfigProvider.backgroundColor,
                 child: Text(
                   exercise.exerciseType.toUpperCase(),
                   style: TextStyleTemplates.defaultTextStyle(

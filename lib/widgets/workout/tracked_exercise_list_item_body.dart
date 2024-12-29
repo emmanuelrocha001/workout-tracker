@@ -132,7 +132,7 @@ class _TrackedExerciseListItemBodyState
       enabled: canEdit,
       controller: controller,
       decoration: InputDecoration(
-        fillColor: ConfigProvider.slightContrastBackgroundColor,
+        fillColor: ConfigProvider.backgroundColor,
         hintStyle: TextStyleTemplates.defaultTextStyle(
           ConfigProvider.alternateTextColor.withOpacity(.5),
         ),
@@ -140,7 +140,7 @@ class _TrackedExerciseListItemBodyState
         hintText: hintText,
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(ConfigProvider.defaultSpace / 2),
         ),
       ),
       style: TextStyleTemplates.defaultTextStyle(
@@ -174,7 +174,7 @@ class _TrackedExerciseListItemBodyState
       // textAlign: TextAlign.start,
       // textDirection: TextDirection.rtl,
       decoration: InputDecoration(
-        fillColor: ConfigProvider.slightContrastBackgroundColor,
+        fillColor: ConfigProvider.backgroundColor,
         hintStyle: TextStyleTemplates.defaultTextStyle(
           ConfigProvider.alternateTextColor.withOpacity(.5),
         ),
@@ -182,7 +182,7 @@ class _TrackedExerciseListItemBodyState
         hintText: hintText,
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(ConfigProvider.defaultSpace / 2),
         ),
       ),
       style: TextStyleTemplates.defaultTextStyle(

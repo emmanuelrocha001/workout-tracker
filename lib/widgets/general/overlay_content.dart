@@ -52,7 +52,7 @@ class OverlayContent extends StatelessWidget {
                 // padding:
                 //     EdgeInsets.only(top: topPadding + configProvider.topPadding),
                 decoration: const BoxDecoration(
-                  color: ConfigProvider.backgroundColor,
+                  color: ConfigProvider.backgroundColorSolid,
                   border: Border(
                     bottom: BorderSide(
                       color: ConfigProvider.slightContrastBackgroundColor,

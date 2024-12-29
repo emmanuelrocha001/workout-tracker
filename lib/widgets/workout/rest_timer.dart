@@ -203,7 +203,7 @@ class _RestTimerState extends State<RestTimer> with WidgetsBindingObserver {
           children: [
             TextButton(
               style: TextButton.styleFrom(
-                backgroundColor: ConfigProvider.slightContrastBackgroundColor,
+                backgroundColor: ConfigProvider.backgroundColor,
               ),
               child: Text(
                 "-30",
@@ -220,7 +220,7 @@ class _RestTimerState extends State<RestTimer> with WidgetsBindingObserver {
             ),
             TextButton(
               style: TextButton.styleFrom(
-                backgroundColor: ConfigProvider.slightContrastBackgroundColor,
+                backgroundColor: ConfigProvider.backgroundColor,
               ),
               child: Text(
                 "+30",

@@ -53,11 +53,11 @@ class FilterGrid extends StatelessWidget {
                   elevation: 0.0,
                   backgroundColor: isSelected
                       ? ConfigProvider.mainColor
-                      : ConfigProvider.slightContrastBackgroundColor,
+                      : ConfigProvider.backgroundColor,
                   side: BorderSide(
                     color: isSelected
                         ? ConfigProvider.mainColor
-                        : ConfigProvider.slightContrastBackgroundColor,
+                        : ConfigProvider.backgroundColor,
                     width: 2.0,
                   ),
                   shape: const RoundedRectangleBorder(

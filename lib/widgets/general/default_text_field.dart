@@ -37,7 +37,7 @@ class DefaultTextField extends StatelessWidget {
         hintStyle: TextStyleTemplates.defaultTextStyle(
           ConfigProvider.mainTextColor,
         ),
-        fillColor: ConfigProvider.backgroundColor,
+        fillColor: ConfigProvider.backgroundColorSolid,
         filled: true,
         focusedBorder: OutlineInputBorder(
           borderSide: const BorderSide(

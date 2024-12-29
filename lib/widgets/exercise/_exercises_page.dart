@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_tracker/widgets/general/default_container.dart';
 import '../../models/create_update_exercise_dto.dart';
 import '../../providers/exercise_provider.dart';
 import '../../providers/workout_provider.dart';
@@ -56,10 +57,12 @@ class _ExercisesPageState extends State<ExercisesPage> {
   Widget build(BuildContext context) {
     var workoutProvider = Provider.of<WorkoutProvider>(context);
     return OverlayContent(
-        blockContentMessage: workoutProvider.isWorkoutInProgress()
-            ? 'Workout is in progress...'
-            : null,
-        overLayContent: Row(
+      blockContentMessage: workoutProvider.isWorkoutInProgress()
+          ? 'Workout is in progress...'
+          : null,
+      overLayContent: Container(
+        color: ConfigProvider.backgroundColorSolid,
+        child: Row(
           children: [
             Padding(
               padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
@@ -96,13 +99,16 @@ class _ExercisesPageState extends State<ExercisesPage> {
             ),
           ],
         ),
-        content: Padding(
-          padding: const EdgeInsets.all(
-            ConfigProvider.defaultSpace,
-          ),
+      ),
+      content: Padding(
+        padding: const EdgeInsets.symmetric(
+            vertical: ConfigProvider.defaultSpace / 2),
+        child: DefaultContainer(
           child: EditableExerciseList(
             scrollController: scrollController,
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

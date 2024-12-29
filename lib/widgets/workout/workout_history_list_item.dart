@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_tracker/widgets/general/default_container.dart';
 
 import '../general/text_style_templates.dart';
 import '../../providers/config_provider.dart';
@@ -274,15 +275,35 @@ class WorkoutHistoryListItem extends StatelessWidget {
         DateFormat(ConfigProvider.defaulDateStampWithDayOfWeekFormat)
             .format(workout.endTime!)
             .toUpperCase();
-    return Card(
-      color: ConfigProvider.backgroundColor,
-      elevation: 0,
-      shape: const BorderDirectional(
-        bottom: BorderSide(
-          width: 1,
-          color: ConfigProvider.slightContrastBackgroundColor,
-        ),
-      ),
+    return DefaultContainer(
+      onTap: () {
+        Helper.showPopUp(
+          context: context,
+          title: workout.title != null && workout.title!.isNotEmpty
+              ? workout.title!
+              : endTimeString,
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                WorkoutHistoryListItemSummary(workout: workout),
+                WorkoutHistoryListItemBreakdown(
+                  workout: workout,
+                  isMetricSystemSelected: isMetricSystemSelected,
+                )
+              ],
+            ),
+          ),
+        );
+      },
+      // color: ConfigProvider.backgroundColorSolid,
+      // elevation: 0,
+      // shape: const BorderDirectional(
+      //   bottom: BorderSide(
+      //     width: 1,
+      //     color: ConfigProvider.slightContrastBackgroundColor,
+      //   ),
+      // ),
+
       child: Center(
         child: Column(
           children: [
@@ -297,37 +318,10 @@ class WorkoutHistoryListItem extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                IconButton(
-                  icon: const Icon(
-                    Icons.fullscreen_rounded,
-                    color: ConfigProvider.mainColor,
-                    size: ConfigProvider.defaultIconSize,
-                  ),
-                  // style: _theme.iconButtonTheme.style,
-                  onPressed: () {
-                    Helper.showPopUp(
-                      context: context,
-                      title: workout.title != null && workout.title!.isNotEmpty
-                          ? workout.title!
-                          : endTimeString,
-                      content: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            WorkoutHistoryListItemSummary(workout: workout),
-                            WorkoutHistoryListItemBreakdown(
-                              workout: workout,
-                              isMetricSystemSelected: isMetricSystemSelected,
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
                 MenuAnchor(
                   style: const MenuStyle(
                     backgroundColor: WidgetStatePropertyAll<Color>(
-                        ConfigProvider.backgroundColor),
+                        ConfigProvider.backgroundColorSolid),
                     // elevation: WidgetStatePropertyAll<double>(0.0),
                   ),
                   builder: (BuildContext context, MenuController controller,

@@ -79,7 +79,7 @@ class DefaultDropDownMenu extends StatelessWidget {
       ),
       menuStyle: const MenuStyle(
         backgroundColor: WidgetStatePropertyAll<Color>(
-          ConfigProvider.backgroundColor,
+          ConfigProvider.backgroundColorSolid,
         ),
       ),
       onSelected: (value) {

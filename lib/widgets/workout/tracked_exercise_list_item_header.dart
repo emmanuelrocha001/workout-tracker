@@ -133,7 +133,7 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
                 MenuAnchor(
                   style: const MenuStyle(
                     backgroundColor: WidgetStatePropertyAll<Color>(
-                        ConfigProvider.backgroundColor),
+                        ConfigProvider.backgroundColorSolid),
                     // elevation: WidgetStatePropertyAll<double>(0.0),
                   ),
                   builder: (BuildContext context, MenuController controller,

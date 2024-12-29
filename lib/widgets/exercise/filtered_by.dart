@@ -27,23 +27,28 @@ class FilteredBy extends StatelessWidget {
   }
 
   Iterable<Widget> _getFilters() {
-    return filters.map(
-      (filter) => Column(
-        children: [
-          PillContainer(
-            child: Text(
-              filter.toUpperCase(),
-              style: TextStyleTemplates.smallBoldTextStyle(
-                ConfigProvider.mainTextColor,
+    return filters.where((x) => x.isNotEmpty).map(
+          (filter) => Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: ConfigProvider.defaultSpace / 2),
+                child: PillContainer(
+                  color: ConfigProvider.backgroundColor,
+                  child: Text(
+                    filter.toUpperCase(),
+                    style: TextStyleTemplates.smallBoldTextStyle(
+                      ConfigProvider.mainTextColor,
+                    ),
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(
+                width: ConfigProvider.defaultSpace,
+              ),
+            ],
           ),
-          const SizedBox(
-            width: ConfigProvider.defaultSpace,
-          ),
-        ],
-      ),
-    );
+        );
   }
 
   @override
@@ -62,26 +67,8 @@ class FilteredBy extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              // PillContainer(
-              //   child: Text(
-              //     filters[0].toUpperCase(),
-              //     style: TextStyleTemplates.smallBoldTextStyle(
-              //       ConfigProvider.mainTextColor,
-              //     ),
-              //   ),
-              // ),
-              // const SizedBox(
-              //   width: ConfigProvider.defaultSpace,
-              // ),
-              // PillContainer(
-              //   child: Text(
-              //     filters[1].toUpperCase(),
-              //     style: TextStyleTemplates.smallBoldTextStyle(
-              //       ConfigProvider.mainTextColor,
-              //     ),
-              //   ),
-              // ),
               ..._getFilters(),
+              const SizedBox(width: ConfigProvider.defaultSpace / 2),
               if (hasAppliedFilter())
                 TextButton(
                   onPressed: onClearFilters,

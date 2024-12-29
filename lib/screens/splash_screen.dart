@@ -14,6 +14,7 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     const size = 100.0;
     var content = Scaffold(
+      backgroundColor: ConfigProvider.backgroundColorSolid,
       body: Center(
         child: SingleChildScrollView(
           child: Stack(

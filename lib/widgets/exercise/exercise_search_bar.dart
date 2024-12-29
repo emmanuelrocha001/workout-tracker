@@ -16,10 +16,10 @@ class ExerciseSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     var exerciseProvider = Provider.of<ExerciseProvider>(context);
     return SliverAppBar(
-      surfaceTintColor: ConfigProvider.backgroundColor,
-      shadowColor: ConfigProvider.slightContrastBackgroundColor,
-      foregroundColor: ConfigProvider.backgroundColor,
-      backgroundColor: ConfigProvider.backgroundColor,
+      surfaceTintColor: ConfigProvider.backgroundColorSolid,
+      shadowColor: ConfigProvider.backgroundColor,
+      foregroundColor: ConfigProvider.backgroundColorSolid,
+      backgroundColor: ConfigProvider.backgroundColorSolid,
       forceMaterialTransparency: false,
       automaticallyImplyLeading: false,
       elevation: 0.0,
@@ -29,6 +29,9 @@ class ExerciseSearchBar extends StatelessWidget {
         titlePadding: EdgeInsets.zero,
         title: Column(
           children: [
+            const SizedBox(
+              height: ConfigProvider.defaultSpace,
+            ),
             const SearchForm(),
             FilteredBy(
               filters: [
