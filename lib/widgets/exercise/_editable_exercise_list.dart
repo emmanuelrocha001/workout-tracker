@@ -116,26 +116,31 @@ class _EditableExerciseListState extends State<EditableExerciseList> {
   Widget build(BuildContext context) {
     var exerciseProvider = Provider.of<ExerciseProvider>(context);
     var exercises = exerciseProvider.exercises;
-    return CustomScrollView(
+    return Scrollbar(
       controller: widget.scrollController,
-      slivers: <Widget>[
-        ExerciseSearchBar(
-          onFilter: onFilter,
-        ),
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (BuildContext context, int index) {
-              return ExerciseListItem(
-                data: exercises[index],
-                showDetails: showDetails,
-                updateExercise: updateExercise,
-                deleteExercise: deleteExercise,
-              );
-            },
-            childCount: exercises.length,
+      // thumbVisibility: true,
+      radius: const Radius.circular(ConfigProvider.defaultSpace / 2),
+      child: CustomScrollView(
+        controller: widget.scrollController,
+        slivers: <Widget>[
+          ExerciseSearchBar(
+            onFilter: onFilter,
           ),
-        ),
-      ],
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                return ExerciseListItem(
+                  data: exercises[index],
+                  showDetails: showDetails,
+                  updateExercise: updateExercise,
+                  deleteExercise: deleteExercise,
+                );
+              },
+              childCount: exercises.length,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

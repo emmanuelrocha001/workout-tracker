@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/exercise_provider.dart';
+import '../../providers/config_provider.dart';
 
 import "../helper.dart";
 
@@ -50,24 +51,27 @@ class _SelectableExerciseListState extends State<SelectableExerciseList> {
       label: "ADD",
       showActionButton: _selectedId.isNotEmpty,
       onPressed: onAdd,
-      content: CustomScrollView(
-        slivers: <Widget>[
-          ExerciseSearchBar(
-            onFilter: onFilter,
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                return ExerciseListItem(
-                  data: exercises[index],
-                  selectedId: _selectedId,
-                  onSelect: _onSelect,
-                );
-              },
-              childCount: exercises.length,
+      content: Scrollbar(
+        radius: const Radius.circular(ConfigProvider.defaultSpace / 2),
+        child: CustomScrollView(
+          slivers: <Widget>[
+            ExerciseSearchBar(
+              onFilter: onFilter,
             ),
-          ),
-        ],
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  return ExerciseListItem(
+                    data: exercises[index],
+                    selectedId: _selectedId,
+                    onSelect: _onSelect,
+                  );
+                },
+                childCount: exercises.length,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

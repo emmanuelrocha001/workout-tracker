@@ -339,7 +339,11 @@ class ExerciseProvider with ChangeNotifier {
     var res = await _deleteUserDefinedExercise(exerciseId: exerciseId);
     if (res) {
       _exercises = [..._systemDefinedExercises, ..._userDefinedExercises];
-      _filteredExercises = [..._exercises];
+      // assume that the exercise is in the filtered list
+      var index = _filteredExercises.indexWhere((x) => x.id == exerciseId);
+      if (index != -1) {
+        _filteredExercises.removeAt(index);
+      }
       notifyListeners();
       return ResDto(
         success: true,

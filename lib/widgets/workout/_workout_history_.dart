@@ -108,17 +108,21 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
         ),
       ),
       content: workoutProvider.workoutHistory.isNotEmpty
-          ? ListView.builder(
-              itemCount: workoutProvider.workoutHistory.length,
-              padding: const EdgeInsets.all(ConfigProvider.defaultSpace / 2),
-              itemBuilder: (context, index) {
-                return WorkoutHistoryListItem(
-                  isMetricSystemSelected: configProvider.isMetricSystemSelected,
-                  workout: workoutProvider.workoutHistory[
-                      workoutProvider.workoutHistory.length - index - 1],
-                  navigateToWorkout: widget.navigateToWorkout,
-                );
-              },
+          ? Scrollbar(
+              radius: const Radius.circular(ConfigProvider.defaultSpace / 2),
+              child: ListView.builder(
+                itemCount: workoutProvider.workoutHistory.length,
+                padding: const EdgeInsets.all(ConfigProvider.defaultSpace / 2),
+                itemBuilder: (context, index) {
+                  return WorkoutHistoryListItem(
+                    isMetricSystemSelected:
+                        configProvider.isMetricSystemSelected,
+                    workout: workoutProvider.workoutHistory[
+                        workoutProvider.workoutHistory.length - index - 1],
+                    navigateToWorkout: widget.navigateToWorkout,
+                  );
+                },
+              ),
             )
           : Center(
               child: Text(
