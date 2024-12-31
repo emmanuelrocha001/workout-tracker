@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../providers/config_provider.dart';
-import 'package:workout_tracker/utility.dart';
 
 import "../general/pill_container.dart";
 
@@ -53,6 +53,7 @@ class FilteredBy extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var configProvider = Provider.of<ConfigProvider>(context, listen: false);
     return Container(
       // color: Colors.purple,
       padding: const EdgeInsets.only(
@@ -73,6 +74,9 @@ class FilteredBy extends StatelessWidget {
                 TextButton(
                   onPressed: onClearFilters,
                   style: TextButton.styleFrom(
+                    visualDensity: configProvider.isMobile
+                        ? VisualDensity.compact
+                        : VisualDensity.standard,
                     backgroundColor: Colors.red,
                   ),
                   child: Text(
@@ -84,6 +88,9 @@ class FilteredBy extends StatelessWidget {
                 ),
               const SizedBox(width: ConfigProvider.defaultSpace),
               IconButton(
+                visualDensity: configProvider.isMobile
+                    ? VisualDensity.compact
+                    : VisualDensity.standard,
                 icon: const Icon(
                   size: ConfigProvider.defaultIconSize,
                   Icons.filter_list_outlined,

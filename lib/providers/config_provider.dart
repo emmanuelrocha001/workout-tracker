@@ -1,3 +1,7 @@
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,7 +10,10 @@ import '../models/user_preferences_dto.dart';
 class ConfigProvider extends ChangeNotifier {
   SharedPreferencesWithCache? _cache;
   UserPreferenceDto? _userPreferences;
+  bool _isNativeMobile = false;
+  bool _isWebMobile = false;
   ConfigProvider() {
+    checkPlatform();
     setupCache();
   }
 
@@ -20,6 +27,26 @@ class ConfigProvider extends ChangeNotifier {
       loadPreferencesFromCache();
     }
   }
+
+  void checkPlatform() {
+    _isWebMobile = _setIsMobileWeb();
+    _isNativeMobile = !kIsWeb && (Platform.isIOS || Platform.isAndroid);
+  }
+
+  bool _setIsMobileWeb() {
+    if (!kIsWeb) {
+      return false;
+    }
+    var userAgent = (html.window.navigator.userAgent).toLowerCase();
+    return userAgent.contains('mobile') || // General mobile devices
+        userAgent.contains('android') || // Android devices
+        userAgent.contains('iphone') || // iPhone
+        userAgent.contains('ipad'); // iPad
+  }
+
+  bool get isNativeMobile => _isNativeMobile;
+  bool get isWebMobile => _isWebMobile;
+  bool get isMobile => _isNativeMobile || _isWebMobile;
 
   String get preferencesKey => '${ConfigProvider.cachePrefix}_preferences';
 
@@ -96,6 +123,15 @@ class ConfigProvider extends ChangeNotifier {
     _savePreferencesToCache();
   }
 
+  bool get hasAcknowledgeDataStorageDisclaimer =>
+      _userPreferences?.hasAcknowledgeDataStorageDisclaimer ?? false;
+
+  void setHasAcknowledgeDataStorageDisclaimer() {
+    _userPreferences?.hasAcknowledgeDataStorageDisclaimer = true;
+    notifyListeners();
+    _savePreferencesToCache();
+  }
+
   static const developerName = "Emmanuel R.";
   static const developerLinkdin = "https://www.linkedin.com/in/emmanuel-rocha";
   static const cachePrefix = 'erp_cache_2aa91e4e-24ac-4197-baaf-23ef40a0b918';
@@ -136,7 +172,7 @@ class ConfigProvider extends ChangeNotifier {
   static const largeFontSize = 20.0;
   static const xLargeFontSize = 32.0;
   static const xxLargeFontSize = 64.0;
-  static const defaultIconSize = 28.0;
+  static const defaultIconSize = 26.0;
   static const mediumIconSize = 22.0;
   static const smallIconSize = 18.0;
 
@@ -181,4 +217,7 @@ class ConfigProvider extends ChangeNotifier {
 
   static const deleteUserDefinedExerciseText =
       'Are you sure you want to delete this exercise? This action cannot be undone.';
+
+  static const dataStorageDisclaimerText =
+      "ERP uses local storage to save your data, meaning all information is stored directly on your device and not on any external servers. While we make every effort to ensure the app functions reliably, we cannot guarantee complete data persistence due to factors beyond our control, such as device-specific issues, software updates, or accidental data deletion.";
 }

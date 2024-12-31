@@ -55,7 +55,7 @@ class OverlayContent extends StatelessWidget {
                   color: ConfigProvider.backgroundColorSolid,
                   border: Border(
                     bottom: BorderSide(
-                      color: ConfigProvider.slightContrastBackgroundColor,
+                      color: ConfigProvider.backgroundColor,
                       width: 1,
                     ),
                   ),

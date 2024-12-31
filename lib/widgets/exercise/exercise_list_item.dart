@@ -42,7 +42,7 @@ class ExerciseListItem extends StatelessWidget {
       color: ConfigProvider.backgroundColorSolid,
       elevation: 0,
       shape: const BorderDirectional(
-        bottom: BorderSide(
+        top: BorderSide(
           width: 1,
           color: ConfigProvider.slightContrastBackgroundColor,
         ),

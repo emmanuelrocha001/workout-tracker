@@ -79,7 +79,7 @@ class _EditableExerciseListState extends State<EditableExerciseList> {
             'Are you sure you want to delete "${exercise.name}"? This action cannot be undone.',
         confimationButtonLabel: "CONFIRM",
         confirmationButtonColor: Colors.red,
-        cancelButtonColor: ConfigProvider.slightContrastBackgroundColor,
+        cancelButtonColor: ConfigProvider.backgroundColor,
         cancelButtonLabel: 'CANCEL');
 
     if (!(confirm ?? false)) {

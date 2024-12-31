@@ -54,9 +54,11 @@ class Helper {
     bool hasPadding = true,
     double heightPercentage = .95,
     double? specificHeight,
+    bool isDismissible = true,
   }) async {
     final mediaQuery = MediaQuery.of(context);
     print('specified height: $specificHeight');
+    print('isDismissible: $isDismissible');
     return await showModalBottomSheet(
         context: context,
         useSafeArea: true,
@@ -116,20 +118,21 @@ class Helper {
                             ),
                           ),
                           // const Spacer(),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.close,
-                                // color: ConfigProvider.backgroundColor,
-                                color: ConfigProvider.mainColor,
-                                size: ConfigProvider.defaultIconSize,
+                          if (isDismissible)
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.close,
+                                  // color: ConfigProvider.backgroundColor,
+                                  color: ConfigProvider.mainColor,
+                                  size: ConfigProvider.defaultIconSize,
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
                               ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
                             ),
-                          ),
                         ],
                       ),
                     ),
@@ -199,15 +202,22 @@ class Helper {
     required String message,
     required String confimationButtonLabel,
     required Color confirmationButtonColor,
-    required String cancelButtonLabel,
-    required Color cancelButtonColor,
+    String? cancelButtonLabel,
+    Color? cancelButtonColor,
+    bool barrierDismissible = true,
     bool hasPadding = true,
   }) async {
     var response = await showDialog<bool?>(
         context: context,
+        barrierDismissible: barrierDismissible,
         builder: (BuildContext context) {
           return AlertDialog(
             scrollable: true,
+            contentPadding: const EdgeInsets.only(
+              top: ConfigProvider.defaultSpace * 2,
+              left: ConfigProvider.defaultSpace * 2,
+              right: ConfigProvider.defaultSpace * 2,
+            ),
             content: SizedBox(
               width: getMaxContentWidth(context, maxContentWidthOverride: 400),
               child: Text(
@@ -222,23 +232,31 @@ class Helper {
             actionsOverflowButtonSpacing: ConfigProvider.defaultSpace,
             alignment: Alignment.center,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(ConfigProvider.defaultSpace),
+              borderRadius:
+                  BorderRadius.circular(ConfigProvider.defaultSpace / 2),
+            ),
+            actionsPadding: const EdgeInsets.only(
+              bottom: ConfigProvider.defaultSpace * 2,
+              top: ConfigProvider.defaultSpace,
+              left: ConfigProvider.defaultSpace * 2,
+              right: ConfigProvider.defaultSpace * 2,
             ),
             actions: <Widget>[
-              TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: cancelButtonColor,
-                ),
-                child: Text(
-                  cancelButtonLabel,
-                  style: TextStyleTemplates.smallBoldTextStyle(
-                    ConfigProvider.mainTextColor,
+              if (cancelButtonLabel != null && cancelButtonColor != null)
+                TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: cancelButtonColor,
                   ),
+                  child: Text(
+                    cancelButtonLabel,
+                    style: TextStyleTemplates.smallBoldTextStyle(
+                      ConfigProvider.mainTextColor,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
                 ),
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-              ),
               TextButton(
                 style: TextButton.styleFrom(
                   backgroundColor: confirmationButtonColor,

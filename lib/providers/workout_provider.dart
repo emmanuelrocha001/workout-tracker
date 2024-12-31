@@ -469,10 +469,13 @@ class WorkoutProvider extends ChangeNotifier {
     trackedExercise.sets.removeAt(index);
 
     _saveInProgressWorkout();
-    if (oldAreSetsLogged != trackedExercise.areSetsLogged()) {
-      _inProgressWorkout!.setAreTrackedExercisesLogged();
-      notifyListeners();
-    }
+    // if (oldAreSetsLogged != trackedExercise.areSetsLogged()) {
+    //   _inProgressWorkout!.setAreTrackedExercisesLogged();
+    //   notifyListeners();
+    // }
+    _inProgressWorkout!.setAreTrackedExercisesLogged();
+    notifyListeners();
+
     return true;
   }
 

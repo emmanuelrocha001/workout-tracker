@@ -113,10 +113,10 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
         final double animValue = Curves.easeInOut.transform(animation.value);
         final double elevation = lerpDouble(0, 6, animValue)!;
         return Material(
-          borderRadius: BorderRadius.circular(ConfigProvider.defaultSpace),
+          borderRadius: BorderRadius.circular(ConfigProvider.defaultSpace / 2),
           elevation: elevation,
-          color: ConfigProvider.mainColor,
-          shadowColor: ConfigProvider.mainColor,
+          color: ConfigProvider.mainColor.withOpacity(.75),
+          shadowColor: ConfigProvider.mainColor.withOpacity(.75),
           child: child,
         );
       },
@@ -146,45 +146,48 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
           Utility.getElapsedTimeString(timeDiff: diff, includeTimeUnits: true);
     }
     return OverlayContent(
-      content: ReorderableListView(
-        proxyDecorator: proxyDecorator,
-        onReorderStart: (index) {
-          setState(() {
-            onReorderInProgress = true;
-          });
-        },
-        onReorderEnd: (index) {
-          Future.delayed(const Duration(milliseconds: 400), () {
+      content: Scrollbar(
+        radius: const Radius.circular(ConfigProvider.defaultSpace / 2),
+        child: ReorderableListView(
+          proxyDecorator: proxyDecorator,
+          onReorderStart: (index) {
             setState(() {
-              onReorderInProgress = false;
+              onReorderInProgress = true;
             });
-          });
-        },
-        onReorder: (int oldIndex, int newIndex) {
-          print('${oldIndex} ${newIndex}');
+          },
+          onReorderEnd: (index) {
+            Future.delayed(const Duration(milliseconds: 400), () {
+              setState(() {
+                onReorderInProgress = false;
+              });
+            });
+          },
+          onReorder: (int oldIndex, int newIndex) {
+            print('${oldIndex} ${newIndex}');
 
-          if (oldIndex < newIndex) {
-            //if moving up the list, the new index provided by the call back is off by 1
-            newIndex -= 1;
-          }
+            if (oldIndex < newIndex) {
+              //if moving up the list, the new index provided by the call back is off by 1
+              newIndex -= 1;
+            }
 
-          onReorder(oldIndex, newIndex);
-        },
-        padding: const EdgeInsets.symmetric(
-            vertical: ConfigProvider.defaultSpace / 2),
-        children: <Widget>[
-          for (int index = 0; index < trackedExercises.length; index += 1)
-            TrackedExerciseListItem(
-              key: ValueKey(trackedExercises[index].id),
-              onReorder: (int increment) {
-                // -1 means move up, 1 means move down
-                onReorder(index, index + increment);
-              },
-              trackedExercise: trackedExercises[index],
-              isMetricSystemSelected: configProvider.isMetricSystemSelected,
-              showAsSimplified: onReorderInProgress,
-            ),
-        ],
+            onReorder(oldIndex, newIndex);
+          },
+          padding: const EdgeInsets.symmetric(
+              vertical: ConfigProvider.defaultSpace / 2),
+          children: <Widget>[
+            for (int index = 0; index < trackedExercises.length; index += 1)
+              TrackedExerciseListItem(
+                key: ValueKey(trackedExercises[index].id),
+                onReorder: (int increment) {
+                  // -1 means move up, 1 means move down
+                  onReorder(index, index + increment);
+                },
+                trackedExercise: trackedExercises[index],
+                isMetricSystemSelected: configProvider.isMetricSystemSelected,
+                showAsSimplified: onReorderInProgress,
+              ),
+          ],
+        ),
       ),
       padding: 115.0,
       overLayContent: Container(
@@ -259,8 +262,8 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                                     : ConfigProvider.cancelUpdateWorkoutText,
                                 confimationButtonLabel: "CONFIRM",
                                 confirmationButtonColor: Colors.red,
-                                cancelButtonColor: ConfigProvider
-                                    .slightContrastBackgroundColor,
+                                cancelButtonColor:
+                                    ConfigProvider.backgroundColor,
                                 cancelButtonLabel: 'RESUME');
 
                             if (res ?? false) {
@@ -301,31 +304,40 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
               ],
             ),
             if (workoutProvider.inProgressWorkoutStartTime != null)
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      // color: Colors.purple,
-                      child: elapsedTimeString.isNotEmpty
-                          ? Text(
-                              elapsedTimeString,
-                              style: TextStyleTemplates.mediumBoldTextStyle(
-                                  ConfigProvider.mainTextColor),
-                            )
-                          : ElapsedTimeTimer(
-                              startTime:
-                                  workoutProvider.inProgressWorkoutStartTime!),
-                    ),
+              Container(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: ConfigProvider.defaultSpace,
+                ),
+                decoration: const BoxDecoration(
+                  // color: ConfigProvider.mainColor,
+                  border: Border(
+                    top: BorderSide(
+                        width: 1, color: ConfigProvider.backgroundColor),
                   ),
-                  if (!workoutProvider.updatingLoggedWorkout)
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
                     Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          right: ConfigProvider.defaultSpace,
-                        ),
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        alignment: Alignment.center,
+                        margin:
+                            const EdgeInsets.all(ConfigProvider.defaultSpace),
+                        child: elapsedTimeString.isNotEmpty
+                            ? Text(
+                                elapsedTimeString,
+                                style: TextStyleTemplates.mediumBoldTextStyle(
+                                    ConfigProvider.mainTextColor),
+                              )
+                            : ElapsedTimeTimer(
+                                startTime: workoutProvider
+                                    .inProgressWorkoutStartTime!),
+                      ),
+                    ),
+                    if (!workoutProvider.updatingLoggedWorkout)
+                      Align(
+                        alignment: Alignment.centerRight,
                         child: IconButton(
                           icon: const Icon(
                             Icons.timer_outlined,
@@ -341,8 +353,8 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                           },
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
           ],
         ),

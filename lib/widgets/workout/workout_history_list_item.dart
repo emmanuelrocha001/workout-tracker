@@ -220,7 +220,7 @@ class WorkoutHistoryListItem extends StatelessWidget {
         message: ConfigProvider.deleteWorkoutEntryText,
         confimationButtonLabel: "CONFIRM",
         confirmationButtonColor: Colors.red,
-        cancelButtonColor: ConfigProvider.slightContrastBackgroundColor,
+        cancelButtonColor: ConfigProvider.backgroundColor,
         cancelButtonLabel: 'CANCEL');
 
     if (res ?? false) {
@@ -245,7 +245,7 @@ class WorkoutHistoryListItem extends StatelessWidget {
         message: messge,
         confimationButtonLabel: 'CONFIRM',
         confirmationButtonColor: Colors.red,
-        cancelButtonColor: ConfigProvider.slightContrastBackgroundColor,
+        cancelButtonColor: ConfigProvider.backgroundColor,
         cancelButtonLabel: 'RESUME IN PROGRESS',
       );
 

@@ -33,6 +33,9 @@ class ExerciseSearchBar extends StatelessWidget {
               height: ConfigProvider.defaultSpace,
             ),
             const SearchForm(),
+            const SizedBox(
+              height: ConfigProvider.defaultSpace / 2,
+            ),
             FilteredBy(
               filters: [
                 exerciseProvider.appliedMuscleGroupIdFilter.isEmpty
@@ -46,11 +49,6 @@ class ExerciseSearchBar extends StatelessWidget {
                 exerciseProvider.clearFilters();
               },
               onFilter: onFilter,
-            ),
-            const Divider(
-              height: ConfigProvider.defaultSpace / 2,
-              color: ConfigProvider.slightContrastBackgroundColor,
-              // thickness: 1.0,
             ),
           ],
         ),

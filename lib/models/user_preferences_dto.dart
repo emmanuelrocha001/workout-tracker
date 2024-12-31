@@ -3,12 +3,14 @@ class UserPreferenceDto {
   bool showRestTimerAfterEachSet;
   bool autoPopulateWorkoutFromSetsHistory;
   bool isMetricSystemSelected;
+  bool hasAcknowledgeDataStorageDisclaimer;
 
   UserPreferenceDto({
     this.userName = '',
     this.showRestTimerAfterEachSet = false,
     this.isMetricSystemSelected = false,
     this.autoPopulateWorkoutFromSetsHistory = false,
+    this.hasAcknowledgeDataStorageDisclaimer = false,
   });
 
   factory UserPreferenceDto.fromJson(Map<String, dynamic> json) {
@@ -18,6 +20,8 @@ class UserPreferenceDto {
       isMetricSystemSelected: json['isMetricSystemSelected'] ?? false,
       autoPopulateWorkoutFromSetsHistory:
           json['autoPopulateTrackedExerciseFromLatest'] ?? false,
+      hasAcknowledgeDataStorageDisclaimer:
+          json['hasAcknowledgeDataStorageDisclaimer'] ?? false,
     );
   }
 
@@ -28,6 +32,8 @@ class UserPreferenceDto {
       'isMetricSystemSelected': isMetricSystemSelected,
       'autoPopulateTrackedExerciseFromLatest':
           autoPopulateWorkoutFromSetsHistory,
+      'hasAcknowledgeDataStorageDisclaimer':
+          hasAcknowledgeDataStorageDisclaimer,
     };
   }
 }

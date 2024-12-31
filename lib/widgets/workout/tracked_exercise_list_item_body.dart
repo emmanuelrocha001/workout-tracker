@@ -59,6 +59,17 @@ class _TrackedExerciseListItemBodyState
   }
 
   @override
+  void didUpdateWidget(covariant TrackedExerciseListItemBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.sets.length != widget.sets.length) {
+      print('number of sets changed');
+      setState(() {
+        sets = [...widget.sets];
+      });
+    }
+  }
+
+  @override
   void dispose() {
     super.dispose();
   }
@@ -132,6 +143,10 @@ class _TrackedExerciseListItemBodyState
       enabled: canEdit,
       controller: controller,
       decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: ConfigProvider.defaultSpace,
+          horizontal: ConfigProvider.defaultSpace,
+        ),
         fillColor: ConfigProvider.backgroundColor,
         hintStyle: TextStyleTemplates.defaultTextStyle(
           ConfigProvider.alternateTextColor.withOpacity(.5),
@@ -174,6 +189,10 @@ class _TrackedExerciseListItemBodyState
       // textAlign: TextAlign.start,
       // textDirection: TextDirection.rtl,
       decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: ConfigProvider.defaultSpace,
+          horizontal: ConfigProvider.defaultSpace,
+        ),
         fillColor: ConfigProvider.backgroundColor,
         hintStyle: TextStyleTemplates.defaultTextStyle(
           ConfigProvider.alternateTextColor.withOpacity(.5),
@@ -351,6 +370,19 @@ class _TrackedExerciseListItemBodyState
           _onRemoveSet(widget.trackedExerciseId, index);
         },
         child: Container(
+          padding: const EdgeInsets.symmetric(
+            vertical: ConfigProvider.defaultSpace,
+          ),
+          decoration: BoxDecoration(
+            border: index < sets.length - 1
+                ? const Border(
+                    bottom: BorderSide(
+                      width: 1,
+                      color: ConfigProvider.backgroundColor,
+                    ),
+                  )
+                : null,
+          ),
           // color: set.isLogged ? Colors.green : Colors.transparent,
           child: Row(
             children: [
@@ -446,6 +478,7 @@ class _TrackedExerciseListItemBodyState
                 ),
               RowItem(
                 child: Checkbox(
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     value: set.isLogged,
                     activeColor: Colors.green,
                     shape: RoundedRectangleBorder(
@@ -500,35 +533,32 @@ class _TrackedExerciseListItemBodyState
           // Header row
           Row(children: generateHeaderRow()),
           ...generateSetRows(),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
-              child: TextButton(
-                onPressed: () {
-                  var set = SetDto();
+          // Align(
+          //   alignment: Alignment.centerRight,
+          //   child: TextButton(
+          //     onPressed: () {
+          //       var set = SetDto();
 
-                  var setAdded = Provider.of<WorkoutProvider>(context,
-                          listen: false)
-                      .addSetToTrackedExercise(widget.trackedExerciseId, set);
-                  if (setAdded) {
-                    setState(() {
-                      sets.add(set);
-                    });
-                  }
-                },
-                style: TextButton.styleFrom(
-                  backgroundColor: ConfigProvider.mainColor,
-                ),
-                child: Text(
-                  "ADD SET",
-                  style: TextStyleTemplates.smallBoldTextStyle(
-                    Utility.getTextColorBasedOnBackground(),
-                  ),
-                ),
-              ),
-            ),
-          ),
+          //       var setAdded =
+          //           Provider.of<WorkoutProvider>(context, listen: false)
+          //               .addSetToTrackedExercise(widget.trackedExerciseId, set);
+          //       if (setAdded) {
+          //         setState(() {
+          //           sets.add(set);
+          //         });
+          //       }
+          //     },
+          //     style: TextButton.styleFrom(
+          //         backgroundColor: ConfigProvider.mainColor,
+          //         visualDensity: VisualDensity.compact),
+          //     child: Text(
+          //       "ADD SET",
+          //       style: TextStyleTemplates.smallBoldTextStyle(
+          //         Utility.getTextColorBasedOnBackground(),
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

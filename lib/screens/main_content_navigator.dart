@@ -39,9 +39,68 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
   void initState() {
     super.initState();
     // might need to delay this. context is possibly not ready. did not navigate while testing on web build
+
     var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
     if (workoutProvider.isWorkoutInProgress()) {
       currentPageIndex = 0;
+    }
+    Future.delayed(Duration.zero, () {
+      showDataDisclaimerIfNotShown();
+    });
+  }
+
+  void showDataDisclaimerIfNotShown() async {
+    var configProvider = Provider.of<ConfigProvider>(context, listen: false);
+    if (!configProvider.hasAcknowledgeDataStorageDisclaimer) {
+      var res = await Helper.showPopUp(
+          context: context,
+          heightPercentage: .33,
+          isDismissible: false,
+          // specificHeight: 300.0,
+          title: 'Data disclaimer',
+          content: SizedBox(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Text(
+                    ConfigProvider.dataStorageDisclaimerText,
+                    style: TextStyleTemplates.smallTextStyle(
+                      ConfigProvider.mainTextColor,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: ConfigProvider.defaultSpace * 2,
+                      top: ConfigProvider.defaultSpace,
+                      left: ConfigProvider.defaultSpace * 2,
+                      right: ConfigProvider.defaultSpace * 2,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: ConfigProvider.mainColor,
+                        ),
+                        child: Text(
+                          'I Acknowledge',
+                          style: TextStyleTemplates.smallBoldTextStyle(
+                            ConfigProvider.backgroundColor,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ));
+
+      if (res ?? false) {
+        configProvider.setHasAcknowledgeDataStorageDisclaimer();
+      }
     }
   }
 
