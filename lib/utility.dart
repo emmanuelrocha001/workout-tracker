@@ -11,10 +11,12 @@ class Utility {
     bool includeHours = true,
   }) {
     var formatter = NumberFormat(ConfigProvider.twoDigitFormat);
+    // limit to 24 hours
     var hoursString = includeHours
-        ? "${formatter.format(timeDiff.hours)}${includeTimeUnits ? "h" : ""}:"
+        ? "${formatter.format(timeDiff.days > 0 ? 24 : timeDiff.hours)}${includeTimeUnits ? "h" : ""}:"
         : "";
-    return '${timeDiff.isNegativeTimeDiff ? "-" : ""} $hoursString${formatter.format(timeDiff.minutes)}${includeTimeUnits ? "m" : ""}:${formatter.format(timeDiff.seconds)}${includeTimeUnits ? "s" : ""}';
+
+    return '${timeDiff.isNegativeTimeDiff ? "-" : ""} $hoursString${formatter.format(timeDiff.days > 0 ? 0 : timeDiff.minutes)}${includeTimeUnits ? "m" : ""}:${formatter.format(timeDiff.days > 0 ? 0 : timeDiff.seconds)}${includeTimeUnits ? "s" : ""}';
   }
 
   static TimeDiff getTimeDifference({
@@ -51,6 +53,7 @@ class Utility {
     var seconds = totalSeconds;
 
     return TimeDiff(
+      days: days,
       hours: hours,
       minutes: minutes,
       seconds: seconds,

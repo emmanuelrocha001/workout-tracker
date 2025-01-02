@@ -257,8 +257,19 @@ class WorkoutProvider extends ChangeNotifier {
     if (_inProgressWorkout == null) {
       return;
     }
-    _inProgressWorkout!.endTime = DateTime.now();
-    _inProgressWorkout!.lastUpdated = _inProgressWorkout!.endTime;
+    var now = DateTime.now();
+    if (_inProgressWorkout!.endTime == null &&
+        _inProgressWorkout!.startTime != null) {
+      _inProgressWorkout!.endTime =
+          now.difference(_inProgressWorkout!.startTime!).inSeconds <=
+                  ConfigProvider.maxWorkoutDurationInSeconds
+              ? now
+              : _inProgressWorkout!.startTime!.add(
+                  Duration(seconds: ConfigProvider.maxWorkoutDurationInSeconds),
+                );
+    }
+
+    _inProgressWorkout!.lastUpdated = DateTime.now();
 
     _showLatestWorkoutHistoryEntryAsFinished = true;
 

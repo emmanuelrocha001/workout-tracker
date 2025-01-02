@@ -138,6 +138,8 @@ class ConfigProvider extends ChangeNotifier {
   static const decimalRegexPattern = r'^\d{0,4}$|^\d{0,4}\.{1}\d{0,2}$';
   static const digitRegexPattern = r'^\d{0,4}$';
 
+  static int earliestAllowedWorkoutYear = 2024;
+  static int maxWorkoutDurationInSeconds = 86400;
   static const defaultDateStampFormatWithTime = 'MMM d, y hh:mm aaa';
   static const defaultDateStampFormat = 'MMM d, y';
   static const defaulDateStampWithDayOfWeekFormat = 'EEE, MMM d, y';

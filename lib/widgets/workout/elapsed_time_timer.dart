@@ -26,6 +26,7 @@ class _ElapsedTimeTimerState extends State<ElapsedTimeTimer>
     with WidgetsBindingObserver {
   Timer? timer;
   int elapsedSeconds = 0;
+  int maxSeconds = 60 * 60 * 24;
 
   @override
   void initState() {
@@ -54,7 +55,10 @@ class _ElapsedTimeTimerState extends State<ElapsedTimeTimer>
       // // trigger a rebuild to avoid lag on resume.
       // setState(() {});
       // startElapsedTimer();
-      reInitializeTimer();
+      if (elapsedSeconds <= maxSeconds) {
+        print("resumed, reinitializing timer");
+        reInitializeTimer();
+      }
     } else if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
       timer?.cancel();
@@ -78,13 +82,26 @@ class _ElapsedTimeTimerState extends State<ElapsedTimeTimer>
   }
 
   void startElapsedTimer() {
+    print(widget.startTime.toIso8601String());
+    print(DateTime.now().toIso8601String());
+
     elapsedSeconds = DateTime.now().difference(widget.startTime).inSeconds;
+    if (elapsedSeconds >= maxSeconds) {
+      elapsedSeconds = maxSeconds;
+      print('elapsed time is more than 24 hours, not starting timer');
+      return;
+    }
     var id = Random().nextInt(100000);
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (widget.logTicker) print("increasing elapsed time from $id timer");
         elapsedSeconds++;
       });
+      if (elapsedSeconds >= maxSeconds) {
+        // reached 24 hours
+        print('elapsed time is more than 24 hours, stopping current timer');
+        timer.cancel();
+      }
     });
   }
 

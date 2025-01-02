@@ -322,76 +322,29 @@ class Helper {
       helpText: prompt,
       cancelText: "CANCEL",
       confirmText: "OK",
-      barrierColor: Colors.black.withOpacity(0.1),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData(
-            timePickerTheme: TimePickerThemeData(
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(ConfigProvider.defaultSpace / 2),
-              ),
-              dialHandColor: ConfigProvider.mainColor,
-              backgroundColor: ConfigProvider.backgroundColorSolid,
-              dialBackgroundColor: ConfigProvider.backgroundColor,
-              helpTextStyle: TextStyleTemplates.defaultBoldTextStyle(
-                ConfigProvider.mainTextColor,
-              ),
-              dialTextStyle: TextStyleTemplates.defaultBoldTextStyle(
-                ConfigProvider.mainTextColor,
-              ),
-              cancelButtonStyle: TextButton.styleFrom(
-                backgroundColor: ConfigProvider.backgroundColor,
-                foregroundColor: Colors.black,
-                textStyle: TextStyleTemplates.smallBoldTextStyle(
-                  Colors.black,
-                ),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                      Radius.circular(ConfigProvider.defaultSpace / 2)),
-                ),
-              ),
-              confirmButtonStyle: TextButton.styleFrom(
-                backgroundColor: ConfigProvider.backgroundColor,
-                foregroundColor: ConfigProvider.mainColor,
-                textStyle: TextStyleTemplates.smallBoldTextStyle(
-                  ConfigProvider.mainColor,
-                ),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                      Radius.circular(ConfigProvider.defaultSpace / 2)),
-                ),
-              ),
-              hourMinuteTextStyle: TextStyleTemplates.xxLargeTextStyle(
-                ConfigProvider.mainTextColor,
-              ),
-              hourMinuteTextColor: WidgetStateColor.resolveWith((states) =>
-                  states.contains(WidgetState.selected)
-                      ? Colors.white
-                      : Colors.black),
-              hourMinuteColor: WidgetStateColor.resolveWith((states) =>
-                  states.contains(WidgetState.selected)
-                      ? ConfigProvider.mainColor
-                      : Colors.white),
-              dayPeriodTextStyle: TextStyleTemplates.defaultBoldTextStyle(
-                  ConfigProvider.mainTextColor),
-              dayPeriodTextColor: WidgetStateColor.resolveWith((states) =>
-                  states.contains(WidgetState.selected)
-                      ? Colors.white
-                      : Colors.black), // Set the text color for AM/PM toggle
-              dayPeriodColor: WidgetStateColor.resolveWith((states) =>
-                  states.contains(WidgetState.selected)
-                      ? ConfigProvider.mainColor
-                      : Colors.white),
-              dayPeriodBorderSide: const BorderSide(
-                color: ConfigProvider.mainColor,
-                width: 4,
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
+    );
+  }
+
+  static Future<DateTime?> showDatePickerDefault({
+    required BuildContext context,
+    required DateTime initialDate,
+    DateTime? firstDate,
+    DateTime? lastDate,
+    String prompt = "SELECT DATE",
+  }) async {
+    // allow to set
+    firstDate ??= DateTime(ConfigProvider.earliestAllowedWorkoutYear, 1, 1);
+    // allow 1 month in future
+    lastDate ??= DateTime.now().add(const Duration(days: 30));
+    return await showDatePicker(
+      helpText: prompt,
+      context: context,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      initialEntryMode: DatePickerEntryMode.calendarOnly,
+      cancelText: "CANCEL",
+      confirmText: "OK",
     );
   }
 }

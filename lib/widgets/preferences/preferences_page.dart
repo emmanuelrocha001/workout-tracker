@@ -5,14 +5,10 @@ import '../../widgets/general/default_container.dart';
 import '../general/overlay_content.dart';
 import '../general/labeled_row.dart';
 import '../general/row_item.dart';
-import '../general/overlay_content.dart';
 import '../general/default_tooltip.dart';
-import '../general/edit_text_field_form.dart';
+import '../general/default_switch.dart';
 import '../general/text_style_templates.dart';
 import '../../providers/config_provider.dart';
-
-import '../helper.dart';
-import '../../utility.dart';
 
 class PreferencesPage extends StatelessWidget {
   const PreferencesPage({super.key});
@@ -52,52 +48,6 @@ class PreferencesPage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // LabeledRow(
-              //   labelWidth: labelSize,
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   label: 'USERNAME',
-              //   children: [
-              //     RowItem(
-              //       isCompact: false,
-              //       alignment: Alignment.centerLeft,
-              //       child: SizedBox(
-              //         // width: 200.0,
-              //         child: Text(
-              //           configProvider.username,
-              //           style: TextStyleTemplates.defaultTextStyle(
-              //             ConfigProvider.mainTextColor,
-              //           ),
-              //         ),
-              //       ),
-              //     ),
-              //     RowItem(
-              //       isCompact: true,
-              //       child: IconButton(
-              //         icon: const Icon(
-              //           Icons.edit,
-              //           size: ConfigProvider.smallIconSize,
-              //           color: ConfigProvider.mainColor,
-              //         ),
-              //         onPressed: () async {
-              //           var input = await Helper.showPopUp(
-              //             title: 'Edit Username',
-              //             context: context,
-              //             specificHeight: 180.0,
-              //             content: EditTextFieldForm(
-              //               initialValue: configProvider.username,
-              //             ),
-              //           );
-              //           if (input != null &&
-              //               input is String &&
-              //               input.isNotEmpty &&
-              //               input != configProvider.username) {
-              //             configProvider.setUsername(input);
-              //           }
-              //         },
-              //       ),
-              //     ),
-              //   ],
-              // ),
               const SizedBox(
                 height: ConfigProvider.defaultSpace / 2,
               ),
@@ -112,16 +62,7 @@ class PreferencesPage extends StatelessWidget {
                         RowItem(
                           isCompact: true,
                           alignment: Alignment.centerLeft,
-                          child: Switch(
-                            activeColor: ConfigProvider.mainColor,
-                            thumbIcon: WidgetStatePropertyAll(
-                              Icon(
-                                configProvider.showRestTimerAfterEachSet
-                                    ? Icons.check
-                                    : Icons.close,
-                                color: ConfigProvider.backgroundColor,
-                              ),
-                            ),
+                          child: DefaultSwitch(
                             value: configProvider.showRestTimerAfterEachSet,
                             onChanged: (bool value) {
                               configProvider
@@ -154,17 +95,7 @@ class PreferencesPage extends StatelessWidget {
                         RowItem(
                           isCompact: true,
                           alignment: Alignment.centerLeft,
-                          child: Switch(
-                            activeColor: ConfigProvider.mainColor,
-                            thumbIcon: WidgetStatePropertyAll(
-                              Icon(
-                                configProvider
-                                        .autoPopulateWorkoutFromSetsHistory
-                                    ? Icons.check
-                                    : Icons.close,
-                                color: ConfigProvider.backgroundColor,
-                              ),
-                            ),
+                          child: DefaultSwitch(
                             value: configProvider
                                 .autoPopulateWorkoutFromSetsHistory,
                             onChanged: (bool value) {
@@ -188,7 +119,6 @@ class PreferencesPage extends StatelessWidget {
                   ],
                 ),
               ),
-
               DefaultContainer(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

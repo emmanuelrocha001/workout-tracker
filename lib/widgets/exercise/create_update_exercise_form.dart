@@ -7,13 +7,12 @@ import '../../providers/config_provider.dart';
 import 'package:workout_tracker/widgets/general/labeled_row.dart';
 import '../general/text_style_templates.dart';
 import '../general/row_item.dart';
-import '../general/edit_text_field_form.dart';
-import '../helper.dart';
 import '../general/default_text_field.dart';
 import '../../models/filters_dto.dart';
 import '../../models/muscle_group_dto.dart';
 import '../general/default_dropdown.dart';
 import '../general/pill_container.dart';
+import '../general/action_button.dart';
 
 class CreateUpdateExerciseForm extends StatefulWidget {
   final ExerciseDto? exercise;
@@ -206,37 +205,22 @@ class _CreateUpdateExerciseFormState extends State<CreateUpdateExerciseForm> {
                   ),
                 ],
               ),
-            Padding(
-              padding: const EdgeInsets.all(ConfigProvider.largeSpace),
-              child: SizedBox(
-                width: ConfigProvider.maxButtonWidth,
-                height: ConfigProvider.defaultButtonHeight,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: ConfigProvider.mainColor,
-                  ),
-                  onPressed: () {
-                    var isValid = _formKey.currentState!.validate();
-                    if (isValid) {
-                      Navigator.of(context).pop(
-                        CreateUpdateExerciseDto(
-                          name: _nameController!.text,
-                          description: _descriptionController!.text,
-                          youtubeId: _youtubeIdController!.text,
-                          muscleGroupId: muscleGroupSelection!.selectedValue,
-                          exerciseType: exerciseTypeSelection!.selectedValue,
-                        ),
-                      );
-                    }
-                  },
-                  child: Text(
-                    widget.exercise == null ? "CREATE" : "UPDATE",
-                    style: TextStyleTemplates.smallBoldTextStyle(
-                      ConfigProvider.backgroundColor,
+            ActionButton(
+              label: widget.exercise == null ? "CREATE" : "UPDATE",
+              onPressed: () {
+                var isValid = _formKey.currentState!.validate();
+                if (isValid) {
+                  Navigator.of(context).pop(
+                    CreateUpdateExerciseDto(
+                      name: _nameController!.text,
+                      description: _descriptionController!.text,
+                      youtubeId: _youtubeIdController!.text,
+                      muscleGroupId: muscleGroupSelection!.selectedValue,
+                      exerciseType: exerciseTypeSelection!.selectedValue,
                     ),
-                  ),
-                ),
-              ),
+                  );
+                }
+              },
             ),
           ],
         ),

@@ -9,6 +9,7 @@ import './screens/main_content_navigator.dart';
 import './screens/initial_screen.dart';
 import './screens/splash_screen.dart';
 import './providers/config_provider.dart';
+import './widgets/general/text_style_templates.dart';
 import './utility.dart';
 
 void main() {
@@ -92,18 +93,138 @@ class WorkoutTracker extends StatelessWidget {
                 ),
               ),
             ),
-            textTheme: const TextTheme(
-              labelLarge: TextStyle(color: Colors.black),
-            ),
+            textTheme: TextTheme(
+                // labelLarge: TextStyle(color: Colors.black),
+                titleSmall: TextStyleTemplates.mediumBoldTextStyle(
+              ConfigProvider.mainTextColor,
+            )),
             iconButtonTheme: IconButtonThemeData(
               style: ButtonStyle(
                 iconColor: WidgetStateProperty.all(ConfigProvider.mainColor),
                 iconSize: WidgetStateProperty.all(32),
               ),
             ),
+            timePickerTheme: TimePickerThemeData(
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(ConfigProvider.defaultSpace / 2),
+              ),
+              dialHandColor: ConfigProvider.mainColor,
+              backgroundColor: ConfigProvider.backgroundColorSolid,
+              dialBackgroundColor: ConfigProvider.backgroundColor,
+              helpTextStyle: TextStyleTemplates.mediumTextStyle(
+                ConfigProvider.mainTextColor,
+              ),
+              dialTextStyle: TextStyleTemplates.mediumTextStyle(
+                ConfigProvider.mainTextColor,
+              ),
+              cancelButtonStyle: TextButton.styleFrom(
+                backgroundColor: ConfigProvider.backgroundColor,
+                foregroundColor: Colors.black,
+                textStyle: TextStyleTemplates.smallBoldTextStyle(
+                  Colors.black,
+                ),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(ConfigProvider.defaultSpace / 2)),
+                ),
+              ),
+              confirmButtonStyle: TextButton.styleFrom(
+                backgroundColor: ConfigProvider.backgroundColor,
+                foregroundColor: ConfigProvider.mainColor,
+                textStyle: TextStyleTemplates.smallBoldTextStyle(
+                  ConfigProvider.mainColor,
+                ),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(ConfigProvider.defaultSpace / 2)),
+                ),
+              ),
+              hourMinuteTextStyle: TextStyleTemplates.xxLargeTextStyle(
+                ConfigProvider.mainTextColor,
+              ),
+              hourMinuteTextColor: WidgetStateColor.resolveWith((states) =>
+                  states.contains(WidgetState.selected)
+                      ? Colors.white
+                      : Colors.black),
+              hourMinuteColor: WidgetStateColor.resolveWith((states) =>
+                  states.contains(WidgetState.selected)
+                      ? ConfigProvider.mainColor
+                      : Colors.white),
+              dayPeriodTextStyle: TextStyleTemplates.defaultBoldTextStyle(
+                  ConfigProvider.mainTextColor),
+              dayPeriodTextColor: WidgetStateColor.resolveWith((states) =>
+                  states.contains(WidgetState.selected)
+                      ? Colors.white
+                      : Colors.black), // Set the text color for AM/PM toggle
+              dayPeriodColor: WidgetStateColor.resolveWith((states) =>
+                  states.contains(WidgetState.selected)
+                      ? ConfigProvider.mainColor
+                      : Colors.white),
+              dayPeriodBorderSide: const BorderSide(
+                color: ConfigProvider.mainColor,
+                width: 4,
+              ),
+            ),
+            datePickerTheme: DatePickerThemeData(
+              backgroundColor: ConfigProvider.backgroundColorSolid,
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(ConfigProvider.defaultSpace / 2),
+              ),
+              cancelButtonStyle: TextButton.styleFrom(
+                backgroundColor: ConfigProvider.backgroundColor,
+                foregroundColor: Colors.black,
+                textStyle: TextStyleTemplates.smallBoldTextStyle(
+                  Colors.black,
+                ),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(ConfigProvider.defaultSpace / 2)),
+                ),
+              ),
+              confirmButtonStyle: TextButton.styleFrom(
+                backgroundColor: ConfigProvider.backgroundColor,
+                foregroundColor: ConfigProvider.mainColor,
+                textStyle: TextStyleTemplates.smallBoldTextStyle(
+                  ConfigProvider.mainColor,
+                ),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(ConfigProvider.defaultSpace / 2)),
+                ),
+              ),
+              headerHeadlineStyle: TextStyleTemplates.xLargeTextStyle(
+                ConfigProvider.mainTextColor,
+              ),
+              dayStyle: TextStyleTemplates.mediumTextStyle(
+                ConfigProvider.mainTextColor,
+              ),
+              yearStyle: TextStyleTemplates.mediumTextStyle(
+                ConfigProvider.mainTextColor,
+              ),
+              weekdayStyle: TextStyleTemplates.mediumBoldTextStyle(
+                ConfigProvider.mainTextColor,
+              ),
+              headerHelpStyle: TextStyleTemplates.mediumTextStyle(
+                ConfigProvider.mainTextColor,
+              ),
+              // todayBackgroundColor:
+              //     WidgetStatePropertyAll(ConfigProvider.mainColor),
+            ),
+            // primaryTextTheme: TextTheme(
+            //   titleSmall: TextStyleTemplates.largeBoldTextStyle(
+            //     ConfigProvider.mainTextColor,
+            //   ),
+            // ),
             primarySwatch:
                 Utility.createMaterialColor(ConfigProvider.mainColor),
             primaryColor: ConfigProvider.mainColor,
+            colorScheme: ColorScheme.fromSwatch(
+              primarySwatch:
+                  Utility.createMaterialColor(ConfigProvider.mainColor),
+            ),
+
             highlightColor: Colors.grey.shade200,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),

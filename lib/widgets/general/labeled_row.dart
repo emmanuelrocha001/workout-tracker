@@ -44,6 +44,15 @@ class LabeledRow extends StatelessWidget {
               if (tooltip != null) DefaultTooltip(message: tooltip!),
             ],
           ),
+        if (!isSideLabel)
+          const Padding(
+            padding: EdgeInsets.all(ConfigProvider.defaultSpace / 2),
+            child: Divider(
+              height: ConfigProvider.defaultSpace / 2,
+              color: ConfigProvider.backgroundColor,
+              // thickness: 1.0,
+            ),
+          ),
         Row(
           mainAxisAlignment: mainAxisAlignment,
           crossAxisAlignment: CrossAxisAlignment.center,

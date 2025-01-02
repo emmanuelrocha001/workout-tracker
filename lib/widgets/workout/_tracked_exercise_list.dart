@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/adjust_workout_times_dto.dart';
-import './adjust_workout_time_form.dart';
+import 'adjust_workout_details_form.dart';
 
 import '../../providers/config_provider.dart';
 import '../../providers/exercise_provider.dart';
@@ -83,22 +83,25 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
 
   void _adjustWorkoutTimes() async {
     var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
-    var maxContentWidth =
-        Helper.getMaxContentWidth(context, maxContentWidthOverride: 400.0);
-    var update = await Helper.showDialogForm(
+    var maxContentWidth = Helper.getMaxContentWidth(context);
+    var update = await Helper.showPopUp(
       context: context,
-      content: AdjustWorkoutTimeForm(
-        maxFormWidth: maxContentWidth,
-        initial: AdjustWorkoutTimesDto(
-          startTime: workoutProvider.inProgressWorkoutStartTime,
-          endTime: workoutProvider.inProgressWorkoutEndTime,
-          autoTimingSelected:
-              workoutProvider.inProgressWorkoutAutoTimingSelected,
-          showRestTimerAfterEachSet: workoutProvider.showRestTimerAfterEachSet,
-          workoutNickName: workoutProvider.inProgressWorkoutNickName,
+      title: 'Workout Details',
+      content: SingleChildScrollView(
+        child: AdjustWorkoutDetailsForm(
+          maxFormWidth: maxContentWidth,
+          initial: AdjustWorkoutTimesDto(
+            startTime: workoutProvider.inProgressWorkoutStartTime,
+            endTime: workoutProvider.inProgressWorkoutEndTime,
+            autoTimingSelected:
+                workoutProvider.inProgressWorkoutAutoTimingSelected,
+            showRestTimerAfterEachSet:
+                workoutProvider.showRestTimerAfterEachSet,
+            workoutNickName: workoutProvider.inProgressWorkoutNickName,
+          ),
+          canEnableAutoTiming: !workoutProvider.updatingLoggedWorkout,
+          isUpdatingWorkout: workoutProvider.updatingLoggedWorkout,
         ),
-        canEnableAutoTiming: !workoutProvider.updatingLoggedWorkout,
-        isUpdatingWorkout: workoutProvider.updatingLoggedWorkout,
       ),
     );
     if (update != null && update is AdjustWorkoutTimesDto) {
