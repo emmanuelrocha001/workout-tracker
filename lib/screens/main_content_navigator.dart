@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/exercise_provider.dart';
-import '../widgets/workout/_workout_history_.dart';
+import '../widgets/workout/_workout_history.dart';
 
 import '../providers/config_provider.dart';
 import '../providers/workout_provider.dart';

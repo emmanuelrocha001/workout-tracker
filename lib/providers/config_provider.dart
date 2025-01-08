@@ -184,6 +184,7 @@ class ConfigProvider extends ChangeNotifier {
   static const largeSpace = 24.0;
 
   // text
+  static const defaultErrorMessage = 'Something went wrong.';
   static const cancelInProgressWorkoutText =
       'Are you sure you want to cancel this workout? All progress will be lost.';
 

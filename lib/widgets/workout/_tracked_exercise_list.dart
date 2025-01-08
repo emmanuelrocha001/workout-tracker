@@ -365,11 +365,17 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
       showActionButton: workoutProvider.isInProgressWorkoutReadyTofinish(),
       actionButtonLabel:
           !workoutProvider.updatingLoggedWorkout ? "FINISH" : "UPDATE",
-      onActionButtonPressed: () {
+      onActionButtonPressed: () async {
         if (!workoutProvider.updatingLoggedWorkout) {
           workoutProvider.finishInProgressWorkout();
         } else {
-          workoutProvider.finishUpdatingWorkoutHistoryEntry();
+          var res = await workoutProvider.finishUpdatingWorkoutHistoryEntry();
+          if (context.mounted) {
+            Helper.showMessageBar(
+                context: context,
+                message: '${res.message}',
+                isError: !res.success);
+          }
         }
         widget.navigateToWorkoutHistory();
       },

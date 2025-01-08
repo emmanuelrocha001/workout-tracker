@@ -39,9 +39,18 @@ class WorkoutTracker extends StatelessWidget {
           lazy: false,
           create: (_) => ExerciseProvider(),
         ),
-        ChangeNotifierProvider<WorkoutProvider>(
+        ChangeNotifierProxyProvider<ExerciseProvider, WorkoutProvider>(
           lazy: false,
           create: (_) => WorkoutProvider(),
+          update: (_, exerciseProvider, workoutProvider) {
+            // only updates once per lifetime, when the exerciseProvider has been initialized with exercises
+            return workoutProvider != null &&
+                    workoutProvider.isInitializedWithExerciseProvider
+                ? workoutProvider
+                : WorkoutProvider(
+                    exercises: exerciseProvider.exercises,
+                  );
+          },
         )
       ],
       child: GestureDetector(

@@ -24,7 +24,6 @@ class ExerciseProvider with ChangeNotifier {
   String? _appliedAuthor;
 
   ExerciseProvider() {
-    print('ExerciseProvider constructor');
     setupCache().then((_) {
       loadExcercises();
     });
@@ -32,13 +31,16 @@ class ExerciseProvider with ChangeNotifier {
 
   Future<void> loadExcercises() async {
     await loadSystemDefinedExercises();
+    print('system exercises loaded ${_systemDefinedExercises.length}');
     await loadUserDefinedExercisesFromCache();
+    print('user defined exercises loaded ${_userDefinedExercises.length}');
+    print('total exercises loaded ${_exercises.length}, notifying listeners');
+    notifyListeners();
   }
 
   Future<void> loadSystemDefinedExercises() async {
     // Load exercises from asset
     try {
-      print("loading exercises from asset");
       var exercisesEncodedString =
           await rootBundle.loadString(_exercisesFilePath);
 
@@ -49,11 +51,11 @@ class ExerciseProvider with ChangeNotifier {
         return temp;
       }).toList();
       _exercises = [..._systemDefinedExercises];
+      _filteredExercises = [..._exercises];
     } catch (e, s) {
       print(e);
       print(s);
     }
-    notifyListeners();
   }
 
   Future<void> setupCache() async {
@@ -71,7 +73,6 @@ class ExerciseProvider with ChangeNotifier {
           _cache?.getStringList(userDefinedExercisesKey);
 
       if (cachedEncodedValueList != null) {
-        print(_exercises.length);
         _userDefinedExercises = (cachedEncodedValueList).map((exercise) {
           var tempUserDefinedExercise =
               ExerciseDto.fromJson(jsonDecode(exercise));
@@ -79,10 +80,8 @@ class ExerciseProvider with ChangeNotifier {
           tempUserDefinedExercise.isCustom = true;
           return tempUserDefinedExercise;
         }).toList();
-        print("exercise before adding user defined ${_exercises.length}");
         _exercises.addAll(_userDefinedExercises);
         _filteredExercises = [..._exercises];
-        notifyListeners();
       } else {
         print('no user defined exercises found in cache');
       }
@@ -283,9 +282,11 @@ class ExerciseProvider with ChangeNotifier {
       description: input.description,
       youtubeId: input.youtubeId,
     );
+    newExercise.setSearchableString();
 
     var res = await _saveUserDefinedExercise(exercise: newExercise);
     if (res) {
+      // always filter by user defined exercises when creating an exercise
       _exercises = [..._systemDefinedExercises, ..._userDefinedExercises];
       _appliedMuscleGroupIdFilter = "";
       _appliedExerciseType = "";
@@ -308,22 +309,22 @@ class ExerciseProvider with ChangeNotifier {
     required ExerciseDto exercise,
     required CreateUpdateExerciseDto input,
   }) async {
-    var muscleGroupIsBeingUpdated =
-        exercise.muscleGroupId != input.muscleGroupId;
     exercise.name = input.name;
     exercise.muscleGroupId = input.muscleGroupId;
     exercise.description = input.description;
     exercise.youtubeId = input.youtubeId;
     exercise.updatedAt = DateTime.now();
+    exercise.setSearchableString();
 
     var res = await _saveUserDefinedExercise(
         exerciseId: exercise.id, exercise: exercise);
     if (res) {
+      // always filter by user defined exercises when updating an exercise
       _exercises = [..._systemDefinedExercises, ..._userDefinedExercises];
-      if (muscleGroupIsBeingUpdated) {
-        _filteredExercises.removeWhere((x) => x.id == exercise.id);
-      }
-      // _filteredExercises = [..._exercises];
+      _appliedMuscleGroupIdFilter = "";
+      _appliedExerciseType = "";
+      setAppliedAuthor("User");
+      _applyFilters();
       notifyListeners();
       return ResDto(
         success: true,

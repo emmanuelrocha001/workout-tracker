@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:workout_tracker/models/res_dto.dart';
 import './config_provider.dart';
 import '../models/exercise_dto.dart';
 import '../models/workout_dto.dart';
@@ -22,15 +23,28 @@ class WorkoutProvider extends ChangeNotifier {
       _exerciseHistory = {};
   SharedPreferencesWithCache? _cache;
   WorkoutDto? _workoutToShowAsFinished;
+  final Map<String, ExerciseDto> _exerciseMap = {};
+  bool _isInitializedWithExerciseProvider = false;
 
-  WorkoutProvider() {
+  bool get isInitializedWithExerciseProvider =>
+      _isInitializedWithExerciseProvider;
+
+  WorkoutProvider({List<ExerciseDto>? exercises}) {
+    if (exercises == null || exercises.isEmpty) {
+      print('No exercises provided, skipping workout provider initialization');
+      return;
+    }
+
     // loadExcercises();
-    setupCache();
+    if (!_isInitializedWithExerciseProvider) {
+      print('Initializing workout provider with exercises ${exercises.length}');
+
+      setupCache(exercises);
+    }
     // inject auth provider
   }
 
-  void setupCache() async {
-    // TODO: it would be better to only save the exercise id for workout and exercise history, as this data can be sourced from the exercise provider.
+  void setupCache(List<ExerciseDto> exercises) async {
     _cache = await SharedPreferencesWithCache.create(
         cacheOptions: SharedPreferencesWithCacheOptions(
             // This cache will only accept the key 'inProgressWorkout'.
@@ -45,17 +59,23 @@ class WorkoutProvider extends ChangeNotifier {
       // clean up deprecated keys
       await _cache?.remove(_deprecatedExerciseSetsHistoryKey);
 
-      loadInProgressWorkoutFromCache();
+      // set up _exercise map
+      for (var exercise in exercises) {
+        _exerciseMap[exercise.id] = exercise;
+      }
+
+      await loadInProgressWorkoutFromCache();
 
       var containsExerciseHistory = _cache!.containsKey(_exerciseHistoryKey);
 
-      loadWorkoutHistoryFromCache(
+      await loadWorkoutHistoryFromCache(
           shouldBuildExerciseHistoryFromWorkoutHistory:
               !containsExerciseHistory);
 
       if (containsExerciseHistory) {
-        loadExerciseHistory();
+        await loadExerciseHistory();
       }
+      _isInitializedWithExerciseProvider = true;
     }
   }
 
@@ -63,7 +83,7 @@ class WorkoutProvider extends ChangeNotifier {
     _cache?.clear();
   }
 
-  void loadInProgressWorkoutFromCache() async {
+  Future<void> loadInProgressWorkoutFromCache() async {
     try {
       var cachedEncodedValue = _cache?.getString(_inProgressWorkoutKey);
       if (cachedEncodedValue != null) {
@@ -79,7 +99,7 @@ class WorkoutProvider extends ChangeNotifier {
     }
   }
 
-  void loadWorkoutHistoryFromCache({
+  Future<void> loadWorkoutHistoryFromCache({
     bool shouldBuildExerciseHistoryFromWorkoutHistory = false,
   }) async {
     try {
@@ -96,8 +116,17 @@ class WorkoutProvider extends ChangeNotifier {
           // populate for legacy data
           tempWorkout.createTime ??= tempWorkout.startTime;
           tempWorkout.lastUpdated ??= tempWorkout.endTime;
+          // try to use up to date exercise data
+          for (var i = 0; i < tempWorkout.exercises.length; i++) {
+            if (_exerciseMap
+                .containsKey(tempWorkout.exercises[i].exercise.id)) {
+              tempWorkout.exercises[i].exercise =
+                  _exerciseMap[tempWorkout.exercises[i].exercise.id]!;
+            }
+          }
           return tempWorkout;
         }).toList();
+        _saveWorkoutHistory();
 
         if (shouldBuildExerciseHistoryFromWorkoutHistory &&
             _workoutHistory.isNotEmpty) {
@@ -114,7 +143,7 @@ class WorkoutProvider extends ChangeNotifier {
     }
   }
 
-  void loadExerciseHistory() async {
+  Future<void> loadExerciseHistory() async {
     try {
       String? cachedEncodedValue = _cache?.getString(_exerciseHistoryKey);
 
@@ -247,6 +276,11 @@ class WorkoutProvider extends ChangeNotifier {
     }
   }
 
+  void _saveWorkoutHistory() async {
+    _cache!.setStringList(_workoutHistoryKey,
+        _workoutHistory.map((workout) => jsonEncode(workout)).toList());
+  }
+
   WorkoutDto? get workoutToShowAsFinished {
     return _workoutToShowAsFinished;
   }
@@ -375,47 +409,49 @@ class WorkoutProvider extends ChangeNotifier {
 
     // TODO might need to await in scenario where uses refreshes the page.
     _cache!.remove(_inProgressWorkoutKey);
-    _cache!.setStringList(_workoutHistoryKey,
-        _workoutHistory.map((workout) => jsonEncode(workout)).toList());
-    _cache!.setString(
-        _deprecatedExerciseSetsHistoryKey, jsonEncode(_exerciseHistory));
+    _saveWorkoutHistory();
   }
 
-  void finishUpdatingWorkoutHistoryEntry() {
+  Future<ResDto> finishUpdatingWorkoutHistoryEntry() async {
     if (_inProgressWorkout == null) {
-      return;
+      return ResDto(success: false, message: 'No workout in progress');
     }
 
     var index =
         _workoutHistory.indexWhere((x) => x.id == _inProgressWorkout!.id);
     if (index == -1) {
-      return;
+      return ResDto(success: false, message: 'Workout not found in history');
     }
-    var previousEntry = _workoutHistory[index];
+    try {
+      var previousEntry = _workoutHistory[index];
 
-    var workoutArtifactsNeedResorting =
-        previousEntry.startTime!.toIso8601String() !=
-            _inProgressWorkout!.startTime!.toIso8601String();
+      var workoutArtifactsNeedResorting =
+          previousEntry.startTime!.toIso8601String() !=
+              _inProgressWorkout!.startTime!.toIso8601String();
 
-    _workoutHistory[index] = _inProgressWorkout!;
-    if (workoutArtifactsNeedResorting) {
-      _sortWorkoutHistory();
+      _workoutHistory[index] = _inProgressWorkout!;
+      if (workoutArtifactsNeedResorting) {
+        _sortWorkoutHistory();
+      }
+
+      // update exercise sets history
+      _updateExerciseHistory(
+        workout: _inProgressWorkout!,
+        oldWorkout: previousEntry,
+      );
+      _saveExerciseHistory();
+      _inProgressWorkout = null;
+
+      notifyListeners();
+
+      // TODO might need to await in scenario where uses refreshes the page.
+      _cache!.remove(_inProgressWorkoutKey);
+      _saveWorkoutHistory();
+      return ResDto(success: true, message: 'Workout updated successfully');
+    } catch (exception) {
+      return ResDto(
+          success: false, message: ConfigProvider.defaultErrorMessage);
     }
-
-    // update exercise sets history
-    _updateExerciseHistory(
-      workout: _inProgressWorkout!,
-      oldWorkout: previousEntry,
-    );
-    _saveExerciseHistory();
-    _inProgressWorkout = null;
-
-    notifyListeners();
-
-    // TODO might need to await in scenario where uses refreshes the page.
-    _cache!.remove(_inProgressWorkoutKey);
-    _cache!.setStringList(_workoutHistoryKey,
-        _workoutHistory.map((workout) => jsonEncode(workout)).toList());
   }
 
   void deleteWorkoutHistoryEntry(String workoutId) {
@@ -434,8 +470,7 @@ class WorkoutProvider extends ChangeNotifier {
     notifyListeners();
 
     // TODO might need to await in scenario where uses refreshes the page.
-    _cache!.setStringList(_workoutHistoryKey,
-        _workoutHistory.map((workout) => jsonEncode(workout)).toList());
+    _saveWorkoutHistory();
   }
 
   bool isWorkoutInProgress() {
