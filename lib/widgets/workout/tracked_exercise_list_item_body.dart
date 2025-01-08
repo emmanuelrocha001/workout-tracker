@@ -262,10 +262,10 @@ class _TrackedExerciseListItemBodyState
     required String trackedExerciseId,
     required int index,
     required bool val,
-    required double setWeight,
-    required int setReps,
-    required double setDistance,
-    required String setTime,
+    required double? setWeight,
+    required int? setReps,
+    required double? setDistance,
+    required String? setTime,
   }) {
     if (index >= 0 && index < sets.length) {
       var timerAlreadyShown = sets[index].restTimerShown;
@@ -487,16 +487,35 @@ class _TrackedExerciseListItemBodyState
                     ),
                     onChanged: (val) {
                       // can log based on current values
-                      var weight = sets[index].weight ??
-                          double.tryParse(previousSetWeight);
-                      var reps =
-                          sets[index].reps ?? int.tryParse(previousSetReps);
-                      var distance = sets[index].distance ??
-                          double.tryParse(previousSetDistance);
+                      double? weight;
+                      if (widget.exerciseDimensions?.isWeightEnabled ?? true) {
+                        weight = sets[index].weight ??
+                            double.tryParse(previousSetWeight);
+                        weight ??= 0.0;
+                      }
+                      int? reps;
+                      if (widget.exerciseDimensions?.isRepEnabled ?? true) {
+                        reps =
+                            sets[index].reps ?? int.tryParse(previousSetReps);
+                        reps ??= 0;
+                      }
+                      double? distance;
+                      if (widget.exerciseDimensions?.isDistanceEnabled ??
+                          false) {
+                        distance = sets[index].distance ??
+                            double.tryParse(previousSetDistance);
+                        distance ??= 0.0;
+                      }
 
-                      var time = TimeInputFormatter.padFormattedTimeInput(
-                              sets[index].time) ??
-                          previousSetTime;
+                      String? time;
+                      if (widget.exerciseDimensions?.isTimeEnabled ?? false) {
+                        time = TimeInputFormatter.padFormattedTimeInput(
+                                sets[index].time) ??
+                            previousSetTime;
+                        if (time.isEmpty) {
+                          time = "00:00:00";
+                        }
+                      }
                       // var canLog = true weight != null && reps != null;
                       var canLog = true;
 
@@ -506,9 +525,9 @@ class _TrackedExerciseListItemBodyState
                           trackedExerciseId: widget.trackedExerciseId,
                           index: index,
                           val: val ?? false,
-                          setWeight: weight ?? 0.0,
-                          setReps: reps ?? 0,
-                          setDistance: distance ?? 0.0,
+                          setWeight: weight,
+                          setReps: reps,
+                          setDistance: distance,
                           setTime: time,
                         );
                       } else {

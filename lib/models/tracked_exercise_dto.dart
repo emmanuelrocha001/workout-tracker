@@ -130,19 +130,19 @@ abstract class ISetDto {
 
 class SetDtoSimplified implements ISetDto {
   @override
-  final int reps;
+  int? reps;
   @override
-  final double weight;
+  double? weight;
   @override
-  final double distance;
+  double? distance;
   @override
-  final String time;
+  String? time;
 
   SetDtoSimplified({
-    required this.reps,
-    required this.weight,
-    this.distance = 0.0,
-    this.time = "",
+    this.reps,
+    this.weight,
+    this.distance,
+    this.time,
   });
 
   factory SetDtoSimplified.fromJson(Map<String, dynamic> json) {
@@ -156,19 +156,27 @@ class SetDtoSimplified implements ISetDto {
 
   factory SetDtoSimplified.fromSetDto(SetDto set) {
     return SetDtoSimplified(
-      reps: set.reps ?? 0,
-      weight: set.weight ?? 0.0,
-      distance: set.distance ?? 0.0,
-      time: set.time ?? "",
+      reps: set.reps,
+      weight: set.weight,
+      distance: set.distance,
+      time: set.time,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'reps': reps,
-      'weight': weight,
-      'distance': distance,
-      'time': time,
-    };
+    Map<String, dynamic> jsonData = {};
+    if (reps != null) {
+      jsonData['reps'] = reps;
+    }
+    if (weight != null) {
+      jsonData['weight'] = weight;
+    }
+    if (distance != null) {
+      jsonData['distance'] = distance;
+    }
+    if (time != null) {
+      jsonData['time'] = time;
+    }
+    return jsonData;
   }
 }

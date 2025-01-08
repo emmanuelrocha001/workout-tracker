@@ -308,6 +308,8 @@ class ExerciseProvider with ChangeNotifier {
     required ExerciseDto exercise,
     required CreateUpdateExerciseDto input,
   }) async {
+    var muscleGroupIsBeingUpdated =
+        exercise.muscleGroupId != input.muscleGroupId;
     exercise.name = input.name;
     exercise.muscleGroupId = input.muscleGroupId;
     exercise.description = input.description;
@@ -318,7 +320,10 @@ class ExerciseProvider with ChangeNotifier {
         exerciseId: exercise.id, exercise: exercise);
     if (res) {
       _exercises = [..._systemDefinedExercises, ..._userDefinedExercises];
-      _filteredExercises = [..._exercises];
+      if (muscleGroupIsBeingUpdated) {
+        _filteredExercises.removeWhere((x) => x.id == exercise.id);
+      }
+      // _filteredExercises = [..._exercises];
       notifyListeners();
       return ResDto(
         success: true,

@@ -5,19 +5,23 @@ import './config_provider.dart';
 import '../models/exercise_dto.dart';
 import '../models/workout_dto.dart';
 import '../models/tracked_exercise_dto.dart';
+import '../models/tracked_exercise_history_entry_dto.dart';
 import '../models/adjust_workout_times_dto.dart';
 
 class WorkoutProvider extends ChangeNotifier {
   static const String _inProgressWorkoutKey = 'inProgressWorkout';
   static const String _workoutHistoryKey = 'workoutHistory';
-  String get exerciseSetsHistoryKey =>
+  String get _deprecatedExerciseSetsHistoryKey =>
       '${ConfigProvider.cachePrefix}_exercises_sets_history';
+  String get _exerciseHistoryKey =>
+      '${ConfigProvider.cachePrefix}_exercise_history';
 
   WorkoutDto? _inProgressWorkout;
   List<WorkoutDto> _workoutHistory = [];
-  final Map<String, List<List<SetDtoSimplified>>> _exerciseSetsHistory = {};
+  final Map<String, Map<String, TrackedExerciseHistoryEntryDto>>
+      _exerciseHistory = {};
   SharedPreferencesWithCache? _cache;
-  bool _showLatestWorkoutHistoryEntryAsFinished = false;
+  WorkoutDto? _workoutToShowAsFinished;
 
   WorkoutProvider() {
     // loadExcercises();
@@ -26,29 +30,31 @@ class WorkoutProvider extends ChangeNotifier {
   }
 
   void setupCache() async {
+    // TODO: it would be better to only save the exercise id for workout and exercise history, as this data can be sourced from the exercise provider.
     _cache = await SharedPreferencesWithCache.create(
         cacheOptions: SharedPreferencesWithCacheOptions(
             // This cache will only accept the key 'inProgressWorkout'.
             allowList: <String>{
           _inProgressWorkoutKey,
           _workoutHistoryKey,
-          exerciseSetsHistoryKey
+          _deprecatedExerciseSetsHistoryKey,
+          _exerciseHistoryKey,
         }));
     // await clearCache();
     if (_cache != null) {
+      // clean up deprecated keys
+      await _cache?.remove(_deprecatedExerciseSetsHistoryKey);
+
       loadInProgressWorkoutFromCache();
 
-      _cache!.containsKey(exerciseSetsHistoryKey);
-
-      var containsExerciseSetsHistoryKey =
-          _cache!.containsKey(exerciseSetsHistoryKey);
+      var containsExerciseHistory = _cache!.containsKey(_exerciseHistoryKey);
 
       loadWorkoutHistoryFromCache(
-          shouldBuildExerciseSetsHistoryFromWorkoutHistory:
-              !containsExerciseSetsHistoryKey);
+          shouldBuildExerciseHistoryFromWorkoutHistory:
+              !containsExerciseHistory);
 
-      if (containsExerciseSetsHistoryKey) {
-        loadExerciseSetsHistory();
+      if (containsExerciseHistory) {
+        loadExerciseHistory();
       }
     }
   }
@@ -74,11 +80,11 @@ class WorkoutProvider extends ChangeNotifier {
   }
 
   void loadWorkoutHistoryFromCache({
-    bool shouldBuildExerciseSetsHistoryFromWorkoutHistory = false,
+    bool shouldBuildExerciseHistoryFromWorkoutHistory = false,
   }) async {
     try {
       print(
-          'attempting to build sets history from workout history $shouldBuildExerciseSetsHistoryFromWorkoutHistory');
+          'attempting to build sets history from workout history $shouldBuildExerciseHistoryFromWorkoutHistory');
       List<String>? cachedEncodedValueList =
           _cache?.getStringList(_workoutHistoryKey);
 
@@ -93,13 +99,13 @@ class WorkoutProvider extends ChangeNotifier {
           return tempWorkout;
         }).toList();
 
-        if (shouldBuildExerciseSetsHistoryFromWorkoutHistory &&
+        if (shouldBuildExerciseHistoryFromWorkoutHistory &&
             _workoutHistory.isNotEmpty) {
           print('\n attempting to build sets history from workout history');
           for (var workout in _workoutHistory) {
-            _updateExerciseSetsHistory(workout);
+            _updateExerciseHistory(workout: workout);
           }
-          saveExerciseSetsHistory();
+          _saveExerciseHistory();
         }
         notifyListeners();
       }
@@ -108,66 +114,145 @@ class WorkoutProvider extends ChangeNotifier {
     }
   }
 
-  void loadExerciseSetsHistory() async {
+  void loadExerciseHistory() async {
     try {
-      String? cachedEncodedValue = _cache?.getString(exerciseSetsHistoryKey);
+      String? cachedEncodedValue = _cache?.getString(_exerciseHistoryKey);
 
-      print('\ncached workout history:\n\n $exerciseSetsHistoryKey\n\n');
+      print('\ncached workout history:\n\n $_exerciseHistoryKey\n\n');
+      print(cachedEncodedValue);
 
       if (cachedEncodedValue != null) {
         (jsonDecode(cachedEncodedValue) as Map<String, dynamic>)
             .forEach((key, value) {
-          _exerciseSetsHistory[key] = List<List<SetDtoSimplified>>.from(
-            (value as List).map(
-              (x) =>
-                  (x as List).map((y) => SetDtoSimplified.fromJson(y)).toList(),
+          _exerciseHistory[key] =
+              Map<String, TrackedExerciseHistoryEntryDto>.from(
+            (value as Map<String, dynamic>).map(
+              (key, value) => MapEntry(
+                key,
+                TrackedExerciseHistoryEntryDto.fromJson(value),
+              ),
             ),
           );
         });
         notifyListeners();
       }
     } catch (e) {
+      print('something went wrong');
       print(e);
     }
   }
 
-  void _updateExerciseSetsHistory(WorkoutDto workout) {
+  void _updateExerciseHistory({
+    required WorkoutDto workout,
+    WorkoutDto? oldWorkout,
+    bool isWorkoutEntryBeingDeleted = false,
+  }) {
+    // delete removed entries
+    var toBeRemoved = <String>{};
+    if (isWorkoutEntryBeingDeleted) {
+      toBeRemoved = workout.exercises.map((x) => x.exercise.id).toSet();
+    } else if (oldWorkout != null && workout.id == oldWorkout.id) {
+      toBeRemoved = oldWorkout.exercises
+          .map((x) => x.exercise.id)
+          .toSet()
+          .difference(workout.exercises.map((x) => x.exercise.id).toSet());
+    }
+
+    print('toBeRemoved $toBeRemoved');
+    for (var exerciseId in toBeRemoved) {
+      if (_exerciseHistory.containsKey(exerciseId) &&
+          _exerciseHistory[exerciseId]!.containsKey(workout.id)) {
+        // remove entry
+        print(
+            'removing entry with exerciseId $exerciseId and workoutId ${workout.id}');
+        _exerciseHistory[exerciseId]!.remove(workout.id);
+      } else {
+        print(
+            'entry not found with exerciseId $exerciseId and workoutId ${workout.id}');
+      }
+    }
+    if (isWorkoutEntryBeingDeleted) {
+      return;
+    }
+
+    // update existing entries
     for (var trackedExercise in workout.exercises) {
       var simplifiedSets = trackedExercise.sets
           .map((x) => SetDtoSimplified.fromSetDto(x))
           .toList();
-      if (_exerciseSetsHistory.containsKey(trackedExercise.exercise.id)) {
-        _exerciseSetsHistory[trackedExercise.exercise.id]!.add(simplifiedSets);
+
+      var entry = TrackedExerciseHistoryEntryDto.newInstance(
+        exerciseId: trackedExercise.exercise.id,
+        workoutId: workout.id,
+        workoutStartDate: workout.startTime!,
+        sets: simplifiedSets,
+      );
+
+      if (_exerciseHistory.containsKey(trackedExercise.exercise.id)) {
+        _exerciseHistory[trackedExercise.exercise.id]![workout.id] = entry;
+        // sort entries
+        var entriesAsList =
+            _exerciseHistory[trackedExercise.exercise.id]!.entries.toList();
+
+        print(
+            're-sorting exercise history entries for exercise ${trackedExercise.exercise.id}');
+        entriesAsList.sort((a, b) =>
+            a.value.workoutStartDate.isBefore(b.value.workoutStartDate)
+                ? -1
+                : 1);
+
+        _exerciseHistory[trackedExercise.exercise.id] = {
+          for (var entry in entriesAsList) entry.key: entry.value
+        };
       } else {
-        _exerciseSetsHistory[trackedExercise.exercise.id] = [simplifiedSets];
+        _exerciseHistory[trackedExercise.exercise.id] = {
+          workout.id: entry,
+        };
       }
     }
   }
 
   List<ISetDto>? getExerciseSetsHistoryLatestEntry(String exerciseId) {
     print(exerciseId);
-    if (_exerciseSetsHistory.containsKey(exerciseId)) {
-      return _exerciseSetsHistory[exerciseId]![
-          _exerciseSetsHistory[exerciseId]!.length - 1];
+    if (_exerciseHistory.containsKey(exerciseId)) {
+      // In dart, for a LinkedHashMap, the underlying structure that maintains the order of insertion is a doubly linked list. This means that we can access the first and last elements in O(1) time.
+      return _exerciseHistory[exerciseId]!.values.last.sets;
     }
     return null;
   }
 
-  void saveExerciseSetsHistory() async {
+  List<TrackedExerciseHistoryEntryDto>? getExerciseHistory(String exerciseId) {
+    if (_exerciseHistory.containsKey(exerciseId)) {
+      return _exerciseHistory[exerciseId]!.values.toList();
+    }
+    return null;
+  }
+
+  void _saveExerciseHistory() async {
+    // filter out expired entries
+    var now = DateTime.now();
+    _exerciseHistory.forEach((key, value) {
+      _exerciseHistory[key] = {
+        for (var entry in value.entries.where(
+          (entry) => entry.value.expiryDate.isAfter(now),
+        ))
+          entry.key: entry.value
+      };
+    });
     try {
       await _cache?.setString(
-          exerciseSetsHistoryKey, jsonEncode(_exerciseSetsHistory));
+          _exerciseHistoryKey, jsonEncode(_exerciseHistory));
     } catch (e) {
       print(e);
     }
   }
 
-  bool get showLatestWorkoutHistoryEntryAsFinished {
-    return _showLatestWorkoutHistoryEntryAsFinished;
+  WorkoutDto? get workoutToShowAsFinished {
+    return _workoutToShowAsFinished;
   }
 
-  void resetShowLatestWorkoutHistoryEntryAsFinished() {
-    _showLatestWorkoutHistoryEntryAsFinished = false;
+  void resetWorkoutToShowAsFinished() {
+    _workoutToShowAsFinished = null;
   }
 
   List<WorkoutDto> get workoutHistory {
@@ -253,6 +338,11 @@ class WorkoutProvider extends ChangeNotifier {
     return true;
   }
 
+  void _sortWorkoutHistory() {
+    _workoutHistory
+        .sort((a, b) => a.startTime!.isBefore(b.startTime!) ? -1 : 1);
+  }
+
   void finishInProgressWorkout() {
     if (_inProgressWorkout == null) {
       return;
@@ -271,13 +361,14 @@ class WorkoutProvider extends ChangeNotifier {
 
     _inProgressWorkout!.lastUpdated = DateTime.now();
 
-    _showLatestWorkoutHistoryEntryAsFinished = true;
+    _workoutToShowAsFinished = _inProgressWorkout;
 
     // save to history
     _workoutHistory.add(_inProgressWorkout!);
-    // update exercoise sets history
-    _updateExerciseSetsHistory(_inProgressWorkout!);
-    saveExerciseSetsHistory();
+    _sortWorkoutHistory();
+    // update exercise sets history
+    _updateExerciseHistory(workout: _inProgressWorkout!);
+    _saveExerciseHistory();
     _inProgressWorkout = null;
 
     notifyListeners();
@@ -286,7 +377,8 @@ class WorkoutProvider extends ChangeNotifier {
     _cache!.remove(_inProgressWorkoutKey);
     _cache!.setStringList(_workoutHistoryKey,
         _workoutHistory.map((workout) => jsonEncode(workout)).toList());
-    _cache!.setString(exerciseSetsHistoryKey, jsonEncode(_exerciseSetsHistory));
+    _cache!.setString(
+        _deprecatedExerciseSetsHistoryKey, jsonEncode(_exerciseHistory));
   }
 
   void finishUpdatingWorkoutHistoryEntry() {
@@ -299,8 +391,23 @@ class WorkoutProvider extends ChangeNotifier {
     if (index == -1) {
       return;
     }
+    var previousEntry = _workoutHistory[index];
+
+    var workoutArtifactsNeedResorting =
+        previousEntry.startTime!.toIso8601String() !=
+            _inProgressWorkout!.startTime!.toIso8601String();
 
     _workoutHistory[index] = _inProgressWorkout!;
+    if (workoutArtifactsNeedResorting) {
+      _sortWorkoutHistory();
+    }
+
+    // update exercise sets history
+    _updateExerciseHistory(
+      workout: _inProgressWorkout!,
+      oldWorkout: previousEntry,
+    );
+    _saveExerciseHistory();
     _inProgressWorkout = null;
 
     notifyListeners();
@@ -316,8 +423,14 @@ class WorkoutProvider extends ChangeNotifier {
     if (index == -1) {
       return;
     }
-
+    var workoutToBeRemoved = _workoutHistory[index];
+    _updateExerciseHistory(
+      workout: workoutToBeRemoved,
+      isWorkoutEntryBeingDeleted: true,
+    );
+    _saveExerciseHistory();
     _workoutHistory.removeAt(index);
+
     notifyListeners();
 
     // TODO might need to await in scenario where uses refreshes the page.
@@ -385,23 +498,30 @@ class WorkoutProvider extends ChangeNotifier {
       return;
     }
     print("from add exercise ${exercise.id}");
+    TrackedExerciseDto trackedExercise;
+    var trackedExerciseIndex = _inProgressWorkout!.exercises
+        .indexWhere((x) => x.exercise.id == exercise.id);
 
-    var trackedExercise = TrackedExerciseDto.newInstance(
-      exercise: exercise,
-    );
-
-    if (autoPopulateWorkoutFromSetsHistory) {
-      print("attempting to auto populate tracked exercise");
-      var latestSets = getExerciseSetsHistoryLatestEntry(exercise.id);
-      if (latestSets != null) {
-        trackedExercise.sets = latestSets
-            .map((x) => SetDto(reps: x.reps, weight: x.weight))
-            .toList();
+    if (trackedExerciseIndex != -1) {
+      // add new set if exerise is already being tracked.
+      trackedExercise = _inProgressWorkout!.exercises[trackedExerciseIndex];
+      trackedExercise.sets.add(SetDto());
+    } else {
+      trackedExercise = TrackedExerciseDto.newInstance(
+        exercise: exercise,
+      );
+      if (autoPopulateWorkoutFromSetsHistory) {
+        print("attempting to auto populate tracked exercise");
+        var latestSets = getExerciseSetsHistoryLatestEntry(exercise.id);
+        if (latestSets != null) {
+          trackedExercise.sets = latestSets
+              .map((x) => SetDto(reps: x.reps, weight: x.weight))
+              .toList();
+        }
       }
+      print("from add exercise ${trackedExercise.id}");
+      _inProgressWorkout!.exercises.add(trackedExercise);
     }
-
-    _inProgressWorkout!.exercises.add(trackedExercise);
-    print("from add exercise ${trackedExercise.id}");
 
     _inProgressWorkout!.setAreTrackedExercisesLogged();
     _saveInProgressWorkout();
@@ -474,8 +594,6 @@ class WorkoutProvider extends ChangeNotifier {
     if (trackedExercise == null) {
       return false;
     }
-
-    var oldAreSetsLogged = trackedExercise.areSetsLogged();
 
     trackedExercise.sets.removeAt(index);
 

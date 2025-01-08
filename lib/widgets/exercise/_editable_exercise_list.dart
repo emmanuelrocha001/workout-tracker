@@ -18,9 +18,11 @@ import '_exercise_details.dart';
 
 class EditableExerciseList extends StatefulWidget {
   final ScrollController scrollController;
+  final bool isWorkoutInProgress;
   const EditableExerciseList({
     super.key,
     required this.scrollController,
+    required this.isWorkoutInProgress,
   });
 
   @override
@@ -132,8 +134,10 @@ class _EditableExerciseListState extends State<EditableExerciseList> {
                 return ExerciseListItem(
                   data: exercises[index],
                   showDetails: showDetails,
-                  updateExercise: updateExercise,
-                  deleteExercise: deleteExercise,
+                  updateExercise:
+                      !widget.isWorkoutInProgress ? updateExercise : null,
+                  deleteExercise:
+                      !widget.isWorkoutInProgress ? deleteExercise : null,
                 );
               },
               childCount: exercises.length,

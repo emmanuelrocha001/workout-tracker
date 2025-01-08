@@ -51,6 +51,7 @@ class Helper {
     required BuildContext context,
     required String title,
     required Widget content,
+    String? subTitle,
     bool hasPadding = true,
     double heightPercentage = .95,
     double? specificHeight,
@@ -136,22 +137,33 @@ class Helper {
                         ],
                       ),
                     ),
-                    Container(
-                      color: ConfigProvider.backgroundColorSolid,
-                      child: Padding(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: ConfigProvider.defaultSpace),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          title,
+                          style: TextStyleTemplates.mediumBoldTextStyle(
+                            ConfigProvider.mainTextColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (subTitle != null && subTitle.isNotEmpty)
+                      Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: ConfigProvider.defaultSpace),
                         child: Align(
                           alignment: Alignment.topLeft,
                           child: Text(
-                            title,
-                            style: TextStyleTemplates.mediumBoldTextStyle(
-                              ConfigProvider.mainTextColor,
+                            subTitle,
+                            style: TextStyleTemplates.defaultTextStyle(
+                              ConfigProvider.alternateTextColor,
                             ),
                           ),
                         ),
                       ),
-                    ),
                     Expanded(
                         child: Padding(
                       padding: hasPadding

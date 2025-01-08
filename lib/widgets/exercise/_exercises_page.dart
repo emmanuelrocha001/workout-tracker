@@ -55,11 +55,11 @@ class _ExercisesPageState extends State<ExercisesPage> {
 
   @override
   Widget build(BuildContext context) {
-    var workoutProvider = Provider.of<WorkoutProvider>(context);
+    var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
     return OverlayContent(
-      blockContentMessage: workoutProvider.isWorkoutInProgress()
-          ? 'Workout is in progress...'
-          : null,
+      // blockContentMessage: workoutProvider.isWorkoutInProgress() && false
+      //     ? 'Workout is in progress...'
+      //     : null,
       overLayContent: Container(
         color: ConfigProvider.backgroundColorSolid,
         child: Row(
@@ -106,6 +106,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
         child: DefaultContainer(
           child: EditableExerciseList(
             scrollController: scrollController,
+            isWorkoutInProgress: workoutProvider.isWorkoutInProgress(),
           ),
         ),
       ),

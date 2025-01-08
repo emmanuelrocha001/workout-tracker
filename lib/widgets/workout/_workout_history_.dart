@@ -39,42 +39,40 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
   }
 
   void showCompletedWorkout() {
+    // TODO, it's possible to that the latest workout is not the one that was just completed since dates can be updated.
     var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
     var configProvider = Provider.of<ConfigProvider>(context, listen: false);
-    if (workoutProvider.showLatestWorkoutHistoryEntryAsFinished) {
+    if (workoutProvider.workoutToShowAsFinished != null) {
       print("showCompletedWorkout");
-      var workout = workoutProvider.latestWorkoutHistoryEntry;
-      if (workout != null) {
-        workoutProvider.resetShowLatestWorkoutHistoryEntryAsFinished();
-        var title =
-            DateFormat(ConfigProvider.defaulDateStampWithDayOfWeekFormat)
-                .format(workout.endTime!)
-                .toUpperCase();
-        Helper.showPopUp(
-          context: context,
-          title: title,
-          content: Center(
-            child: Stack(
-              children: [
-                Column(
-                  children: [
-                    WorkoutHistoryListItemSummary(workout: workout),
-                    WorkoutHistoryListItemBreakdown(
-                      isMetricSystemSelected:
-                          configProvider.isMetricSystemSelected,
-                      workout: workout,
-                    )
-                  ],
-                ),
-                const Align(
-                  alignment: Alignment.topCenter,
-                  child: ConfettiDefault(),
-                ),
-              ],
-            ),
+      var workout = workoutProvider.workoutToShowAsFinished!;
+      workoutProvider.resetWorkoutToShowAsFinished();
+      var title = DateFormat(ConfigProvider.defaulDateStampWithDayOfWeekFormat)
+          .format(workout.endTime!)
+          .toUpperCase();
+      Helper.showPopUp(
+        context: context,
+        title: title,
+        content: Center(
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  WorkoutHistoryListItemSummary(workout: workout),
+                  WorkoutHistoryListItemBreakdown(
+                    isMetricSystemSelected:
+                        configProvider.isMetricSystemSelected,
+                    workout: workout,
+                  )
+                ],
+              ),
+              const Align(
+                alignment: Alignment.topCenter,
+                child: ConfettiDefault(),
+              ),
+            ],
           ),
-        );
-      }
+        ),
+      );
     }
   }
 

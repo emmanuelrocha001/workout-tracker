@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,9 +31,7 @@ class WorkoutHistoryListItem extends StatelessWidget {
   List<Widget> _generateSimplifiedCompletedExerciseList(
       {required BuildContext context,
       required List<TrackedExerciseDto> trackedExercises}) {
-    return trackedExercises.map((
-      trackedExercise,
-    ) {
+    return trackedExercises.mapIndexed((index, trackedExercise) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [

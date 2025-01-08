@@ -8,6 +8,7 @@ import '../../models/tracked_exercise_dto.dart';
 import '../general/pill_container.dart';
 import '../general/text_style_templates.dart';
 import './workout_history_list_item_breakdown_exercise_item.dart';
+import './_tracked_exercise_history.dart';
 
 import '../helper.dart';
 import '../../utility.dart';
@@ -23,36 +24,23 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
     this.showAsSimplified = false,
   });
 
-  void _showLatestSetHistoryEntry({
+  void _showExerciseHistory({
     required BuildContext context,
   }) async {
     var configProvider = Provider.of<ConfigProvider>(context, listen: false);
     var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
-    var latestSets = workoutProvider
-        .getExerciseSetsHistoryLatestEntry(trackedExercise.exercise.id);
-    await Helper.showDialogForm(
+    var exerciseHistory =
+        workoutProvider.getExerciseHistory(trackedExercise.exercise.id);
+    await Helper.showPopUp(
       context: context,
-      content: Center(
-        child: latestSets != null
-            ? SizedBox(
-                height: 200.0,
-                child: SingleChildScrollView(
-                  child: WorkoutHistoryListItemBreakdownExerciseItem(
-                    exercise: trackedExercise.exercise,
-                    sets: workoutProvider.getExerciseSetsHistoryLatestEntry(
-                          trackedExercise.exercise.id,
-                        ) ??
-                        [],
-                    isMetricSystemSelected:
-                        configProvider.isMetricSystemSelected,
-                  ),
-                ),
-              )
-            : Text(
-                "No history found",
-                style: TextStyleTemplates.defaultTextStyle(
-                    ConfigProvider.mainTextColor),
-              ),
+      title: trackedExercise.exercise.name,
+      // subTitle: MuscleGroupDto.getMuscleGroupName(
+      //   trackedExercise.exercise.muscleGroupId,
+      // ).toUpperCase(),
+      content: TrackedExerciseHistory(
+        exercise: trackedExercise.exercise,
+        entries: exerciseHistory,
+        isMetricSystemSelected: configProvider.isMetricSystemSelected,
       ),
     );
     // if (exerciseId != null && exerciseId.isNotEmpty) {
@@ -123,7 +111,7 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
               ),
               // style: _theme.iconButtonTheme.style,
               onPressed: () {
-                _showLatestSetHistoryEntry(context: context);
+                _showExerciseHistory(context: context);
               },
             ),
           if (!showAsSimplified)
