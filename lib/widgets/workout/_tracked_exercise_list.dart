@@ -285,7 +285,7 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                   child: TextButton(
                     onPressed: onAddExercise,
                     style: TextButton.styleFrom(
-                      visualDensity: VisualDensity.compact,
+                      visualDensity: VisualDensity.comfortable,
                       backgroundColor: ConfigProvider.mainColor,
                     ),
                     child: Text(

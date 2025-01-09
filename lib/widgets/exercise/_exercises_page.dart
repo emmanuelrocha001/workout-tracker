@@ -86,6 +86,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                 child: TextButton(
                   onPressed: () => createNewExercise(context),
                   style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.comfortable,
                     backgroundColor: ConfigProvider.mainColor,
                   ),
                   child: Text(
