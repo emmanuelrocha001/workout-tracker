@@ -30,6 +30,8 @@ class WorkoutHistory extends StatefulWidget {
 }
 
 class _WorkoutHistoryState extends State<WorkoutHistory> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -107,8 +109,10 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
       ),
       content: workoutProvider.workoutHistory.isNotEmpty
           ? Scrollbar(
+              controller: _scrollController,
               radius: const Radius.circular(ConfigProvider.defaultSpace / 2),
               child: ListView.builder(
+                controller: _scrollController,
                 itemCount: workoutProvider.workoutHistory.length,
                 padding: const EdgeInsets.all(ConfigProvider.defaultSpace / 2),
                 itemBuilder: (context, index) {

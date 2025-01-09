@@ -15,7 +15,6 @@ import '../../providers/workout_provider.dart';
 import '../../widgets/workout/rest_timer.dart';
 import '../exercise/_selectable_exercise_list.dart';
 import 'tracked_exercise_list_item.dart';
-import 'tracked_exercise_list_item_header.dart';
 import 'elapsed_time_timer.dart';
 
 import '../general/overlay_content.dart';
@@ -35,6 +34,7 @@ class TrackedExerciseList extends StatefulWidget {
 }
 
 class _TrackedExerciseListState extends State<TrackedExerciseList> {
+  final ScrollController _scrollController = ScrollController();
   bool onReorderInProgress = false;
 
   void onAddExercise() async {
@@ -150,8 +150,10 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
     }
     return OverlayContent(
       content: Scrollbar(
+        controller: _scrollController,
         radius: const Radius.circular(ConfigProvider.defaultSpace / 2),
         child: ReorderableListView(
+          scrollController: _scrollController,
           proxyDecorator: proxyDecorator,
           onReorderStart: (index) {
             setState(() {

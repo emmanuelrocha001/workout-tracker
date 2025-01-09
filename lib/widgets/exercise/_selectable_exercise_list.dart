@@ -21,6 +21,7 @@ class SelectableExerciseList extends StatefulWidget {
 
 class _SelectableExerciseListState extends State<SelectableExerciseList> {
   String _selectedId = "";
+  final ScrollController _scrollController = ScrollController();
 
   void _onSelect(String? id) {
     print(id);
@@ -52,8 +53,10 @@ class _SelectableExerciseListState extends State<SelectableExerciseList> {
       showActionButton: _selectedId.isNotEmpty,
       onPressed: onAdd,
       content: Scrollbar(
+        controller: _scrollController,
         radius: const Radius.circular(ConfigProvider.defaultSpace / 2),
         child: CustomScrollView(
+          controller: _scrollController,
           slivers: <Widget>[
             ExerciseSearchBar(
               onFilter: onFilter,

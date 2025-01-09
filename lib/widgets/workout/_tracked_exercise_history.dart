@@ -15,12 +15,14 @@ class TrackedExerciseHistory extends StatelessWidget {
   final ExerciseDto exercise;
   final List<TrackedExerciseHistoryEntryDto>? entries;
   final bool isMetricSystemSelected;
+  final ScrollController scrollController;
 
   const TrackedExerciseHistory({
     super.key,
     required this.exercise,
     required this.entries,
     required this.isMetricSystemSelected,
+    required this.scrollController,
   });
 
   @override
@@ -29,9 +31,11 @@ class TrackedExerciseHistory extends StatelessWidget {
       padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
       child: entries != null
           ? Scrollbar(
+              controller: scrollController,
               // thumbVisibility: true,
               radius: const Radius.circular(ConfigProvider.defaultSpace / 2),
               child: ListView.builder(
+                controller: scrollController,
                 itemCount: entries!.length,
                 itemBuilder: (context, index) {
                   return TrackedExerciseHistoryItem(

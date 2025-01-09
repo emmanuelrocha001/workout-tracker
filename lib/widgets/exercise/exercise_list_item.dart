@@ -104,7 +104,7 @@ class ExerciseListItem extends StatelessWidget {
         trailing: onSelect != null
             ? IconButton(
                 icon: const Icon(
-                  Icons.play_circle_fill_rounded,
+                  Icons.play_circle_outline_rounded,
                 ),
                 style: Theme.of(context).iconButtonTheme.style,
                 onPressed: () {

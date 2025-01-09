@@ -147,9 +147,6 @@ class WorkoutProvider extends ChangeNotifier {
     try {
       String? cachedEncodedValue = _cache?.getString(_exerciseHistoryKey);
 
-      print('\ncached workout history:\n\n $_exerciseHistoryKey\n\n');
-      print(cachedEncodedValue);
-
       if (cachedEncodedValue != null) {
         (jsonDecode(cachedEncodedValue) as Map<String, dynamic>)
             .forEach((key, value) {

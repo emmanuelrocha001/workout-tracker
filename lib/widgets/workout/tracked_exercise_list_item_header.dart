@@ -41,24 +41,9 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
         exercise: trackedExercise.exercise,
         entries: exerciseHistory,
         isMetricSystemSelected: configProvider.isMetricSystemSelected,
+        scrollController: ScrollController(),
       ),
     );
-    // if (exerciseId != null && exerciseId.isNotEmpty) {
-    //   if (context.mounted) {
-    //     var workoutProvider =
-    //         // ignore: use_build_context_synchronously
-    //         Provider.of<WorkoutProvider>(context, listen: false);
-    //     var exerciseProvider =
-    //         // ignore: use_build_context_synchronously
-    //         Provider.of<ExerciseProvider>(context, listen: false);
-    //     var exercise = exerciseProvider.getExerciseById(exerciseId);
-
-    //     if (exercise == null) return;
-
-    //     workoutProvider.addTrackedExercise(exercise);
-    //     print('FROM selector ${exerciseId}');
-    //   }
-    // }
   }
 
   @override
@@ -144,7 +129,7 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
               menuChildren: [
                 MenuItemButton(
                   child: const Icon(
-                    Icons.play_circle_fill_rounded,
+                    Icons.play_circle_outline_rounded,
                     color: ConfigProvider.mainColor,
                     size: ConfigProvider.defaultIconSize,
                   ),
