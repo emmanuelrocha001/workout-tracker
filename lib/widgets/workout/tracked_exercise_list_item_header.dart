@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/workout_provider.dart';
+import '../../providers/exercise_provider.dart';
 import '../../providers/config_provider.dart';
 
 import '../../models/muscle_group_dto.dart';
 import '../../models/tracked_exercise_dto.dart';
+import '../general/default_menu_item_button.dart';
 import '../general/pill_container.dart';
 import '../general/text_style_templates.dart';
 import './workout_history_list_item_breakdown_exercise_item.dart';
 import './_tracked_exercise_history.dart';
+import '../exercise/_selectable_exercise_list.dart';
 
 import '../helper.dart';
 import '../../utility.dart';
@@ -44,6 +47,51 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
         scrollController: ScrollController(),
       ),
     );
+  }
+
+  void _replaceExercise({
+    required BuildContext context,
+  }) async {
+    var exerciseProvider =
+        Provider.of<ExerciseProvider>(context, listen: false);
+    exerciseProvider.clearFilters();
+    exerciseProvider
+        .setAppliedMuscleGroupIdFilter(trackedExercise.exercise.muscleGroupId);
+
+    dynamic exerciseId = await Helper.showPopUp(
+      context: context,
+      title: 'Exercises',
+      content: const SelectableExerciseList(
+        isReplacing: true,
+      ),
+    );
+    if (exerciseId != null && exerciseId.isNotEmpty) {
+      if (context.mounted) {
+        var workoutProvider =
+            // ignore: use_build_context_synchronously
+            Provider.of<WorkoutProvider>(context, listen: false);
+        var configProvider =
+            // ignore: use_build_context_synchronously
+            Provider.of<ConfigProvider>(context, listen: false);
+
+        var exercise = exerciseProvider.getExerciseById(exerciseId);
+
+        if (exercise == null) return;
+
+        var res = workoutProvider.replaceTrackedExercise(
+          originalTrackedExerciseId: trackedExercise.id,
+          exercise: exercise,
+          autoPopulateWorkoutFromSetsHistory:
+              configProvider.autoPopulateWorkoutFromSetsHistory,
+        );
+        Helper.showMessageBar(
+          context: context,
+          message: '${res.message}',
+          isError: !res.success,
+        );
+        print('FROM selector ${exerciseId}');
+      }
+    }
   }
 
   @override
@@ -127,12 +175,9 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
                 );
               },
               menuChildren: [
-                MenuItemButton(
-                  child: const Icon(
-                    Icons.play_circle_outline_rounded,
-                    color: ConfigProvider.mainColor,
-                    size: ConfigProvider.defaultIconSize,
-                  ),
+                DefaultMenuItemButton(
+                  icon: Icons.play_circle_outline_rounded,
+                  label: 'WATCH',
                   onPressed: () {
                     Helper.navigateToYoutube(
                       youtubeId: exerciseData.youtubeId,
@@ -140,29 +185,30 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
                     );
                   },
                 ),
-                MenuItemButton(
-                  child: const Icon(
-                    Icons.keyboard_arrow_up_rounded,
-                    color: ConfigProvider.mainColor,
-                  ),
+                DefaultMenuItemButton(
+                  icon: Icons.repeat_rounded,
+                  label: 'REPLACE',
+                  onPressed: () => _replaceExercise(context: context),
+                ),
+                DefaultMenuItemButton(
+                  icon: Icons.keyboard_arrow_up_rounded,
+                  label: 'MOVE UP',
                   onPressed: () {
                     onReorder(-1);
                   },
                 ),
-                MenuItemButton(
-                  child: const Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: ConfigProvider.mainColor,
-                  ),
+                DefaultMenuItemButton(
+                  icon: Icons.keyboard_arrow_down_rounded,
+                  label: 'MOVE DOWN',
                   onPressed: () {
                     onReorder(1);
                   },
                 ),
-                MenuItemButton(
-                  child: const Icon(
-                    Icons.delete_outline_rounded,
-                    color: Colors.red,
-                  ),
+                DefaultMenuItemButton(
+                  icon: Icons.delete_outline_rounded,
+                  label: 'DELETE',
+                  iconColor: Colors.red,
+                  labelColor: Colors.red,
                   onPressed: () {
                     Provider.of<WorkoutProvider>(context, listen: false)
                         .deleteTrackedExercise(trackedExercise.id);

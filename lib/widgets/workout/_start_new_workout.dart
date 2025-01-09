@@ -51,6 +51,7 @@ class StartNewWorkout extends StatelessWidget {
                     );
                   },
                   style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
                     backgroundColor: ConfigProvider.mainColor,
                   ),
                   child: Text(

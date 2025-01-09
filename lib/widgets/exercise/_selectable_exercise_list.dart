@@ -13,7 +13,11 @@ import '../general/overlay_action_button.dart';
 import './exercise_search_bar.dart';
 
 class SelectableExerciseList extends StatefulWidget {
-  const SelectableExerciseList({super.key});
+  final bool isReplacing;
+  const SelectableExerciseList({
+    super.key,
+    this.isReplacing = false,
+  });
 
   @override
   State<SelectableExerciseList> createState() => _SelectableExerciseListState();
@@ -49,7 +53,7 @@ class _SelectableExerciseListState extends State<SelectableExerciseList> {
     var exerciseProvider = Provider.of<ExerciseProvider>(context);
     var exercises = exerciseProvider.exercises;
     return OverlayActionButton(
-      label: "ADD",
+      label: !widget.isReplacing ? "ADD" : "REPLACE",
       showActionButton: _selectedId.isNotEmpty,
       onPressed: onAdd,
       content: Scrollbar(

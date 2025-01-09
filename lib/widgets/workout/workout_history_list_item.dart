@@ -12,6 +12,7 @@ import '../../models/workout_dto.dart';
 import '../../models/tracked_exercise_dto.dart';
 
 import '../general/row_item.dart';
+import '../general/default_menu_item_button.dart';
 import './workout_history_list_item_summary.dart';
 import './workout_history_list_item_breakdown.dart';
 
@@ -344,12 +345,9 @@ class WorkoutHistoryListItem extends StatelessWidget {
                     );
                   },
                   menuChildren: [
-                    MenuItemButton(
-                      child: const Icon(
-                        Icons.restart_alt_rounded,
-                        color: ConfigProvider.mainColor,
-                        size: ConfigProvider.defaultIconSize,
-                      ),
+                    DefaultMenuItemButton(
+                      icon: Icons.restart_alt_rounded,
+                      label: 'REPEAT',
                       onPressed: () async {
                         startWorkoutFromHistory(
                           context: context,
@@ -357,12 +355,9 @@ class WorkoutHistoryListItem extends StatelessWidget {
                         );
                       },
                     ),
-                    MenuItemButton(
-                      child: const Icon(
-                        Icons.edit_rounded,
-                        color: ConfigProvider.mainColor,
-                        size: ConfigProvider.defaultIconSize,
-                      ),
+                    DefaultMenuItemButton(
+                      icon: Icons.edit_rounded,
+                      label: 'UPDATE',
                       onPressed: () async {
                         startWorkoutFromHistory(
                           context: context,
@@ -370,12 +365,11 @@ class WorkoutHistoryListItem extends StatelessWidget {
                         );
                       },
                     ),
-                    MenuItemButton(
-                        child: const Icon(
-                          Icons.delete_outline_rounded,
-                          color: Colors.red,
-                          size: ConfigProvider.defaultIconSize,
-                        ),
+                    DefaultMenuItemButton(
+                        icon: Icons.delete_outline_rounded,
+                        label: 'DELETE',
+                        iconColor: Colors.red,
+                        labelColor: Colors.red,
                         onPressed: () {
                           _deleteWorkoutEntry(context);
                         }),

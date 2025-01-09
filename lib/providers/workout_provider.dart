@@ -238,7 +238,7 @@ class WorkoutProvider extends ChangeNotifier {
     }
   }
 
-  List<ISetDto>? getExerciseSetsHistoryLatestEntry(String exerciseId) {
+  List<ISetDto>? getSetsFromLatestExerciseHistoryEntry(String exerciseId) {
     print(exerciseId);
     if (_exerciseHistory.containsKey(exerciseId)) {
       // In dart, for a LinkedHashMap, the underlying structure that maintains the order of insertion is a doubly linked list. This means that we can access the first and last elements in O(1) time.
@@ -544,7 +544,7 @@ class WorkoutProvider extends ChangeNotifier {
       );
       if (autoPopulateWorkoutFromSetsHistory) {
         print("attempting to auto populate tracked exercise");
-        var latestSets = getExerciseSetsHistoryLatestEntry(exercise.id);
+        var latestSets = getSetsFromLatestExerciseHistoryEntry(exercise.id);
         if (latestSets != null) {
           trackedExercise.sets = latestSets
               .map((x) => SetDto(reps: x.reps, weight: x.weight))
@@ -558,6 +558,58 @@ class WorkoutProvider extends ChangeNotifier {
     _inProgressWorkout!.setAreTrackedExercisesLogged();
     _saveInProgressWorkout();
     notifyListeners();
+  }
+
+  ResDto replaceTrackedExercise({
+    required originalTrackedExerciseId,
+    required ExerciseDto exercise,
+    bool autoPopulateWorkoutFromSetsHistory = false,
+  }) {
+    if (_inProgressWorkout == null) {
+      return ResDto(success: false, message: 'No workout in progress');
+    }
+
+    var originalTrackedExerciseIndex = _inProgressWorkout!.exercises
+        .indexWhere((x) => x.id == originalTrackedExerciseId);
+
+    if (originalTrackedExerciseIndex == -1) {
+      return ResDto(
+          success: false,
+          message: 'Original exercise not found, cannot replace.');
+    }
+
+    print("from add exercise ${exercise.id}");
+    TrackedExerciseDto trackedExercise;
+    var replacementTrackedExerciseIndex = _inProgressWorkout!.exercises
+        .indexWhere((x) => x.exercise.id == exercise.id);
+
+    if (replacementTrackedExerciseIndex != -1) {
+      return ResDto(
+        success: false,
+        message: 'Replacement exercise is already being tracked.',
+      );
+    } else {
+      trackedExercise = TrackedExerciseDto.newInstance(
+        exercise: exercise,
+      );
+      if (autoPopulateWorkoutFromSetsHistory) {
+        print("attempting to auto populate tracked exercise");
+        var latestSets = getSetsFromLatestExerciseHistoryEntry(exercise.id);
+        if (latestSets != null) {
+          trackedExercise.sets = latestSets
+              .map((x) => SetDto(reps: x.reps, weight: x.weight))
+              .toList();
+        }
+      }
+      print("from add exercise ${trackedExercise.id}");
+      _inProgressWorkout!.exercises[originalTrackedExerciseIndex] =
+          trackedExercise;
+    }
+
+    _inProgressWorkout!.setAreTrackedExercisesLogged();
+    _saveInProgressWorkout();
+    notifyListeners();
+    return ResDto(success: true, message: 'Exercise replaced successfully.');
   }
 
   void deleteTrackedExercise(String trackedExerciseId) {

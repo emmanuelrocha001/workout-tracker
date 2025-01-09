@@ -19,6 +19,7 @@ import 'elapsed_time_timer.dart';
 
 import '../general/overlay_content.dart';
 import '../general/text_style_templates.dart';
+import '../general/default_menu_item_button.dart';
 import '../helper.dart';
 import '../../utility.dart';
 
@@ -242,23 +243,18 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                         );
                       },
                       menuChildren: [
-                        MenuItemButton(
-                          style: const ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll<Color>(
-                                ConfigProvider.backgroundColorSolid),
-                          ),
+                        DefaultMenuItemButton(
+                          icon: Icons.edit_rounded,
+                          label: 'ADJUST DETAILS',
                           onPressed: _adjustWorkoutTimes,
-                          child: Text(
-                            "ADJUST DETAILS",
-                            style: TextStyleTemplates.smallBoldTextStyle(
-                                ConfigProvider.mainColor),
-                          ),
                         ),
-                        MenuItemButton(
-                          style: const ButtonStyle(
-                            backgroundColor:
-                                WidgetStatePropertyAll<Color>(Colors.red),
-                          ),
+                        DefaultMenuItemButton(
+                          icon: Icons.delete_outline_rounded,
+                          label: !workoutProvider.updatingLoggedWorkout
+                              ? "CANCEL WORKOUT"
+                              : "CANCEL UPDATE",
+                          iconColor: Colors.red,
+                          labelColor: Colors.red,
                           onPressed: () async {
                             var res = await Helper.showConfirmationDialogForm(
                                 context: context,
@@ -275,13 +271,6 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                               workoutProvider.cancelInProgressWorkout();
                             }
                           },
-                          child: Text(
-                            !workoutProvider.updatingLoggedWorkout
-                                ? "CANCEL WORKOUT"
-                                : "CANCEL UPDATE",
-                            style: TextStyleTemplates.smallBoldTextStyle(
-                                ConfigProvider.backgroundColor),
-                          ),
                         ),
                       ],
                     ),
@@ -296,6 +285,7 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                   child: TextButton(
                     onPressed: onAddExercise,
                     style: TextButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
                       backgroundColor: ConfigProvider.mainColor,
                     ),
                     child: Text(

@@ -7,6 +7,7 @@ import '../../providers/config_provider.dart';
 import '../../models/muscle_group_dto.dart';
 
 import '../general/text_style_templates.dart';
+import '../general/default_menu_item_button.dart';
 
 import "../general/pill_container.dart";
 import "../../models/exercise_dto.dart";
@@ -152,24 +153,20 @@ class ExerciseListItem extends StatelessWidget {
                       );
                     },
                     menuChildren: [
-                      MenuItemButton(
-                        child: const Icon(
-                          Icons.edit_rounded,
-                          color: ConfigProvider.mainColor,
-                          size: ConfigProvider.defaultIconSize,
-                        ),
+                      DefaultMenuItemButton(
+                        icon: Icons.edit_rounded,
+                        label: 'UPDATE',
                         onPressed: () async {
                           updateExercise!(
                             exercise: data,
                           );
                         },
                       ),
-                      MenuItemButton(
-                        child: const Icon(
-                          Icons.delete_outline_rounded,
-                          color: Colors.red,
-                          size: ConfigProvider.defaultIconSize,
-                        ),
+                      DefaultMenuItemButton(
+                        icon: Icons.delete_outline_rounded,
+                        label: 'DELETE',
+                        iconColor: Colors.red,
+                        labelColor: Colors.red,
                         onPressed: () {
                           deleteExercise!(
                             exercise: data,
