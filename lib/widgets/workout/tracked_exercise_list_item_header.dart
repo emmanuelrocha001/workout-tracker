@@ -4,17 +4,14 @@ import '../../providers/workout_provider.dart';
 import '../../providers/exercise_provider.dart';
 import '../../providers/config_provider.dart';
 
-import '../../models/muscle_group_dto.dart';
 import '../../models/tracked_exercise_dto.dart';
 import '../general/default_menu_item_button.dart';
-import '../general/pill_container.dart';
+
 import '../general/text_style_templates.dart';
-import './workout_history_list_item_breakdown_exercise_item.dart';
-import './_tracked_exercise_history.dart';
+import '_exercise_details_with_history.dart';
 import '../exercise/_selectable_exercise_list.dart';
 
 import '../helper.dart';
-import '../../utility.dart';
 
 class TrackedExerciseListItemHeader extends StatelessWidget {
   final TrackedExerciseDto trackedExercise;
@@ -27,24 +24,18 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
     this.showAsSimplified = false,
   });
 
-  void _showExerciseHistory({
+  void _showExerciseDetailsWithHistory({
     required BuildContext context,
   }) async {
-    var configProvider = Provider.of<ConfigProvider>(context, listen: false);
     var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
     var exerciseHistory =
         workoutProvider.getExerciseHistory(trackedExercise.exercise.id);
-    await Helper.showPopUp(
+    Helper.showPopUp(
       context: context,
       title: trackedExercise.exercise.name,
-      // subTitle: MuscleGroupDto.getMuscleGroupName(
-      //   trackedExercise.exercise.muscleGroupId,
-      // ).toUpperCase(),
-      content: TrackedExerciseHistory(
+      content: ExerciseDetailsWithHistory(
         exercise: trackedExercise.exercise,
-        entries: exerciseHistory,
-        isMetricSystemSelected: configProvider.isMetricSystemSelected,
-        scrollController: ScrollController(),
+        exerciseHistory: exerciseHistory,
       ),
     );
   }
@@ -144,7 +135,7 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
               ),
               // style: _theme.iconButtonTheme.style,
               onPressed: () {
-                _showExerciseHistory(context: context);
+                _showExerciseDetailsWithHistory(context: context);
               },
             ),
           if (!showAsSimplified)

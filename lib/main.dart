@@ -233,6 +233,10 @@ class WorkoutTracker extends StatelessWidget {
               primarySwatch:
                   Utility.createMaterialColor(ConfigProvider.mainColor),
             ),
+            // tabBarTheme: const TabBarTheme(
+            //   indicatorColor: Colors.red,
+            //   dividerColor: ConfigProvider.backgroundColor,
+            // ),
 
             highlightColor: Colors.grey.shade200,
             visualDensity: VisualDensity.adaptivePlatformDensity,

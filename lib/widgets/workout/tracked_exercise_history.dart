@@ -48,10 +48,12 @@ class TrackedExerciseHistory extends StatelessWidget {
                 },
               ),
             )
-          : Text(
-              "No history found",
-              style: TextStyleTemplates.defaultTextStyle(
-                  ConfigProvider.mainTextColor),
+          : Center(
+              child: Text(
+                "No history found",
+                style: TextStyleTemplates.defaultTextStyle(
+                    ConfigProvider.mainTextColor),
+              ),
             ),
     );
   }

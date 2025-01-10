@@ -1,20 +1,17 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/exercise_provider.dart';
+import '../../providers/workout_provider.dart';
 import '../../providers/config_provider.dart';
 import "../helper.dart";
 import '../../models/exercise_dto.dart';
 import '../../models/create_update_exercise_dto.dart';
 import './create_update_exercise_form.dart';
 import '../exercise/_exercise_filters_grid.dart';
-import '../../class_extensions.dart';
 import './exercise_list_item.dart';
-import '../general/overlay_action_button.dart';
 import './exercise_search_bar.dart';
-import '_exercise_details.dart';
+import '../workout/_exercise_details_with_history.dart';
 
 class EditableExerciseList extends StatefulWidget {
   final ScrollController scrollController;
@@ -33,11 +30,14 @@ class _EditableExerciseListState extends State<EditableExerciseList> {
   void showDetails({
     required ExerciseDto exercise,
   }) async {
+    var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
+    var exerciseHistory = workoutProvider.getExerciseHistory(exercise.id);
     Helper.showPopUp(
-      title: exercise.name,
       context: context,
-      content: ExerciseDetails(
+      title: exercise.name,
+      content: ExerciseDetailsWithHistory(
         exercise: exercise,
+        exerciseHistory: exerciseHistory,
       ),
     );
   }
