@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 import 'package:url_launcher/url_launcher_string.dart';
 
 import 'package:another_flushbar/flushbar.dart';
@@ -30,21 +32,35 @@ class Helper {
   }
 
   static void navigateToYoutube({
+    required BuildContext context,
     String? youtubeId,
     String? searchQuery,
   }) async {
     if (youtubeId == null && searchQuery == null) return;
-    var baseUrl = "https://www.youtube.com";
+    var baseUrl = "www.youtube.com";
 
     var url = (youtubeId?.isNotEmpty ?? false)
         ? "$baseUrl/watch?v=$youtubeId"
         : "$baseUrl/results?search_query=${Uri.encodeComponent(searchQuery!)}";
 
-    await launchUrlString(url, mode: LaunchMode.externalNonBrowserApplication);
+    var configProvider = Provider.of<ConfigProvider>(context, listen: false);
+    var isMobileWeb = configProvider.isWebMobile;
+
+    if (!isMobileWeb) {
+      await launchUrlString(
+        'https://$url',
+        mode: LaunchMode.externalNonBrowserApplication,
+      );
+    } else {
+      html.window.open('youtube://$url', "_self");
+    }
   }
 
   static void navigateToUrl({required String url}) async {
-    await launchUrlString(url, mode: LaunchMode.externalNonBrowserApplication);
+    await launchUrlString(
+      url,
+      mode: LaunchMode.externalNonBrowserApplication,
+    );
   }
 
   static Future<dynamic> showPopUp({

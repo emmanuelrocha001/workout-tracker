@@ -110,6 +110,7 @@ class ExerciseListItem extends StatelessWidget {
                 style: Theme.of(context).iconButtonTheme.style,
                 onPressed: () {
                   Helper.navigateToYoutube(
+                    context: context,
                     youtubeId: data.youtubeId,
                     searchQuery: data.name,
                   );

@@ -171,6 +171,7 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
                   label: 'WATCH',
                   onPressed: () {
                     Helper.navigateToYoutube(
+                      context: context,
                       youtubeId: exerciseData.youtubeId,
                       searchQuery: exerciseData.name,
                     );
