@@ -54,6 +54,10 @@ class OverlayContent extends StatelessWidget {
                 decoration: const BoxDecoration(
                   color: ConfigProvider.backgroundColorSolid,
                   border: Border(
+                    top: BorderSide(
+                      color: ConfigProvider.backgroundColor,
+                      width: 1,
+                    ),
                     bottom: BorderSide(
                       color: ConfigProvider.backgroundColor,
                       width: 1,

@@ -64,9 +64,11 @@ class WorkoutTracker extends StatelessWidget {
           }
         },
         child: MaterialApp(
-          title: 'Workout Tracker',
+          title: 'ERP',
+          // color: ConfigProvider.mainColor,
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
+            scaffoldBackgroundColor: ConfigProvider.backgroundColorSolid,
             textSelectionTheme: TextSelectionThemeData(
               cursorColor: ConfigProvider.mainColor,
               selectionColor: Colors.grey.shade300,
@@ -241,6 +243,7 @@ class WorkoutTracker extends StatelessWidget {
             highlightColor: Colors.grey.shade200,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
+          color: ConfigProvider.backgroundColorSolid,
           home: const InitialScreen(),
           routes: {
             InitialScreen.routeName: (ctx) => const InitialScreen(),

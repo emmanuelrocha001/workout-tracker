@@ -106,13 +106,32 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
 
   @override
   Widget build(BuildContext context) {
+    var configProvider = Provider.of<ConfigProvider>(context, listen: false);
+    var isMobile = configProvider.isMobile;
+    isMobile = false;
+    var navigationBarColor = isMobile
+        ? ConfigProvider.mainColor
+        : ConfigProvider.backgroundColorSolid;
+    var iconColor = isMobile
+        ? ConfigProvider.backgroundColorSolid
+        : ConfigProvider.mainColor;
+    var selectedIconColor = isMobile
+        ? ConfigProvider.mainColor
+        : ConfigProvider.backgroundColorSolid;
+    var labelColor = isMobile
+        ? ConfigProvider.backgroundColorSolid
+        : ConfigProvider.mainTextColor;
+    var indicatorColor = isMobile
+        ? ConfigProvider.backgroundColorSolid
+        : ConfigProvider.mainColor;
+
     return Scaffold(
       backgroundColor: ConfigProvider.backgroundColor,
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
           labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
           backgroundColor: ConfigProvider.backgroundColor,
-          indicatorColor: ConfigProvider.mainColor,
+          indicatorColor: indicatorColor,
           indicatorShape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(ConfigProvider.defaultSpace),
           ),
@@ -124,60 +143,61 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
             //   );
             // }
             return TextStyleTemplates.smallBoldTextStyle(
-              Colors.black,
+              labelColor,
             );
           }),
         ),
-        child: NavigationBar(
-          backgroundColor: ConfigProvider.backgroundColorSolid,
-          elevation: 2.0,
-          onDestinationSelected: (int index) {
-            var exerciseProvider =
-                Provider.of<ExerciseProvider>(context, listen: false);
-            exerciseProvider.clearFilters();
-            setState(() {
-              currentPageIndex = index;
-            });
-          },
-          selectedIndex: currentPageIndex,
-          destinations: <Widget>[
-            NavigationDestination(
-              icon: Icon(
-                Icons.fitness_center_rounded,
-                color: currentPageIndex == 0
-                    ? ConfigProvider.backgroundColor
-                    : Colors.black,
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: ConfigProvider.backgroundColor,
+                width: 1,
               ),
-              label: 'Workout',
             ),
-            NavigationDestination(
-              icon: Icon(
-                Icons.history_rounded,
-                color: currentPageIndex == 1
-                    ? ConfigProvider.backgroundColor
-                    : Colors.black,
+          ),
+          child: NavigationBar(
+            backgroundColor: navigationBarColor,
+            onDestinationSelected: (int index) {
+              var exerciseProvider =
+                  Provider.of<ExerciseProvider>(context, listen: false);
+              exerciseProvider.clearFilters();
+              setState(() {
+                currentPageIndex = index;
+              });
+            },
+            selectedIndex: currentPageIndex,
+            destinations: <Widget>[
+              NavigationDestination(
+                icon: Icon(
+                  Icons.fitness_center_rounded,
+                  color: currentPageIndex == 0 ? selectedIconColor : iconColor,
+                ),
+                label: 'Workout',
               ),
-              label: 'History',
-            ),
-            NavigationDestination(
-              icon: Icon(
-                Icons.build_outlined,
-                color: currentPageIndex == 2
-                    ? ConfigProvider.backgroundColor
-                    : Colors.black,
+              NavigationDestination(
+                icon: Icon(
+                  Icons.history_rounded,
+                  color: currentPageIndex == 1 ? selectedIconColor : iconColor,
+                ),
+                label: 'History',
               ),
-              label: 'Exercises',
-            ),
-            NavigationDestination(
-              icon: Icon(
-                Icons.settings_rounded,
-                color: currentPageIndex == 3
-                    ? ConfigProvider.backgroundColor
-                    : Colors.black,
+              NavigationDestination(
+                icon: Icon(
+                  Icons.build_outlined,
+                  color: currentPageIndex == 2 ? selectedIconColor : iconColor,
+                ),
+                label: 'Exercises',
               ),
-              label: 'Preferences',
-            ),
-          ],
+              NavigationDestination(
+                icon: Icon(
+                  Icons.settings_rounded,
+                  color: currentPageIndex == 3 ? selectedIconColor : iconColor,
+                ),
+                label: 'Preferences',
+              ),
+            ],
+          ),
         ),
       ),
       body: <Widget>[

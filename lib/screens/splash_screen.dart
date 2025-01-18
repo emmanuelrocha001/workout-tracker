@@ -5,15 +5,13 @@ import '../widgets/general/loading.dart';
 import '../widgets/general/text_style_templates.dart';
 
 class SplashScreen extends StatelessWidget {
-  final bool renderWithScaffold;
   const SplashScreen({
     super.key,
-    this.renderWithScaffold = false,
   });
   @override
   Widget build(BuildContext context) {
     const size = 100.0;
-    var content = Scaffold(
+    return Scaffold(
       backgroundColor: ConfigProvider.backgroundColorSolid,
       body: Center(
         child: SingleChildScrollView(
@@ -53,11 +51,5 @@ class SplashScreen extends StatelessWidget {
         ),
       ),
     );
-    return !renderWithScaffold
-        ? content
-        : Scaffold(
-            // backgroundColor: ConfigProvider.LEAFY_GREEN,
-            body: content,
-          );
   }
 }
