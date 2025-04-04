@@ -392,6 +392,9 @@ class WorkoutProvider extends ChangeNotifier {
 
     _inProgressWorkout!.lastUpdated = DateTime.now();
 
+    // calculate some metrics
+    _inProgressWorkout!.calculateStats();
+
     _workoutToShowAsFinished = _inProgressWorkout;
 
     // save to history
@@ -432,6 +435,7 @@ class WorkoutProvider extends ChangeNotifier {
       }
 
       // update exercise sets history
+      _inProgressWorkout!.calculateStats();
       _updateExerciseHistory(
         workout: _inProgressWorkout!,
         oldWorkout: previousEntry,
@@ -529,6 +533,7 @@ class WorkoutProvider extends ChangeNotifier {
     if (_inProgressWorkout == null) {
       return;
     }
+
     print("from add exercise ${exercise.id}");
     TrackedExerciseDto trackedExercise;
     var trackedExerciseIndex = _inProgressWorkout!.exercises
@@ -538,6 +543,7 @@ class WorkoutProvider extends ChangeNotifier {
       // add new set if exerise is already being tracked.
       trackedExercise = _inProgressWorkout!.exercises[trackedExerciseIndex];
       trackedExercise.sets.add(SetDto());
+      trackedExercise.isCollapsed = false;
     } else {
       trackedExercise = TrackedExerciseDto.newInstance(
         exercise: exercise,
@@ -666,7 +672,11 @@ class WorkoutProvider extends ChangeNotifier {
     return true;
   }
 
-  bool deleteSetFromTrackedExercise(String trackedExerciseId, int index) {
+  bool deleteSetFromTrackedExercise({
+    required String trackedExerciseId,
+    required int index,
+    bool autoCollapseTrackedExercises = false,
+  }) {
     if (_inProgressWorkout == null) {
       return false;
     }
@@ -679,6 +689,8 @@ class WorkoutProvider extends ChangeNotifier {
       return false;
     }
 
+    var oldAreSetsLogged = trackedExercise.areSetsLogged();
+
     trackedExercise.sets.removeAt(index);
 
     _saveInProgressWorkout();
@@ -686,14 +698,24 @@ class WorkoutProvider extends ChangeNotifier {
     //   _inProgressWorkout!.setAreTrackedExercisesLogged();
     //   notifyListeners();
     // }
+
+    var areSetsLogged = trackedExercise.areSetsLogged();
+    if (oldAreSetsLogged != areSetsLogged && autoCollapseTrackedExercises) {
+      trackedExercise.isCollapsed = areSetsLogged;
+    }
+
     _inProgressWorkout!.setAreTrackedExercisesLogged();
     notifyListeners();
 
     return true;
   }
 
-  bool updateSetInTrackedExercise(
-      String trackedExerciseId, int index, SetDto set) {
+  bool updateSetInTrackedExercise({
+    required String trackedExerciseId,
+    required int index,
+    required SetDto set,
+    bool autoCollapseTrackedExercises = false,
+  }) {
     if (_inProgressWorkout == null) {
       return false;
     }
@@ -713,10 +735,33 @@ class WorkoutProvider extends ChangeNotifier {
     _saveInProgressWorkout();
 
     if (oldAreSetsLogged != trackedExercise.areSetsLogged()) {
+      if (autoCollapseTrackedExercises) {
+        trackedExercise.isCollapsed = !oldAreSetsLogged;
+      }
       _inProgressWorkout!.setAreTrackedExercisesLogged();
       notifyListeners();
     }
 
     return true;
+  }
+
+  void setTrackedExerciseCollapsedStatus(
+      String trackedExerciseId, bool isCollapsed) {
+    if (_inProgressWorkout == null) {
+      return;
+    }
+
+    var trackedExercise = _inProgressWorkout!.exercises
+        .where((x) => x.id == trackedExerciseId)
+        .firstOrNull;
+
+    if (trackedExercise == null) {
+      return;
+    }
+
+    trackedExercise.isCollapsed = isCollapsed;
+
+    _saveInProgressWorkout();
+    notifyListeners();
   }
 }

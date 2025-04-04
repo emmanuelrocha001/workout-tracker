@@ -124,6 +124,39 @@ class PreferencesPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     LabeledRow(
+                      label: 'Auto Collapse Exercise Entries',
+                      labelWidth: labelSize,
+                      children: [
+                        RowItem(
+                          isCompact: true,
+                          alignment: Alignment.centerLeft,
+                          child: DefaultSwitch(
+                            value: configProvider.autoCollapseTrackedExercises,
+                            onChanged: (bool value) {
+                              configProvider
+                                  .setAutoCollapseTrackeExercises(value);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.all(ConfigProvider.defaultSpace),
+                      child: Text(
+                        ConfigProvider.autoCollapseTrackedExercisesToolTip,
+                        style: TextStyleTemplates.smallTextStyle(
+                            ConfigProvider.mainTextColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              DefaultContainer(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    LabeledRow(
                       label: 'Units',
                       labelWidth: labelSize,
                       // tooltip: ConfigProvider.unitsToggleToolTip,

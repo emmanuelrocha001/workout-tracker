@@ -10,10 +10,9 @@ import '../../models/workout_dto.dart';
 
 class WorkoutHistoryListItemSummary extends StatelessWidget {
   final WorkoutDto workout;
-  const WorkoutHistoryListItemSummary({
-    super.key,
-    required this.workout,
-  });
+  final bool isMetricSystemSelected;
+  const WorkoutHistoryListItemSummary(
+      {super.key, required this.workout, required this.isMetricSystemSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -86,11 +85,37 @@ class WorkoutHistoryListItemSummary extends StatelessWidget {
                     const Icon(
                       Icons.access_time_rounded,
                       color: ConfigProvider.mainTextColor,
-                      size: ConfigProvider.smallIconSize,
+                      size: ConfigProvider.mediumIconSize,
                     ),
                     const SizedBox(width: ConfigProvider.defaultSpace / 2),
                     Text(
                       '${hours}h ${minutes}m',
+                      style: TextStyleTemplates.defaultBoldTextStyle(
+                        ConfigProvider.mainTextColor,
+                      ),
+                    ),
+                    const SizedBox(width: ConfigProvider.defaultSpace),
+                    const Icon(
+                      Icons.fitness_center_rounded,
+                      color: ConfigProvider.mainTextColor,
+                      size: ConfigProvider.smallIconSize,
+                    ),
+                    const SizedBox(width: ConfigProvider.defaultSpace / 2),
+                    Text(
+                      '${workout.getTotalWeight()} ${isMetricSystemSelected ? "kg" : "lb"}',
+                      style: TextStyleTemplates.defaultBoldTextStyle(
+                        ConfigProvider.mainTextColor,
+                      ),
+                    ),
+                    const SizedBox(width: ConfigProvider.defaultSpace),
+                    const Icon(
+                      Icons.run_circle_outlined,
+                      color: ConfigProvider.mainTextColor,
+                      size: ConfigProvider.mediumIconSize,
+                    ),
+                    const SizedBox(width: ConfigProvider.defaultSpace / 2),
+                    Text(
+                      '${workout.getTotalDistance()} ${isMetricSystemSelected ? "km" : "mi"}',
                       style: TextStyleTemplates.defaultBoldTextStyle(
                         ConfigProvider.mainTextColor,
                       ),

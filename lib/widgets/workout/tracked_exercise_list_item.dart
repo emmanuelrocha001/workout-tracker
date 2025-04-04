@@ -15,15 +15,17 @@ import '../general/text_style_templates.dart';
 
 class TrackedExerciseListItem extends StatelessWidget {
   final TrackedExerciseDto trackedExercise;
-  final bool showAsSimplified;
+  final bool isCollapsed;
   final Function(int) onReorder;
+  final Function(String, bool) setCollapsedStatus;
   final bool isMetricSystemSelected;
   const TrackedExerciseListItem({
     super.key,
     required this.trackedExercise,
     required this.isMetricSystemSelected,
-    required this.showAsSimplified,
+    required this.isCollapsed,
     required this.onReorder,
+    required this.setCollapsedStatus,
   });
 
   @override
@@ -46,9 +48,8 @@ class TrackedExerciseListItem extends StatelessWidget {
                   TrackedExerciseListItemHeader(
                     trackedExercise: trackedExercise,
                     onReorder: onReorder,
-                    showAsSimplified: showAsSimplified,
                   ),
-                  if (!showAsSimplified)
+                  if (!isCollapsed)
                     TrackedExerciseListItemBody(
                       trackedExerciseId: trackedExercise.id,
                       isMetricSystemSelected: isMetricSystemSelected,
@@ -84,7 +85,8 @@ class TrackedExerciseListItem extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: ConfigProvider.defaultSpace / 2),
+                        horizontal: ConfigProvider.defaultSpace / 2,
+                      ),
                       child: Icon(
                         areSetsLogged
                             ? Icons.check
@@ -98,7 +100,40 @@ class TrackedExerciseListItem extends StatelessWidget {
               ),
             ),
           ),
-          if (!showAsSimplified)
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding:
+                  const EdgeInsets.only(right: ConfigProvider.defaultSpace),
+              child: PillContainer(
+                height: ConfigProvider.defaultSpace * 4,
+                outlineColor: ConfigProvider.mainColor,
+                color: ConfigProvider.backgroundColorSolid,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        setCollapsedStatus(
+                          trackedExercise.id,
+                          !isCollapsed,
+                        );
+                      },
+                      visualDensity: VisualDensity.compact,
+                      icon: Icon(
+                        isCollapsed
+                            ? Icons.keyboard_arrow_down_rounded
+                            : Icons.keyboard_arrow_up_rounded,
+                        color: ConfigProvider.mainColor,
+                        size: ConfigProvider.mediumIconSize,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          if (!isCollapsed)
             Positioned(
               bottom: 0,
               right: 0,

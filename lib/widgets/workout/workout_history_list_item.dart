@@ -285,7 +285,10 @@ class WorkoutHistoryListItem extends StatelessWidget {
           content: SingleChildScrollView(
             child: Column(
               children: [
-                WorkoutHistoryListItemSummary(workout: workout),
+                WorkoutHistoryListItemSummary(
+                  workout: workout,
+                  isMetricSystemSelected: isMetricSystemSelected,
+                ),
                 WorkoutHistoryListItemBreakdown(
                   workout: workout,
                   isMetricSystemSelected: isMetricSystemSelected,
@@ -377,7 +380,10 @@ class WorkoutHistoryListItem extends StatelessWidget {
                 ),
               ],
             ),
-            WorkoutHistoryListItemSummary(workout: workout),
+            WorkoutHistoryListItemSummary(
+              workout: workout,
+              isMetricSystemSelected: isMetricSystemSelected,
+            ),
             _simplifiedCompletedExerciseListHeader(),
             ..._generateSimplifiedCompletedExerciseList(
               context: context,

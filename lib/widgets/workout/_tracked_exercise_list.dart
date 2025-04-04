@@ -66,7 +66,6 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
           autoPopulateWorkoutFromSetsHistory:
               configProvider.autoPopulateWorkoutFromSetsHistory,
         );
-        print('FROM selector ${exerciseId}');
       }
     }
   }
@@ -80,6 +79,11 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
     } catch (e) {
       print('from catch ${e}');
     }
+  }
+
+  void setCollapsedStatus(String id, bool value) {
+    var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
+    workoutProvider.setTrackedExerciseCollapsedStatus(id, value);
   }
 
   void _adjustWorkoutTimes() async {
@@ -181,16 +185,22 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
           padding: const EdgeInsets.symmetric(
               vertical: ConfigProvider.defaultSpace / 2),
           children: <Widget>[
-            for (int index = 0; index < trackedExercises.length; index += 1)
+            for (int index = 0; index < trackedExercises.length; index++)
               TrackedExerciseListItem(
                 key: ValueKey(trackedExercises[index].id),
                 onReorder: (int increment) {
                   // -1 means move up, 1 means move down
                   onReorder(index, index + increment);
                 },
+                setCollapsedStatus: setCollapsedStatus,
                 trackedExercise: trackedExercises[index],
                 isMetricSystemSelected: configProvider.isMetricSystemSelected,
-                showAsSimplified: onReorderInProgress,
+                // Tracked exercise will show as collapsed if:
+                // 1. A reorder is in progress.
+                // 2. The tracked exercise is collapsed manually.
+                // 3. The tracked exercise auto collapses when all sets are logged
+                isCollapsed: onReorderInProgress ||
+                    (trackedExercises[index].isCollapsed ?? false),
               ),
           ],
         ),

@@ -59,7 +59,11 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
             children: [
               Column(
                 children: [
-                  WorkoutHistoryListItemSummary(workout: workout),
+                  WorkoutHistoryListItemSummary(
+                    workout: workout,
+                    isMetricSystemSelected:
+                        configProvider.isMetricSystemSelected,
+                  ),
                   WorkoutHistoryListItemBreakdown(
                     isMetricSystemSelected:
                         configProvider.isMetricSystemSelected,

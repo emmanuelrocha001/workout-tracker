@@ -16,12 +16,10 @@ import '../helper.dart';
 class TrackedExerciseListItemHeader extends StatelessWidget {
   final TrackedExerciseDto trackedExercise;
   final Function(int) onReorder;
-  final bool showAsSimplified;
   const TrackedExerciseListItemHeader({
     super.key,
     required this.trackedExercise,
     required this.onReorder,
-    this.showAsSimplified = false,
   });
 
   void _showExerciseDetailsWithHistory({
@@ -114,100 +112,97 @@ class TrackedExerciseListItemHeader extends StatelessWidget {
                     ConfigProvider.mainTextColor,
                   ),
                 ),
-                if (!showAsSimplified)
-                  Text(
-                    exerciseData.exerciseType.toUpperCase(),
-                    style: TextStyleTemplates.smallTextStyle(
-                      ConfigProvider.alternateTextColor,
-                    ),
+                Text(
+                  exerciseData.exerciseType.toUpperCase(),
+                  style: TextStyleTemplates.smallTextStyle(
+                    ConfigProvider.alternateTextColor,
                   ),
+                ),
               ],
             ),
           ),
           const Spacer(),
-          if (!showAsSimplified)
-            IconButton(
-              icon: const Icon(
-                // Icons.auto_graph_rounded,
-                Icons.info_outline_rounded,
-                color: ConfigProvider.mainColor,
-                size: ConfigProvider.defaultIconSize,
-              ),
-              // style: _theme.iconButtonTheme.style,
-              onPressed: () {
-                _showExerciseDetailsWithHistory(context: context);
-              },
+          IconButton(
+            icon: const Icon(
+              // Icons.auto_graph_rounded,
+              Icons.info_outline_rounded,
+              color: ConfigProvider.mainColor,
+              size: ConfigProvider.defaultIconSize,
             ),
-          if (!showAsSimplified)
-            MenuAnchor(
-              style: const MenuStyle(
-                backgroundColor: WidgetStatePropertyAll<Color>(
-                    ConfigProvider.backgroundColorSolid),
-                // elevation: WidgetStatePropertyAll<double>(0.0),
-              ),
-              builder: (BuildContext context, MenuController controller,
-                  Widget? child) {
-                return IconButton(
-                  icon: const Icon(
-                    Icons.more_vert_rounded,
-                    color: ConfigProvider.mainTextColor,
-                    size: ConfigProvider.defaultIconSize,
-                  ),
-                  // style: _theme.iconButtonTheme.style,
-                  onPressed: () {
-                    if (controller.isOpen) {
-                      controller.close();
-                    } else {
-                      controller.open();
-                    }
-                    // Provider.of<WorkoutProvider>(context, listen: false)
-                    //     .deleteTrackedExercise(trackedExercise.id);
-                  },
-                );
-              },
-              menuChildren: [
-                DefaultMenuItemButton(
-                  icon: Icons.play_circle_outline_rounded,
-                  label: 'WATCH',
-                  onPressed: () {
-                    Helper.navigateToYoutube(
-                      context: context,
-                      youtubeId: exerciseData.youtubeId,
-                      searchQuery: exerciseData.name,
-                    );
-                  },
-                ),
-                DefaultMenuItemButton(
-                  icon: Icons.repeat_rounded,
-                  label: 'REPLACE',
-                  onPressed: () => _replaceExercise(context: context),
-                ),
-                DefaultMenuItemButton(
-                  icon: Icons.keyboard_arrow_up_rounded,
-                  label: 'MOVE UP',
-                  onPressed: () {
-                    onReorder(-1);
-                  },
-                ),
-                DefaultMenuItemButton(
-                  icon: Icons.keyboard_arrow_down_rounded,
-                  label: 'MOVE DOWN',
-                  onPressed: () {
-                    onReorder(1);
-                  },
-                ),
-                DefaultMenuItemButton(
-                  icon: Icons.delete_outline_rounded,
-                  label: 'DELETE',
-                  iconColor: Colors.red,
-                  labelColor: Colors.red,
-                  onPressed: () {
-                    Provider.of<WorkoutProvider>(context, listen: false)
-                        .deleteTrackedExercise(trackedExercise.id);
-                  },
-                ),
-              ],
+            // style: _theme.iconButtonTheme.style,
+            onPressed: () {
+              _showExerciseDetailsWithHistory(context: context);
+            },
+          ),
+          MenuAnchor(
+            style: const MenuStyle(
+              backgroundColor: WidgetStatePropertyAll<Color>(
+                  ConfigProvider.backgroundColorSolid),
+              // elevation: WidgetStatePropertyAll<double>(0.0),
             ),
+            builder: (BuildContext context, MenuController controller,
+                Widget? child) {
+              return IconButton(
+                icon: const Icon(
+                  Icons.more_vert_rounded,
+                  color: ConfigProvider.mainTextColor,
+                  size: ConfigProvider.defaultIconSize,
+                ),
+                // style: _theme.iconButtonTheme.style,
+                onPressed: () {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    controller.open();
+                  }
+                  // Provider.of<WorkoutProvider>(context, listen: false)
+                  //     .deleteTrackedExercise(trackedExercise.id);
+                },
+              );
+            },
+            menuChildren: [
+              DefaultMenuItemButton(
+                icon: Icons.play_circle_outline_rounded,
+                label: 'WATCH',
+                onPressed: () {
+                  Helper.navigateToYoutube(
+                    context: context,
+                    youtubeId: exerciseData.youtubeId,
+                    searchQuery: exerciseData.name,
+                  );
+                },
+              ),
+              DefaultMenuItemButton(
+                icon: Icons.repeat_rounded,
+                label: 'REPLACE',
+                onPressed: () => _replaceExercise(context: context),
+              ),
+              DefaultMenuItemButton(
+                icon: Icons.keyboard_arrow_up_rounded,
+                label: 'MOVE UP',
+                onPressed: () {
+                  onReorder(-1);
+                },
+              ),
+              DefaultMenuItemButton(
+                icon: Icons.keyboard_arrow_down_rounded,
+                label: 'MOVE DOWN',
+                onPressed: () {
+                  onReorder(1);
+                },
+              ),
+              DefaultMenuItemButton(
+                icon: Icons.delete_outline_rounded,
+                label: 'DELETE',
+                iconColor: Colors.red,
+                labelColor: Colors.red,
+                onPressed: () {
+                  Provider.of<WorkoutProvider>(context, listen: false)
+                      .deleteTrackedExercise(trackedExercise.id);
+                },
+              ),
+            ],
+          ),
         ],
       ),
     );

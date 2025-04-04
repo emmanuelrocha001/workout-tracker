@@ -123,12 +123,29 @@ class ConfigProvider extends ChangeNotifier {
     _savePreferencesToCache();
   }
 
+  bool get autoCollapseTrackedExercises =>
+      _userPreferences?.autoCollapseTrackedExercises ?? false;
+
+  void setAutoCollapseTrackeExercises(bool value) {
+    _userPreferences?.autoCollapseTrackedExercises = value;
+    notifyListeners();
+    _savePreferencesToCache();
+  }
+
   bool get hasAcknowledgeDataStorageDisclaimer =>
       _userPreferences?.hasAcknowledgeDataStorageDisclaimer ?? false;
 
   void setHasAcknowledgeDataStorageDisclaimer() {
     _userPreferences?.hasAcknowledgeDataStorageDisclaimer = true;
     notifyListeners();
+    _savePreferencesToCache();
+  }
+
+  int? get lastNavigatorPageIndex => _userPreferences?.lastNavigatorPageIndex;
+
+  void setLastNavigatorPageIndex(int index) {
+    if (_userPreferences == null) return;
+    _userPreferences?.lastNavigatorPageIndex = index;
     _savePreferencesToCache();
   }
 
@@ -199,6 +216,9 @@ class ConfigProvider extends ChangeNotifier {
 
   static const autoPopulateWorkoutFromSetsHistoryToolTip =
       'Automatically populate exercises from latest tracked sets. This applies to any exercise that is manually added during a workout.';
+
+  static const autoCollapseTrackedExercisesToolTip =
+      'Automatically collapse exercise entries when all sets are marked as completed.';
 
   static const unitsToggleToolTip =
       "Toggle between imperial and metric units. Note, this will not translate existing data.";

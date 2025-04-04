@@ -12,6 +12,8 @@ class WorkoutDto {
   bool areTrackedExercisesLogged = false;
   bool autoTimingSelected = false;
   bool showRestTimerAfterEachSet = false;
+  double? totalDistance;
+  double? totalWeight;
 
   WorkoutDto({
     required this.id,
@@ -24,6 +26,8 @@ class WorkoutDto {
     this.areTrackedExercisesLogged = false,
     this.autoTimingSelected = false,
     this.showRestTimerAfterEachSet = false,
+    this.totalDistance,
+    this.totalWeight,
   });
 
   WorkoutDto.newInstance({
@@ -54,6 +58,8 @@ class WorkoutDto {
           .map((exercise) => TrackedExerciseDto.fromJson(exercise))
           .toList(),
       showRestTimerAfterEachSet: json['showRestTimerAfterExercise'] ?? false,
+      totalDistance: json['totalDistance'],
+      totalWeight: json['totalWeight'],
     );
     workout.setAreTrackedExercisesLogged();
     return workout;
@@ -102,6 +108,8 @@ class WorkoutDto {
       'endTime': endTime?.toIso8601String(),
       'lastUpdated': lastUpdated?.toIso8601String(),
       'showRestTimerAfterExercise': showRestTimerAfterEachSet,
+      'totalDistance': totalDistance,
+      'totalWeight': totalWeight,
     };
   }
 
@@ -116,5 +124,32 @@ class WorkoutDto {
     areTrackedExercisesLogged =
         exercises.isNotEmpty && exercises.every((x) => x.areSetsLogged());
     return areTrackedExercisesLogged;
+  }
+
+  calculateStats() {
+    totalDistance = _calculateTotalDistance();
+    totalWeight = _calculateTotalWeight();
+  }
+
+  double getTotalDistance() {
+    return totalDistance ?? _calculateTotalDistance();
+  }
+
+  double _calculateTotalDistance() {
+    return exercises.fold(
+      0.0,
+      (total, exercise) => total + exercise.getTotalDistance(),
+    );
+  }
+
+  double getTotalWeight() {
+    return totalWeight ?? _calculateTotalWeight();
+  }
+
+  double _calculateTotalWeight() {
+    return exercises.fold(
+      0.0,
+      (total, exercise) => total + exercise.getTotalWeight(),
+    );
   }
 }

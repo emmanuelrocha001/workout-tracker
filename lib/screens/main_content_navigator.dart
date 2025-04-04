@@ -22,17 +22,18 @@ class MainContentNavigator extends StatefulWidget {
 }
 
 class _MainContentNavigatorState extends State<MainContentNavigator> {
-  int currentPageIndex = 1;
+  int currentPageIndex = 0;
 
   void navigateToPage(int index) {
-    if (index > 0 && index < 2) {
+    var configProvider = Provider.of<ConfigProvider>(context, listen: false);
+    print('navigating');
+
+    if (index >= 0 && index < 2) {
+      configProvider.setLastNavigatorPageIndex(index);
       setState(() {
         currentPageIndex = index;
       });
     }
-    setState(() {
-      currentPageIndex = index;
-    });
   }
 
   @override
@@ -41,6 +42,11 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
     // might need to delay this. context is possibly not ready. did not navigate while testing on web build
 
     var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
+
+    var configProvider = Provider.of<ConfigProvider>(context, listen: false);
+    if (configProvider.lastNavigatorPageIndex != null) {
+      currentPageIndex = configProvider.lastNavigatorPageIndex!;
+    }
     if (workoutProvider.isWorkoutInProgress()) {
       currentPageIndex = 0;
     }
@@ -162,6 +168,8 @@ class _MainContentNavigatorState extends State<MainContentNavigator> {
               var exerciseProvider =
                   Provider.of<ExerciseProvider>(context, listen: false);
               exerciseProvider.clearFilters();
+              configProvider.setLastNavigatorPageIndex(index);
+
               setState(() {
                 currentPageIndex = index;
               });

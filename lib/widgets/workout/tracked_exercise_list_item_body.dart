@@ -268,6 +268,9 @@ class _TrackedExerciseListItemBodyState
     required String? setTime,
   }) {
     if (index >= 0 && index < sets.length) {
+      var workoutProvider =
+          Provider.of<WorkoutProvider>(context, listen: false);
+      var configProvider = Provider.of<ConfigProvider>(context, listen: false);
       var timerAlreadyShown = sets[index].restTimerShown;
       var tSet = SetDto.getCopy(sets[index]);
       print("on log $index");
@@ -277,10 +280,21 @@ class _TrackedExerciseListItemBodyState
       tSet.distance = setDistance;
       tSet.time = setTime;
       tSet.restTimerShown = true;
-      _onUpdateSet(trackedExerciseId, index, tSet);
-      // erocha todo - need to check if timer has already been shown and if setting is enabled
-      var workoutProvider =
-          Provider.of<WorkoutProvider>(context, listen: false);
+
+      var isSetUpdated = Provider.of<WorkoutProvider>(context, listen: false)
+          .updateSetInTrackedExercise(
+        trackedExerciseId: trackedExerciseId,
+        index: index,
+        set: tSet,
+        autoCollapseTrackedExercises:
+            configProvider.autoCollapseTrackedExercises,
+      );
+
+      if (isSetUpdated) {
+        setState(() {
+          sets[index] = tSet;
+        });
+      }
 
       /**
        * Show rest timer after each set if
@@ -303,22 +317,16 @@ class _TrackedExerciseListItemBodyState
   }
 
   void _onRemoveSet(trackedExcerciseId, int index) {
+    var configProvider = Provider.of<ConfigProvider>(context, listen: false);
     var setRemoved = Provider.of<WorkoutProvider>(context, listen: false)
-        .deleteSetFromTrackedExercise(trackedExcerciseId, index);
+        .deleteSetFromTrackedExercise(
+      trackedExerciseId: trackedExcerciseId,
+      index: index,
+      autoCollapseTrackedExercises: configProvider.autoCollapseTrackedExercises,
+    );
     if (setRemoved) {
       setState(() {
         sets.removeAt(index);
-      });
-    }
-  }
-
-  void _onUpdateSet(String trackedExerciseId, int index, SetDto set) {
-    var setUpdated = Provider.of<WorkoutProvider>(context, listen: false)
-        .updateSetInTrackedExercise(trackedExerciseId, index, set);
-
-    if (setUpdated) {
-      setState(() {
-        sets[index] = set;
       });
     }
   }
@@ -400,12 +408,15 @@ class _TrackedExerciseListItemBodyState
                     save: (double number) {
                       var weightBeforeUpdate = sets[index].weight;
                       sets[index].weight = number;
-                      var isUpdated =
+                      var isSetUpdated =
                           Provider.of<WorkoutProvider>(context, listen: false)
                               .updateSetInTrackedExercise(
-                                  widget.trackedExerciseId, index, sets[index]);
+                        trackedExerciseId: widget.trackedExerciseId,
+                        index: index,
+                        set: sets[index],
+                      );
 
-                      if (!isUpdated) {
+                      if (!isSetUpdated) {
                         sets[index].weight = weightBeforeUpdate;
                       }
                     },
@@ -421,12 +432,15 @@ class _TrackedExerciseListItemBodyState
                     save: (double number) {
                       var repsBeforeUpdate = sets[index].reps;
                       sets[index].reps = number.toInt();
-                      var isUpdated =
+                      var isSetUpdated =
                           Provider.of<WorkoutProvider>(context, listen: false)
                               .updateSetInTrackedExercise(
-                                  widget.trackedExerciseId, index, sets[index]);
+                        trackedExerciseId: widget.trackedExerciseId,
+                        index: index,
+                        set: sets[index],
+                      );
 
-                      if (!isUpdated) {
+                      if (!isSetUpdated) {
                         sets[index].reps = repsBeforeUpdate;
                       }
                     },
@@ -442,12 +456,15 @@ class _TrackedExerciseListItemBodyState
                     save: (double number) {
                       var distanceBeforeUpdate = sets[index].distance;
                       sets[index].distance = number;
-                      var isUpdated =
+                      var isSetUpdated =
                           Provider.of<WorkoutProvider>(context, listen: false)
                               .updateSetInTrackedExercise(
-                                  widget.trackedExerciseId, index, sets[index]);
+                        trackedExerciseId: widget.trackedExerciseId,
+                        index: index,
+                        set: sets[index],
+                      );
 
-                      if (!isUpdated) {
+                      if (isSetUpdated) {
                         sets[index].distance = distanceBeforeUpdate;
                       }
                     },
@@ -463,12 +480,15 @@ class _TrackedExerciseListItemBodyState
                     save: (String value) {
                       var timeBeforeUpdate = sets[index].time;
                       sets[index].time = value;
-                      var isUpdated =
+                      var isSetUpdated =
                           Provider.of<WorkoutProvider>(context, listen: false)
                               .updateSetInTrackedExercise(
-                                  widget.trackedExerciseId, index, sets[index]);
+                        trackedExerciseId: widget.trackedExerciseId,
+                        index: index,
+                        set: sets[index],
+                      );
 
-                      if (!isUpdated) {
+                      if (!isSetUpdated) {
                         sets[index].time = timeBeforeUpdate;
                       }
                     },

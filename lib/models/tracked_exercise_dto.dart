@@ -6,11 +6,13 @@ class TrackedExerciseDto {
   late String id;
   ExerciseDto exercise;
   List<SetDto> sets = [];
+  bool? isCollapsed;
 
   TrackedExerciseDto({
     required this.id,
     required this.exercise,
     required this.sets,
+    this.isCollapsed,
   });
 
   TrackedExerciseDto.newInstance({required this.exercise}) {
@@ -23,6 +25,7 @@ class TrackedExerciseDto {
     // print("from TrackedExerciseDto.fromJson ${json}\n");
     return TrackedExerciseDto(
       id: json['id'],
+      isCollapsed: json['isCollapsed'],
       exercise: ExerciseDto.fromJson(json['exercise']),
       sets: (json['sets'] as List)
           .map((set) => SetDto(
@@ -42,6 +45,7 @@ class TrackedExerciseDto {
       'id': id,
       'exercise': exercise.toJson(),
       'sets': sets.map((x) => x.toJson()).toList(),
+      'isCollapsed': isCollapsed,
     };
   }
 
@@ -50,6 +54,21 @@ class TrackedExerciseDto {
       return false;
     }
     return sets.every((x) => x.isLogged);
+  }
+
+  double getTotalDistance() {
+    if (exercise.dimensions?.isDistanceEnabled ?? false) {
+      return sets.fold(0.0, (total, set) => total + (set.distance ?? 0.0));
+    }
+    return 0.0;
+  }
+
+  double getTotalWeight() {
+    if (exercise.dimensions?.isWeightEnabled ?? false) {
+      return sets.fold(
+          0.0, (total, set) => total + ((set.weight ?? 0.0) * (set.reps ?? 0)));
+    }
+    return 0.0;
   }
 }
 
