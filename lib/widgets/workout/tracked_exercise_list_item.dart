@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../utility.dart';
+import '../helper.dart';
 
 import '../../providers/config_provider.dart';
 import '../../providers/workout_provider.dart';
@@ -58,6 +59,32 @@ class TrackedExerciseListItem extends StatelessWidget {
                           .map((x) => SetDto.getCopy(x))
                           .toList(),
                     ),
+                  SizedBox(
+                    width: Helper.getMaxContentWidth(context),
+                    child: IconButton(
+                      visualDensity: VisualDensity.compact,
+                      style: TextButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            ConfigProvider.defaultSpace / 2,
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        setCollapsedStatus(
+                          trackedExercise.id,
+                          !isCollapsed,
+                        );
+                      },
+                      icon: Icon(
+                        isCollapsed
+                            ? Icons.keyboard_arrow_down_rounded
+                            : Icons.keyboard_arrow_up_rounded,
+                        color: ConfigProvider.mainColor,
+                        size: ConfigProvider.mediumIconSize,
+                      ),
+                    ),
+                  ),
                   const SizedBox(
                     height: ConfigProvider.defaultSpace / 2,
                   ),
@@ -100,39 +127,39 @@ class TrackedExerciseListItem extends StatelessWidget {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding:
-                  const EdgeInsets.only(right: ConfigProvider.defaultSpace),
-              child: PillContainer(
-                height: ConfigProvider.defaultSpace * 4,
-                outlineColor: ConfigProvider.mainColor,
-                color: ConfigProvider.backgroundColorSolid,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        setCollapsedStatus(
-                          trackedExercise.id,
-                          !isCollapsed,
-                        );
-                      },
-                      visualDensity: VisualDensity.compact,
-                      icon: Icon(
-                        isCollapsed
-                            ? Icons.keyboard_arrow_down_rounded
-                            : Icons.keyboard_arrow_up_rounded,
-                        color: ConfigProvider.mainColor,
-                        size: ConfigProvider.mediumIconSize,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          // Align(
+          //   alignment: Alignment.topRight,
+          //   child: Padding(
+          //     padding:
+          //         const EdgeInsets.only(right: ConfigProvider.defaultSpace),
+          //     child: PillContainer(
+          //       height: ConfigProvider.defaultSpace * 4,
+          //       outlineColor: ConfigProvider.mainColor,
+          //       color: ConfigProvider.backgroundColorSolid,
+          //       child: Row(
+          //         mainAxisSize: MainAxisSize.min,
+          //         children: [
+          //           IconButton(
+          //             onPressed: () {
+          //               setCollapsedStatus(
+          //                 trackedExercise.id,
+          //                 !isCollapsed,
+          //               );
+          //             },
+          //             visualDensity: VisualDensity.compact,
+          //             icon: Icon(
+          //               isCollapsed
+          //                   ? Icons.keyboard_arrow_down_rounded
+          //                   : Icons.keyboard_arrow_up_rounded,
+          //               color: ConfigProvider.mainColor,
+          //               size: ConfigProvider.mediumIconSize,
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
           if (!isCollapsed)
             Positioned(
               bottom: 0,
