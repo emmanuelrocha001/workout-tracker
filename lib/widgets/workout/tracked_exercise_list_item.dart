@@ -60,7 +60,7 @@ class TrackedExerciseListItem extends StatelessWidget {
                           .toList(),
                     ),
                   SizedBox(
-                    width: Helper.getMaxContentWidth(context),
+                    width: 200.0,
                     child: IconButton(
                       visualDensity: VisualDensity.compact,
                       style: TextButton.styleFrom(
@@ -81,7 +81,7 @@ class TrackedExerciseListItem extends StatelessWidget {
                             ? Icons.keyboard_arrow_down_rounded
                             : Icons.keyboard_arrow_up_rounded,
                         color: ConfigProvider.mainColor,
-                        size: ConfigProvider.mediumIconSize,
+                        size: ConfigProvider.defaultIconSize,
                       ),
                     ),
                   ),
