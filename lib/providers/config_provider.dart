@@ -200,6 +200,9 @@ class ConfigProvider extends ChangeNotifier {
   static const mediumSpace = 16.0;
   static const largeSpace = 24.0;
 
+  static const defaultThumbnailHeight = 180.0;
+  static const defaultThumbnailWidth = 360.0;
+
   // text
   static const defaultErrorMessage = 'Something went wrong.';
   static const cancelInProgressWorkoutText =
@@ -218,7 +221,7 @@ class ConfigProvider extends ChangeNotifier {
       'Automatically populate exercises from latest tracked sets. This applies to any exercise that is manually added during a workout.';
 
   static const autoCollapseTrackedExercisesToolTip =
-      'Automatically collapse exercise entries when all sets are marked as completed.';
+      'Automatically collapse exercises when all sets are marked as completed.';
 
   static const unitsToggleToolTip =
       "Toggle between imperial and metric units. Note, this will not translate existing data.";

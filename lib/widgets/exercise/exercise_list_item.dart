@@ -105,30 +105,17 @@ class ExerciseListItem extends StatelessWidget {
         trailing: onSelect != null
             ? IconButton(
                 icon: const Icon(
-                  Icons.play_circle_outline_rounded,
+                  Icons.info_outline_rounded,
+                  color: ConfigProvider.mainColor,
+                  size: ConfigProvider.defaultIconSize,
                 ),
-                style: Theme.of(context).iconButtonTheme.style,
                 onPressed: () {
-                  Helper.navigateToYoutube(
-                    context: context,
-                    youtubeId: data.youtubeId,
-                    searchQuery: data.name,
+                  showDetails!(
+                    exercise: data,
                   );
                 },
               )
-            : data.isCustom &&
-                    updateExercise != null &&
-                    deleteExercise != null // temp for testing
-                // ? IconButton(
-                //     icon: const Icon(
-                //       Icons.more_horiz_rounded,
-                //       size: ConfigProvider.smallIconSize,
-                //       color: ConfigProvider.mainColor,
-                //     ),
-                //     onPressed: () {
-                //       updateExercise!(exercise: data);
-                //     },
-                //   )
+            : data.isCustom && updateExercise != null && deleteExercise != null
                 ? MenuAnchor(
                     style: const MenuStyle(
                       backgroundColor: WidgetStatePropertyAll<Color>(

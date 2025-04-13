@@ -275,13 +275,29 @@ class ExerciseProvider with ChangeNotifier {
 
   Future<ResDto> createUserDefinedExercise(
       CreateUpdateExerciseDto input) async {
+    final urlRegex = RegExp(
+        r'(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})');
+    final idRegex = RegExp(r'^[a-zA-Z0-9_-]{11}$');
+    String? videoId;
+
+    final urlMatch = urlRegex.firstMatch(input.youtubeId ?? "");
+    if (idRegex.hasMatch(input.youtubeId ?? "")) {
+      videoId = input.youtubeId;
+    } else if (urlMatch != null) {
+      videoId = urlMatch.group(1);
+    } else {
+      videoId = "";
+      print("Invalid input – not a recognizable YouTube ID or URL.");
+    }
+
     var newExercise = ExerciseDto.newInstance(
       name: input.name,
       muscleGroupId: input.muscleGroupId,
       exerciseType: input.exerciseType,
       description: input.description,
-      youtubeId: input.youtubeId,
+      youtubeId: videoId,
     );
+
     newExercise.setSearchableString();
 
     var res = await _saveUserDefinedExercise(exercise: newExercise);

@@ -124,7 +124,7 @@ class PreferencesPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     LabeledRow(
-                      label: 'Auto Collapse Exercise Entries',
+                      label: 'Auto Collapse Exercises',
                       labelWidth: labelSize,
                       children: [
                         RowItem(

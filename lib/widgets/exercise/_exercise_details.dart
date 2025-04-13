@@ -7,6 +7,7 @@ import '../general/text_style_templates.dart';
 import '../general/row_item.dart';
 import '../../models/muscle_group_dto.dart';
 import '../general/pill_container.dart';
+import '../helper.dart';
 
 class ExerciseDetails extends StatelessWidget {
   final ExerciseDto exercise;
@@ -63,9 +64,52 @@ class ExerciseDetails extends StatelessWidget {
                     ConfigProvider.mainTextColor,
                   ),
                 ),
-              )
+              ),
             ],
           ),
+          if (exercise.youtubeId != null && exercise.youtubeId!.isNotEmpty)
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(
+                    ConfigProvider.defaultSpace,
+                  ),
+                  child: Image.network(
+                    'https://img.youtube.com/vi/${exercise?.youtubeId}/maxresdefault.jpg',
+                    width: ConfigProvider.defaultThumbnailWidth,
+                    height: ConfigProvider.defaultThumbnailHeight,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(Icons.error);
+                    },
+                  ),
+                ),
+                SizedBox(
+                  width: ConfigProvider.defaultThumbnailWidth,
+                  height: ConfigProvider.defaultThumbnailHeight,
+                  child: Center(
+                    child: IconButton(
+                      alignment: Alignment.center,
+                      style: TextButton.styleFrom(
+                        shape: const CircleBorder(),
+                        backgroundColor: Colors.black.withOpacity(0.25),
+                      ),
+                      icon: const Icon(
+                        size: ConfigProvider.defaultIconSize * 1.5,
+                        Icons.play_circle_outline_rounded,
+                        color: ConfigProvider.backgroundColorSolid,
+                      ),
+                      onPressed: () {
+                        Helper.navigateToYoutube(
+                          context: context,
+                          youtubeId: exercise.youtubeId,
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
           LabeledRow(
             label: 'Muscle Group',
             mainAxisAlignment: MainAxisAlignment.start,

@@ -13,6 +13,7 @@ import '../../models/muscle_group_dto.dart';
 import '../general/default_dropdown.dart';
 import '../general/pill_container.dart';
 import '../general/action_button.dart';
+import '../helper.dart';
 
 class CreateUpdateExerciseForm extends StatefulWidget {
   final ExerciseDto? exercise;
@@ -122,7 +123,7 @@ class _CreateUpdateExerciseFormState extends State<CreateUpdateExerciseForm> {
             LabeledRow(
               label: 'YouTube Id',
               tooltip:
-                  "This Id will be used to redirect to the specified video. If left blank, the exercise name will be used as part of the search query.",
+                  "Enter a YouTube video ID or paste a full YouTube link — we’ll extract the ID for you.",
               children: [
                 RowItem(
                   alignment: Alignment.centerLeft,
@@ -130,7 +131,21 @@ class _CreateUpdateExerciseFormState extends State<CreateUpdateExerciseForm> {
                     controller: _youtubeIdController,
                     focusNode: _youtubeIdFocusNode,
                   ),
-                )
+                ),
+                IconButton(
+                  tooltip: 'Pase from clipboard',
+                  icon: const Icon(
+                    // Icons.auto_graph_rounded,
+                    Icons.paste_rounded,
+                    color: ConfigProvider.mainColor,
+                    size: ConfigProvider.defaultIconSize,
+                  ),
+                  // style: _theme.iconButtonTheme.style,
+                  onPressed: () async {
+                    var latestClipboardValue = await Helper.getClipboardText();
+                    _youtubeIdController!.text = latestClipboardValue;
+                  },
+                ),
               ],
             ),
             if (muscleGroupSelection != null)

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:provider/provider.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
@@ -10,6 +12,15 @@ import '../providers/config_provider.dart';
 import './general/text_style_templates.dart';
 
 class Helper {
+  static Future<String> getClipboardText() async {
+    final data = await Clipboard.getData('text/plain');
+    if (data != null && data.text != null) {
+      return data.text!;
+    } else {
+      return "";
+    }
+  }
+
   static double getTopPadding(BuildContext context) {
     var configProvider = Provider.of<ConfigProvider>(context, listen: false);
     var mediaQueryTopPadding = MediaQuery.of(context).padding.top;

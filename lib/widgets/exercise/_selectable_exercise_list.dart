@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/exercise_provider.dart';
+import '../../providers/workout_provider.dart';
 import '../../providers/config_provider.dart';
 
 import "../helper.dart";
 
+import '../../models/exercise_dto.dart';
 import '../exercise/_exercise_filters_grid.dart';
 import '../../class_extensions.dart';
 import './exercise_list_item.dart';
+import '../workout/_exercise_details_with_history.dart';
 import '../general/overlay_action_button.dart';
 import './exercise_search_bar.dart';
 
@@ -48,6 +51,21 @@ class _SelectableExerciseListState extends State<SelectableExerciseList> {
     Navigator.of(context).pop(_selectedId);
   }
 
+  void showDetails({
+    required ExerciseDto exercise,
+  }) async {
+    var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
+    var exerciseHistory = workoutProvider.getExerciseHistory(exercise.id);
+    Helper.showPopUp(
+      context: context,
+      title: exercise.name,
+      content: ExerciseDetailsWithHistory(
+        exercise: exercise,
+        exerciseHistory: exerciseHistory,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var exerciseProvider = Provider.of<ExerciseProvider>(context);
@@ -72,6 +90,7 @@ class _SelectableExerciseListState extends State<SelectableExerciseList> {
                     data: exercises[index],
                     selectedId: _selectedId,
                     onSelect: _onSelect,
+                    showDetails: showDetails,
                   );
                 },
                 childCount: exercises.length,
