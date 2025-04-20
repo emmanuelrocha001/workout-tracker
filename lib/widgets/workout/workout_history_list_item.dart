@@ -312,12 +312,16 @@ class WorkoutHistoryListItem extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(
-                  workout.title != null && workout.title!.isNotEmpty
-                      ? workout.title!
-                      : endTimeString,
-                  style: TextStyleTemplates.defaultBoldTextStyle(
-                    ConfigProvider.mainTextColor,
+                SizedBox(
+                  width: Helper.getMaxContentWidth(context) - 80.0,
+                  child: Text(
+                    workout.title != null && workout.title!.isNotEmpty
+                        ? workout.title!
+                        : endTimeString,
+                    overflow: TextOverflow.fade,
+                    style: TextStyleTemplates.defaultBoldTextStyle(
+                      ConfigProvider.mainTextColor,
+                    ),
                   ),
                 ),
                 const Spacer(),

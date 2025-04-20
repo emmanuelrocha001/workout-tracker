@@ -50,7 +50,7 @@ class _TrackedExerciseListItemBodyState
   List<TextEditingController> _timeControllers = [];
   int? updateRestOfSetsElligibleIndex;
   int? updateRestOfSetsIndex;
-  int updateRestOfSetsPromptTimerAllowedSeconds = 2;
+  int updateRestOfSetsPromptTimerAllowedSeconds = 3;
   Timer? updateRestOfSetsPromptTimer;
 
   @override
@@ -357,13 +357,13 @@ class _TrackedExerciseListItemBodyState
       tSet.time = setTime;
       tSet.restTimerShown = true;
 
-      var isSetUpdated = Provider.of<WorkoutProvider>(context, listen: false)
-          .updateSetInTrackedExercise(
+      var isSetUpdated = workoutProvider.updateSetInTrackedExercise(
         trackedExerciseId: trackedExerciseId,
         index: index,
         set: tSet,
         autoCollapseTrackedExercises:
-            configProvider.autoCollapseTrackedExercises,
+            configProvider.autoCollapseTrackedExercises &&
+                !workoutProvider.updatingLoggedWorkout,
       );
 
       if (isSetUpdated) {
@@ -378,7 +378,8 @@ class _TrackedExerciseListItemBodyState
       * - there are more sets
       */
 
-      if (tSet.isLogged &&
+      if (!workoutProvider.updatingLoggedWorkout &&
+          tSet.isLogged &&
           index < sets.length - 1 &&
           index == updateRestOfSetsElligibleIndex) {
         updateRestOfSetsPrompt(index, tSet);
@@ -414,11 +415,13 @@ class _TrackedExerciseListItemBodyState
 
   void _onRemoveSet(trackedExcerciseId, int index) {
     var configProvider = Provider.of<ConfigProvider>(context, listen: false);
-    var setRemoved = Provider.of<WorkoutProvider>(context, listen: false)
-        .deleteSetFromTrackedExercise(
+    var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
+    var setRemoved = workoutProvider.deleteSetFromTrackedExercise(
       trackedExerciseId: trackedExcerciseId,
       index: index,
-      autoCollapseTrackedExercises: configProvider.autoCollapseTrackedExercises,
+      autoCollapseTrackedExercises:
+          configProvider.autoCollapseTrackedExercises &&
+              !workoutProvider.updatingLoggedWorkout,
     );
     if (setRemoved) {
       setState(() {
