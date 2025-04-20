@@ -745,6 +745,44 @@ class WorkoutProvider extends ChangeNotifier {
     return true;
   }
 
+  bool updateSetsBasedOnSetInTrackedExercise({
+    required String trackedExerciseId,
+    required SetDto set,
+    required List<int> indexes,
+  }) {
+    if (_inProgressWorkout == null || indexes.isEmpty) {
+      return false;
+    }
+
+    var trackedExercise = _inProgressWorkout!.exercises
+        .where((x) => x.id == trackedExerciseId)
+        .firstOrNull;
+
+    if (trackedExercise == null) {
+      return false;
+    }
+
+    var oldAreSetsLogged = trackedExercise.areSetsLogged();
+
+    // update sets
+    for (var index in indexes) {
+      var tempSet = SetDto.getCopy(set);
+      tempSet.isLogged = false;
+      trackedExercise.sets[index] = tempSet;
+    }
+
+    _saveInProgressWorkout();
+    _inProgressWorkout!.setAreTrackedExercisesLogged();
+    notifyListeners();
+    // if (oldAreSetsLogged != trackedExercise.areSetsLogged()) {
+    //   // probably wan to unlog sets if they are logged;
+    //   _inProgressWorkout!.setAreTrackedExercisesLogged();
+    //   notifyListeners();
+    // }
+
+    return true;
+  }
+
   void setTrackedExerciseCollapsedStatus(
       String trackedExerciseId, bool isCollapsed) {
     if (_inProgressWorkout == null) {

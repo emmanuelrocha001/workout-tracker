@@ -1,13 +1,16 @@
+import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_tracker/models/exercise_type_dto.dart';
+import 'package:workout_tracker/widgets/general/time_based_indicator.dart';
 
 import '../../providers/config_provider.dart';
 import '../../providers/workout_provider.dart';
 
+import '../general/action_button.dart';
 import '../general/custom_number_input_formatter.dart';
 import '../general/time_input_formatter.dart';
 import '../general/row_item.dart';
@@ -45,6 +48,10 @@ class _TrackedExerciseListItemBodyState
   List<TextEditingController> _repsControllers = [];
   List<TextEditingController> _distanceControllers = [];
   List<TextEditingController> _timeControllers = [];
+  int? updateRestOfSetsElligibleIndex;
+  int? updateRestOfSetsIndex;
+  int updateRestOfSetsPromptTimerAllowedSeconds = 2;
+  Timer? updateRestOfSetsPromptTimer;
 
   @override
   void initState() {
@@ -72,6 +79,75 @@ class _TrackedExerciseListItemBodyState
   @override
   void dispose() {
     super.dispose();
+    if (updateRestOfSetsPromptTimer != null) {
+      print("cancelling timer");
+      updateRestOfSetsPromptTimer!.cancel();
+    }
+  }
+
+  void updateRestOfSetsPrompt(
+    int currentSetIndex,
+    SetDto currentSet,
+  ) {
+    print("cancelling timer if active");
+    if (updateRestOfSetsPromptTimer != null &&
+        updateRestOfSetsPromptTimer!.isActive) {
+      updateRestOfSetsPromptTimer!.cancel();
+    }
+    var elapsedSeconds = 0;
+    setState(
+      () {
+        updateRestOfSetsIndex = currentSetIndex;
+        updateRestOfSetsPromptTimer =
+            Timer.periodic(const Duration(seconds: 1), (timer) {
+          elapsedSeconds++;
+          if (elapsedSeconds >= updateRestOfSetsPromptTimerAllowedSeconds ||
+              updateRestOfSetsIndex == null) {
+            // reached 24 hours
+            print('elapsed time is more than 24 hours, stopping current timer');
+            timer.cancel();
+            setState(() {
+              updateRestOfSetsIndex = null;
+              updateRestOfSetsElligibleIndex = null;
+            });
+          }
+        });
+      },
+    );
+  }
+
+  void updateRestOfSets() {
+    if (updateRestOfSetsIndex == null) {
+      print("invalid call to update rest of sets");
+      return;
+    }
+    var indexes = List.generate(
+      sets.length - updateRestOfSetsIndex! - 1,
+      (i) => updateRestOfSetsIndex! + i + 1,
+    );
+
+    print(indexes);
+    var workoutProvider = Provider.of<WorkoutProvider>(context, listen: false);
+    workoutProvider.updateSetsBasedOnSetInTrackedExercise(
+      trackedExerciseId: widget.trackedExerciseId,
+      set: sets[updateRestOfSetsIndex!],
+      indexes: indexes,
+    );
+
+    setState(() {
+      // local update
+      for (var index in indexes) {
+        var tempSet = SetDto.getCopy(sets[updateRestOfSetsIndex!]);
+        tempSet.isLogged = false;
+        sets[index] = tempSet;
+      }
+      updateRestOfSetsIndex = null;
+    });
+
+    if (updateRestOfSetsPromptTimer != null &&
+        updateRestOfSetsPromptTimer!.isActive) {
+      updateRestOfSetsPromptTimer!.cancel();
+    }
   }
 
   List<Widget> generateHeaderRow() {
@@ -296,6 +372,26 @@ class _TrackedExerciseListItemBodyState
         });
       }
 
+      /*
+      * Trigger user prompt to apply changes to rest of the sets if
+      * - marking a set as logged
+      * - there are more sets
+      */
+
+      if (tSet.isLogged &&
+          index < sets.length - 1 &&
+          index == updateRestOfSetsElligibleIndex) {
+        updateRestOfSetsPrompt(index, tSet);
+      } else if (!tSet.isLogged && index == updateRestOfSetsIndex) {
+        setState(() {
+          updateRestOfSetsIndex = null;
+        });
+        if (updateRestOfSetsPromptTimer != null &&
+            updateRestOfSetsPromptTimer!.isActive) {
+          updateRestOfSetsPromptTimer!.cancel();
+        }
+      }
+
       /**
        * Show rest timer after each set if
        * - not updating a logged workout
@@ -392,169 +488,204 @@ class _TrackedExerciseListItemBodyState
                 : null,
           ),
           // color: set.isLogged ? Colors.green : Colors.transparent,
-          child: Row(
+          child: Column(
             children: [
-              RowItem(
-                  child: Text(
-                '${index + 1}',
-                style: TextStyleTemplates.defaultTextStyle(
-                  ConfigProvider.mainTextColor,
-                ),
-              )),
-              if (widget.exerciseDimensions?.isWeightEnabled ?? true)
-                RowItem(
-                  child: getNumberInput(
-                    controller: _weightControllers[index],
-                    save: (double number) {
-                      var weightBeforeUpdate = sets[index].weight;
-                      sets[index].weight = number;
-                      var isSetUpdated =
-                          Provider.of<WorkoutProvider>(context, listen: false)
-                              .updateSetInTrackedExercise(
-                        trackedExerciseId: widget.trackedExerciseId,
-                        index: index,
-                        set: sets[index],
-                      );
-
-                      if (!isSetUpdated) {
-                        sets[index].weight = weightBeforeUpdate;
-                      }
-                    },
-                    allowDecimal: true,
-                    canEdit: !set.isLogged,
-                    hintText: previousSetWeight,
-                  ),
-                ),
-              if (widget.exerciseDimensions?.isRepEnabled ?? true)
-                RowItem(
-                  child: getNumberInput(
-                    controller: _repsControllers[index],
-                    save: (double number) {
-                      var repsBeforeUpdate = sets[index].reps;
-                      sets[index].reps = number.toInt();
-                      var isSetUpdated =
-                          Provider.of<WorkoutProvider>(context, listen: false)
-                              .updateSetInTrackedExercise(
-                        trackedExerciseId: widget.trackedExerciseId,
-                        index: index,
-                        set: sets[index],
-                      );
-
-                      if (!isSetUpdated) {
-                        sets[index].reps = repsBeforeUpdate;
-                      }
-                    },
-                    allowDecimal: false,
-                    canEdit: !set.isLogged,
-                    hintText: previousSetReps,
-                  ),
-                ),
-              if (widget.exerciseDimensions?.isDistanceEnabled ?? false)
-                RowItem(
-                  child: getNumberInput(
-                    controller: _distanceControllers[index],
-                    save: (double number) {
-                      var distanceBeforeUpdate = sets[index].distance;
-                      sets[index].distance = number;
-                      var isSetUpdated =
-                          Provider.of<WorkoutProvider>(context, listen: false)
-                              .updateSetInTrackedExercise(
-                        trackedExerciseId: widget.trackedExerciseId,
-                        index: index,
-                        set: sets[index],
-                      );
-
-                      if (isSetUpdated) {
-                        sets[index].distance = distanceBeforeUpdate;
-                      }
-                    },
-                    allowDecimal: true,
-                    canEdit: !set.isLogged,
-                    hintText: previousSetDistance,
-                  ),
-                ),
-              if (widget.exerciseDimensions?.isTimeEnabled ?? false)
-                RowItem(
-                  child: getTimeInput(
-                    controller: _timeControllers[index],
-                    save: (String value) {
-                      var timeBeforeUpdate = sets[index].time;
-                      sets[index].time = value;
-                      var isSetUpdated =
-                          Provider.of<WorkoutProvider>(context, listen: false)
-                              .updateSetInTrackedExercise(
-                        trackedExerciseId: widget.trackedExerciseId,
-                        index: index,
-                        set: sets[index],
-                      );
-
-                      if (!isSetUpdated) {
-                        sets[index].time = timeBeforeUpdate;
-                      }
-                    },
-                    canEdit: !set.isLogged,
-                    hintText: previousSetTime,
-                  ),
-                ),
-              RowItem(
-                child: Checkbox(
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    value: set.isLogged,
-                    activeColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          ConfigProvider.defaultSpace / 2),
+              Row(
+                children: [
+                  RowItem(
+                      child: Text(
+                    '${index + 1}',
+                    style: TextStyleTemplates.defaultTextStyle(
+                      ConfigProvider.mainTextColor,
                     ),
-                    onChanged: (val) {
-                      // can log based on current values
-                      double? weight;
-                      if (widget.exerciseDimensions?.isWeightEnabled ?? true) {
-                        weight = sets[index].weight ??
-                            double.tryParse(previousSetWeight);
-                        weight ??= 0.0;
-                      }
-                      int? reps;
-                      if (widget.exerciseDimensions?.isRepEnabled ?? true) {
-                        reps =
-                            sets[index].reps ?? int.tryParse(previousSetReps);
-                        reps ??= 0;
-                      }
-                      double? distance;
-                      if (widget.exerciseDimensions?.isDistanceEnabled ??
-                          false) {
-                        distance = sets[index].distance ??
-                            double.tryParse(previousSetDistance);
-                        distance ??= 0.0;
-                      }
+                  )),
+                  if (widget.exerciseDimensions?.isWeightEnabled ?? true)
+                    RowItem(
+                      child: getNumberInput(
+                        controller: _weightControllers[index],
+                        save: (double number) {
+                          var weightBeforeUpdate = sets[index].weight;
+                          sets[index].weight = number;
+                          var isSetUpdated = Provider.of<WorkoutProvider>(
+                                  context,
+                                  listen: false)
+                              .updateSetInTrackedExercise(
+                            trackedExerciseId: widget.trackedExerciseId,
+                            index: index,
+                            set: sets[index],
+                          );
 
-                      String? time;
-                      if (widget.exerciseDimensions?.isTimeEnabled ?? false) {
-                        time = TimeInputFormatter.padFormattedTimeInput(
-                                sets[index].time) ??
-                            previousSetTime;
-                        if (time.isEmpty) {
-                          time = "00:00:00";
-                        }
-                      }
-                      // var canLog = true weight != null && reps != null;
-                      var canLog = true;
+                          if (!isSetUpdated) {
+                            sets[index].weight = weightBeforeUpdate;
+                          } else {
+                            updateRestOfSetsElligibleIndex = index;
+                          }
+                        },
+                        allowDecimal: true,
+                        canEdit: !set.isLogged,
+                        hintText: previousSetWeight,
+                      ),
+                    ),
+                  if (widget.exerciseDimensions?.isRepEnabled ?? true)
+                    RowItem(
+                      child: getNumberInput(
+                        controller: _repsControllers[index],
+                        save: (double number) {
+                          var repsBeforeUpdate = sets[index].reps;
+                          sets[index].reps = number.toInt();
+                          var isSetUpdated = Provider.of<WorkoutProvider>(
+                                  context,
+                                  listen: false)
+                              .updateSetInTrackedExercise(
+                            trackedExerciseId: widget.trackedExerciseId,
+                            index: index,
+                            set: sets[index],
+                          );
 
-                      if (canLog) {
-                        print("logging set $index");
-                        _onLog(
-                          trackedExerciseId: widget.trackedExerciseId,
-                          index: index,
-                          val: val ?? false,
-                          setWeight: weight,
-                          setReps: reps,
-                          setDistance: distance,
-                          setTime: time,
-                        );
-                      } else {
-                        print("Cannot log set $index");
-                      }
-                    }),
+                          if (!isSetUpdated) {
+                            sets[index].reps = repsBeforeUpdate;
+                          } else {
+                            updateRestOfSetsElligibleIndex = index;
+                          }
+                        },
+                        allowDecimal: false,
+                        canEdit: !set.isLogged,
+                        hintText: previousSetReps,
+                      ),
+                    ),
+                  if (widget.exerciseDimensions?.isDistanceEnabled ?? false)
+                    RowItem(
+                      child: getNumberInput(
+                        controller: _distanceControllers[index],
+                        save: (double number) {
+                          var distanceBeforeUpdate = sets[index].distance;
+                          sets[index].distance = number;
+                          var isSetUpdated = Provider.of<WorkoutProvider>(
+                                  context,
+                                  listen: false)
+                              .updateSetInTrackedExercise(
+                            trackedExerciseId: widget.trackedExerciseId,
+                            index: index,
+                            set: sets[index],
+                          );
+
+                          if (!isSetUpdated) {
+                            sets[index].distance = distanceBeforeUpdate;
+                          } else {
+                            updateRestOfSetsElligibleIndex = index;
+                          }
+                        },
+                        allowDecimal: true,
+                        canEdit: !set.isLogged,
+                        hintText: previousSetDistance,
+                      ),
+                    ),
+                  if (widget.exerciseDimensions?.isTimeEnabled ?? false)
+                    RowItem(
+                      child: getTimeInput(
+                        controller: _timeControllers[index],
+                        save: (String value) {
+                          var timeBeforeUpdate = sets[index].time;
+                          sets[index].time = value;
+                          var isSetUpdated = Provider.of<WorkoutProvider>(
+                                  context,
+                                  listen: false)
+                              .updateSetInTrackedExercise(
+                            trackedExerciseId: widget.trackedExerciseId,
+                            index: index,
+                            set: sets[index],
+                          );
+
+                          if (!isSetUpdated) {
+                            sets[index].time = timeBeforeUpdate;
+                          } else {
+                            updateRestOfSetsElligibleIndex = index;
+                          }
+                        },
+                        canEdit: !set.isLogged,
+                        hintText: previousSetTime,
+                      ),
+                    ),
+                  RowItem(
+                    child: Checkbox(
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        value: set.isLogged,
+                        activeColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              ConfigProvider.defaultSpace / 2),
+                        ),
+                        onChanged: (val) {
+                          // can log based on current values
+                          double? weight;
+                          if (widget.exerciseDimensions?.isWeightEnabled ??
+                              true) {
+                            weight = sets[index].weight ??
+                                double.tryParse(previousSetWeight);
+                            weight ??= 0.0;
+                          }
+                          int? reps;
+                          if (widget.exerciseDimensions?.isRepEnabled ?? true) {
+                            reps = sets[index].reps ??
+                                int.tryParse(previousSetReps);
+                            reps ??= 0;
+                          }
+                          double? distance;
+                          if (widget.exerciseDimensions?.isDistanceEnabled ??
+                              false) {
+                            distance = sets[index].distance ??
+                                double.tryParse(previousSetDistance);
+                            distance ??= 0.0;
+                          }
+
+                          String? time;
+                          if (widget.exerciseDimensions?.isTimeEnabled ??
+                              false) {
+                            time = TimeInputFormatter.padFormattedTimeInput(
+                                    sets[index].time) ??
+                                previousSetTime;
+                            if (time.isEmpty) {
+                              time = "00:00:00";
+                            }
+                          }
+                          // var canLog = true weight != null && reps != null;
+                          var canLog = true;
+
+                          if (canLog) {
+                            print("logging set $index");
+                            _onLog(
+                              trackedExerciseId: widget.trackedExerciseId,
+                              index: index,
+                              val: val ?? false,
+                              setWeight: weight,
+                              setReps: reps,
+                              setDistance: distance,
+                              setTime: time,
+                            );
+                          } else {
+                            print("Cannot log set $index");
+                          }
+                        }),
+                  ),
+                ],
               ),
+              if (index == updateRestOfSetsIndex)
+                TextButton(
+                  onPressed: updateRestOfSets,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Apply this change to the remaining sets?",
+                        style: TextStyleTemplates.smallTextStyle(
+                            ConfigProvider.mainColor),
+                      ),
+                      TimeBasedIndicator(
+                          timeLenghtInMilliseconds:
+                              updateRestOfSetsPromptTimerAllowedSeconds * 1000),
+                    ],
+                  ),
+                ),
             ],
           ),
         ),

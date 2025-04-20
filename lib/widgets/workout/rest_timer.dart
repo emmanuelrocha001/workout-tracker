@@ -179,7 +179,10 @@ class _RestTimerState extends State<RestTimer> with WidgetsBindingObserver {
               children: [
                 Text(
                   timeRemainingInMilliseconds >= 0
-                      ? '${Utility.getElapsedTimeString(timeDiff: Utility.getTimeDifferenceAsTimeDiff(timeRemainingInSeconds, false), includeHours: false)}'
+                      ? Utility.getElapsedTimeString(
+                          timeDiff: Utility.getTimeDifferenceAsTimeDiff(
+                              timeRemainingInSeconds, false),
+                          includeHours: false)
                       : "00:00",
                   style: TextStyleTemplates.xLargeBoldTextStyle(
                       ConfigProvider.mainTextColor),

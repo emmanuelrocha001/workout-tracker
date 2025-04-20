@@ -5,11 +5,9 @@ import './text_style_templates.dart';
 class ActionButton extends StatelessWidget {
   final Function()? onPressed;
   final String label;
-  const ActionButton({
-    super.key,
-    required this.label,
-    this.onPressed,
-  });
+  final double? width;
+  const ActionButton(
+      {super.key, required this.label, this.onPressed, this.width});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +16,7 @@ class ActionButton extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(ConfigProvider.mediumSpace),
         child: SizedBox(
-          width: ConfigProvider.maxButtonWidth,
+          width: width ?? ConfigProvider.maxButtonWidth,
           height: ConfigProvider.defaultButtonHeight,
           child: TextButton(
             style: TextButton.styleFrom(
