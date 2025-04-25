@@ -549,6 +549,7 @@ class WorkoutProvider extends ChangeNotifier {
         exercise: exercise,
       );
       if (autoPopulateWorkoutFromSetsHistory) {
+        // TODO try catch here in case something goes wrong. Adding the new exercise should succeed even if we cannot auto populate
         print("attempting to auto populate tracked exercise");
         var latestSets = getSetsFromLatestExerciseHistoryEntry(exercise.id);
         if (latestSets != null) {

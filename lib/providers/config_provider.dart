@@ -245,5 +245,5 @@ class ConfigProvider extends ChangeNotifier {
       'Are you sure you want to delete this exercise? This action cannot be undone.';
 
   static const dataStorageDisclaimerText =
-      "ERP uses local storage to save your data, meaning all information is stored directly on your device and not on any external servers. While we make every effort to ensure the app functions reliably, we cannot guarantee complete data persistence due to factors beyond our control, such as device-specific issues, software updates, or accidental data deletion.";
+      "RepPal uses local storage to save your data, meaning all information is stored directly on your device and not on any external servers. While we make every effort to ensure the app functions reliably, we cannot guarantee complete data persistence due to factors beyond our control, such as device-specific issues, software updates, or accidental data deletion.";
 }

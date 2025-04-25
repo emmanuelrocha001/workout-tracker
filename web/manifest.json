@@ -1,6 +1,6 @@
 {
-  "name": "ERP",
-  "short_name": "ERP",
+  "name": "RepPal",
+  "short_name": "RepPal",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#FFFFF",

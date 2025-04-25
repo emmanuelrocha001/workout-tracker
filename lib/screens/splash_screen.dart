@@ -31,7 +31,7 @@ class SplashScreen extends StatelessWidget {
                     //   color: ConfigProvider.mainColor,
                     // ),
                     Text(
-                      'erp',
+                      'RepPal',
                       style: TextStyleTemplates.largeBoldTextStyle(
                         ConfigProvider.mainColor,
                       ),

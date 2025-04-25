@@ -64,7 +64,7 @@ class WorkoutTracker extends StatelessWidget {
           }
         },
         child: MaterialApp(
-          title: 'ERP',
+          title: 'RepPal',
           // color: ConfigProvider.mainColor,
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
