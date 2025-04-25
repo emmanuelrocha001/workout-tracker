@@ -29,7 +29,7 @@ class TrackedExerciseHistory extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
-      child: entries != null
+      child: entries != null && entries!.isNotEmpty
           ? Scrollbar(
               controller: scrollController,
               // thumbVisibility: true,

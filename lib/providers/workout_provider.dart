@@ -146,7 +146,6 @@ class WorkoutProvider extends ChangeNotifier {
   Future<void> loadExerciseHistory() async {
     try {
       String? cachedEncodedValue = _cache?.getString(_exerciseHistoryKey);
-
       if (cachedEncodedValue != null) {
         (jsonDecode(cachedEncodedValue) as Map<String, dynamic>)
             .forEach((key, value) {
@@ -240,7 +239,8 @@ class WorkoutProvider extends ChangeNotifier {
 
   List<ISetDto>? getSetsFromLatestExerciseHistoryEntry(String exerciseId) {
     print(exerciseId);
-    if (_exerciseHistory.containsKey(exerciseId)) {
+    if (_exerciseHistory.containsKey(exerciseId) &&
+        _exerciseHistory[exerciseId]!.isNotEmpty) {
       // In dart, for a LinkedHashMap, the underlying structure that maintains the order of insertion is a doubly linked list. This means that we can access the first and last elements in O(1) time.
       return _exerciseHistory[exerciseId]!.values.last.sets;
     }
@@ -549,7 +549,6 @@ class WorkoutProvider extends ChangeNotifier {
         exercise: exercise,
       );
       if (autoPopulateWorkoutFromSetsHistory) {
-        // TODO try catch here in case something goes wrong. Adding the new exercise should succeed even if we cannot auto populate
         print("attempting to auto populate tracked exercise");
         var latestSets = getSetsFromLatestExerciseHistoryEntry(exercise.id);
         if (latestSets != null) {
