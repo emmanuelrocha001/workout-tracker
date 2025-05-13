@@ -4,14 +4,16 @@ import './exercise_dto.dart';
 
 class TrackedExerciseDto {
   late String id;
-  ExerciseDto exercise;
+  late String muscleGroupId;
+  ExerciseDto? exercise;
   List<SetDto> sets = [];
   bool? isCollapsed;
 
   TrackedExerciseDto({
     required this.id,
-    required this.exercise,
+    required this.muscleGroupId,
     required this.sets,
+    this.exercise,
     this.isCollapsed,
   });
 
@@ -19,14 +21,25 @@ class TrackedExerciseDto {
     id = const Uuid().v4();
     print("from generating id ${id}");
     sets.add(SetDto());
+    muscleGroupId = exercise!.muscleGroupId;
+  }
+
+  TrackedExerciseDto.newSlotInstance({required this.muscleGroupId}) {
+    id = const Uuid().v4();
+    print("from generating id ${id}");
+    // sets.add(SetDto());
   }
 
   factory TrackedExerciseDto.fromJson(Map<String, dynamic> json) {
     // print("from TrackedExerciseDto.fromJson ${json}\n");
     return TrackedExerciseDto(
       id: json['id'],
+      muscleGroupId:
+          json['muscleGroupId'] ?? json['exercise']['muscleGroupId'].toString(),
       isCollapsed: json['isCollapsed'],
-      exercise: ExerciseDto.fromJson(json['exercise']),
+      exercise: json['exercise'] != null
+          ? ExerciseDto.fromJson(json['exercise'])
+          : null,
       sets: (json['sets'] as List)
           .map((set) => SetDto(
                 reps: set['reps'],
@@ -43,7 +56,8 @@ class TrackedExerciseDto {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'exercise': exercise.toJson(),
+      'muscleGroupId': muscleGroupId,
+      'exercise': exercise?.toJson(),
       'sets': sets.map((x) => x.toJson()).toList(),
       'isCollapsed': isCollapsed,
     };
@@ -57,14 +71,14 @@ class TrackedExerciseDto {
   }
 
   double getTotalDistance() {
-    if (exercise.dimensions?.isDistanceEnabled ?? false) {
+    if (exercise?.dimensions?.isDistanceEnabled ?? false) {
       return sets.fold(0.0, (total, set) => total + (set.distance ?? 0.0));
     }
     return 0.0;
   }
 
   double getTotalWeight() {
-    if (exercise.dimensions?.isWeightEnabled ?? false) {
+    if (exercise?.dimensions?.isWeightEnabled ?? false) {
       return sets.fold(
           0.0, (total, set) => total + ((set.weight ?? 0.0) * (set.reps ?? 0)));
     }

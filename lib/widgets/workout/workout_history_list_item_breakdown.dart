@@ -19,7 +19,7 @@ class WorkoutHistoryListItemBreakdown extends StatelessWidget {
       children: workout.exercises
           .map(
             (trackedExercise) => WorkoutHistoryListItemBreakdownExerciseItem(
-                exercise: trackedExercise.exercise,
+                exercise: trackedExercise.exercise!,
                 sets: trackedExercise.sets,
                 isMetricSystemSelected: isMetricSystemSelected),
           )

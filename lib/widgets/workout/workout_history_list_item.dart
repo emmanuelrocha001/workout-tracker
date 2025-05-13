@@ -59,14 +59,14 @@ class WorkoutHistoryListItem extends StatelessWidget {
               padding:
                   const EdgeInsets.only(right: ConfigProvider.defaultSpace),
               child: Text(
-                trackedExercise.exercise.name,
+                trackedExercise.exercise!.name,
                 style: TextStyleTemplates.defaultTextStyle(
                   ConfigProvider.mainTextColor,
                 ),
               ),
             ),
           ),
-          if (trackedExercise.exercise.dimensions?.isWeightEnabled ?? true)
+          if (trackedExercise.exercise!.dimensions?.isWeightEnabled ?? true)
             RowItem(
               isCompact: true,
               alignment: Alignment.centerLeft,
@@ -79,7 +79,7 @@ class WorkoutHistoryListItem extends StatelessWidget {
                 ),
               ),
             ),
-          if (trackedExercise.exercise.dimensions?.isWeightEnabled ?? true)
+          if (trackedExercise.exercise!.dimensions?.isWeightEnabled ?? true)
             RowItem(
               isCompact: true,
               alignment: Alignment.centerLeft,
@@ -92,10 +92,10 @@ class WorkoutHistoryListItem extends StatelessWidget {
                 ),
               ),
             ),
-          if ((trackedExercise.exercise.dimensions?.isRepEnabled ?? true) &&
-              !(trackedExercise.exercise.dimensions?.isWeightEnabled ?? true))
+          if ((trackedExercise.exercise!.dimensions?.isRepEnabled ?? true) &&
+              !(trackedExercise.exercise!.dimensions?.isWeightEnabled ?? true))
             const SizedBox(width: 75.0),
-          if (trackedExercise.exercise.dimensions?.isRepEnabled ?? true)
+          if (trackedExercise.exercise!.dimensions?.isRepEnabled ?? true)
             RowItem(
               isCompact: true,
               minWidth: 60.0,
@@ -108,9 +108,9 @@ class WorkoutHistoryListItem extends StatelessWidget {
                 ),
               ),
             ),
-          if ((trackedExercise.exercise.dimensions?.isDistanceEnabled ??
+          if ((trackedExercise.exercise!.dimensions?.isDistanceEnabled ??
                   false) ||
-              (trackedExercise.exercise.dimensions?.isTimeEnabled ?? false))
+              (trackedExercise.exercise!.dimensions?.isTimeEnabled ?? false))
             Row(
               children: [
                 RowItem(
@@ -118,18 +118,18 @@ class WorkoutHistoryListItem extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   minWidth: 40.0,
                   maxWidth: 40.0,
-                  child:
-                      (trackedExercise.exercise.dimensions?.isDistanceEnabled ??
-                              false)
-                          ? Text(
-                              '${trackedExercise.sets.last.distance}',
-                              style: TextStyleTemplates.defaultTextStyle(
-                                ConfigProvider.mainTextColor,
-                              ),
-                            )
-                          : const SizedBox(),
+                  child: (trackedExercise
+                              .exercise!.dimensions?.isDistanceEnabled ??
+                          false)
+                      ? Text(
+                          '${trackedExercise.sets.last.distance}',
+                          style: TextStyleTemplates.defaultTextStyle(
+                            ConfigProvider.mainTextColor,
+                          ),
+                        )
+                      : const SizedBox(),
                 ),
-                (trackedExercise.exercise.dimensions?.isDistanceEnabled ??
+                (trackedExercise.exercise!.dimensions?.isDistanceEnabled ??
                         false)
                     ? RowItem(
                         isCompact: true,
@@ -144,7 +144,7 @@ class WorkoutHistoryListItem extends StatelessWidget {
                         ),
                       )
                     : const SizedBox(),
-                (trackedExercise.exercise.dimensions?.isTimeEnabled ?? false)
+                (trackedExercise.exercise!.dimensions?.isTimeEnabled ?? false)
                     ? RowItem(
                         isCompact: true,
                         alignment: Alignment.centerLeft,

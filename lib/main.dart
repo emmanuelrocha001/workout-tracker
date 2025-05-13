@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:workout_tracker/providers/config_provider.dart';
 import './providers/exercise_provider.dart';
 import 'providers/workout_provider.dart';
+import 'providers/templates_provider.dart';
 
 import './screens/main_content_navigator.dart';
 import './screens/initial_screen.dart';
@@ -38,6 +39,10 @@ class WorkoutTracker extends StatelessWidget {
         ChangeNotifierProvider<ExerciseProvider>(
           lazy: false,
           create: (_) => ExerciseProvider(),
+        ),
+        ChangeNotifierProvider<TemplatesProvider>(
+          lazy: false,
+          create: (_) => TemplatesProvider(),
         ),
         ChangeNotifierProxyProvider<ExerciseProvider, WorkoutProvider>(
           lazy: false,

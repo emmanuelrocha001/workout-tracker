@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workout_tracker/models/res_dto.dart';
 import './config_provider.dart';
 import '../models/exercise_dto.dart';
+import '../models/template_dto.dart';
 import '../models/workout_dto.dart';
 import '../models/tracked_exercise_dto.dart';
 import '../models/tracked_exercise_history_entry_dto.dart';
@@ -84,8 +85,10 @@ class WorkoutProvider extends ChangeNotifier {
   }
 
   Future<void> loadInProgressWorkoutFromCache() async {
+    // erocha TODO - account for tracked exercise slots which have no exercise
     try {
       var cachedEncodedValue = _cache?.getString(_inProgressWorkoutKey);
+      print('cached in progress workout: $cachedEncodedValue');
       if (cachedEncodedValue != null) {
         _inProgressWorkout =
             WorkoutDto.fromJson(jsonDecode(cachedEncodedValue));
@@ -108,7 +111,7 @@ class WorkoutProvider extends ChangeNotifier {
       List<String>? cachedEncodedValueList =
           _cache?.getStringList(_workoutHistoryKey);
 
-      // print('\ncached workout history:\n\n $cachedEncodedValueList\n\n');
+      print('\ncached workout history:\n\n $cachedEncodedValueList\n\n');
 
       if (cachedEncodedValueList != null) {
         _workoutHistory = (cachedEncodedValueList).map((workout) {
@@ -119,9 +122,9 @@ class WorkoutProvider extends ChangeNotifier {
           // try to use up to date exercise data
           for (var i = 0; i < tempWorkout.exercises.length; i++) {
             if (_exerciseMap
-                .containsKey(tempWorkout.exercises[i].exercise.id)) {
+                .containsKey(tempWorkout.exercises[i].exercise?.id)) {
               tempWorkout.exercises[i].exercise =
-                  _exerciseMap[tempWorkout.exercises[i].exercise.id]!;
+                  _exerciseMap[tempWorkout.exercises[i].exercise?.id]!;
             }
           }
           return tempWorkout;
@@ -146,6 +149,7 @@ class WorkoutProvider extends ChangeNotifier {
   Future<void> loadExerciseHistory() async {
     try {
       String? cachedEncodedValue = _cache?.getString(_exerciseHistoryKey);
+
       if (cachedEncodedValue != null) {
         (jsonDecode(cachedEncodedValue) as Map<String, dynamic>)
             .forEach((key, value) {
@@ -175,12 +179,13 @@ class WorkoutProvider extends ChangeNotifier {
     // delete removed entries
     var toBeRemoved = <String>{};
     if (isWorkoutEntryBeingDeleted) {
-      toBeRemoved = workout.exercises.map((x) => x.exercise.id).toSet();
+      toBeRemoved = workout.exercises.map((x) => x.exercise!.id).toSet();
     } else if (oldWorkout != null && workout.id == oldWorkout.id) {
       toBeRemoved = oldWorkout.exercises
-          .map((x) => x.exercise.id)
+          .where((x) => x.exercise != null)
+          .map((x) => x.exercise!.id)
           .toSet()
-          .difference(workout.exercises.map((x) => x.exercise.id).toSet());
+          .difference(workout.exercises.map((x) => x.exercise!.id).toSet());
     }
 
     print('toBeRemoved $toBeRemoved');
@@ -207,30 +212,30 @@ class WorkoutProvider extends ChangeNotifier {
           .toList();
 
       var entry = TrackedExerciseHistoryEntryDto.newInstance(
-        exerciseId: trackedExercise.exercise.id,
+        exerciseId: trackedExercise.exercise!.id,
         workoutId: workout.id,
         workoutStartDate: workout.startTime!,
         sets: simplifiedSets,
       );
 
-      if (_exerciseHistory.containsKey(trackedExercise.exercise.id)) {
-        _exerciseHistory[trackedExercise.exercise.id]![workout.id] = entry;
+      if (_exerciseHistory.containsKey(trackedExercise.exercise!.id)) {
+        _exerciseHistory[trackedExercise.exercise!.id]![workout.id] = entry;
         // sort entries
         var entriesAsList =
-            _exerciseHistory[trackedExercise.exercise.id]!.entries.toList();
+            _exerciseHistory[trackedExercise.exercise!.id]!.entries.toList();
 
         print(
-            're-sorting exercise history entries for exercise ${trackedExercise.exercise.id}');
+            're-sorting exercise history entries for exercise ${trackedExercise.exercise!.id}');
         entriesAsList.sort((a, b) =>
             a.value.workoutStartDate.isBefore(b.value.workoutStartDate)
                 ? -1
                 : 1);
 
-        _exerciseHistory[trackedExercise.exercise.id] = {
+        _exerciseHistory[trackedExercise.exercise!.id] = {
           for (var entry in entriesAsList) entry.key: entry.value
         };
       } else {
-        _exerciseHistory[trackedExercise.exercise.id] = {
+        _exerciseHistory[trackedExercise.exercise!.id] = {
           workout.id: entry,
         };
       }
@@ -342,6 +347,48 @@ class WorkoutProvider extends ChangeNotifier {
     if (shouldStartAsNew) {
       _inProgressWorkout!.showRestTimerAfterEachSet = showRestTimerAfterEachSet;
     }
+    notifyListeners();
+    _saveInProgressWorkout();
+  }
+
+  void startWorkoutFromTemplateDay({
+    required TemplateDto template,
+    required int daySlotIndex,
+    bool showRestTimerAfterEachSet = false,
+  }) {
+    var tempWorkout = WorkoutDto.newInstance(
+      title: '${template.name}- Day ${daySlotIndex + 1}',
+    );
+
+    tempWorkout.templateId = template.id;
+    tempWorkout.templateDayIndex = daySlotIndex;
+
+    var tempExercises = template.days![daySlotIndex].slots
+        .map((x) {
+          if (x.exerciseId == null || !_exerciseMap.containsKey(x.exerciseId)) {
+            return TrackedExerciseDto.newSlotInstance(
+                muscleGroupId: x.muscleGroupId);
+          }
+
+          var exercise = _exerciseMap[x.exerciseId];
+          var trackedExercise = TrackedExerciseDto.newInstance(
+            exercise: exercise,
+          );
+          print("attempting to auto populate tracked exercise");
+          var latestSets = getSetsFromLatestExerciseHistoryEntry(exercise!.id);
+          if (latestSets != null) {
+            trackedExercise.sets = latestSets
+                .map((x) => SetDto(reps: x.reps, weight: x.weight))
+                .toList();
+          }
+          return trackedExercise;
+        })
+        .whereType<TrackedExerciseDto>()
+        .toList();
+    tempWorkout.exercises = tempExercises;
+    _inProgressWorkout = tempWorkout;
+
+    _inProgressWorkout!.showRestTimerAfterEachSet = showRestTimerAfterEachSet;
     notifyListeners();
     _saveInProgressWorkout();
   }
@@ -537,7 +584,7 @@ class WorkoutProvider extends ChangeNotifier {
     print("from add exercise ${exercise.id}");
     TrackedExerciseDto trackedExercise;
     var trackedExerciseIndex = _inProgressWorkout!.exercises
-        .indexWhere((x) => x.exercise.id == exercise.id);
+        .indexWhere((x) => x.exercise!.id == exercise.id);
 
     if (trackedExerciseIndex != -1) {
       // add new set if exerise is already being tracked.
@@ -584,10 +631,13 @@ class WorkoutProvider extends ChangeNotifier {
           message: 'Original exercise not found, cannot replace.');
     }
 
+    print("from replace exercise");
+    // erocha TODO fix this. Need to replace by trackedExerciseId poistion incas of slot
+
     print("from add exercise ${exercise.id}");
     TrackedExerciseDto trackedExercise;
     var replacementTrackedExerciseIndex = _inProgressWorkout!.exercises
-        .indexWhere((x) => x.exercise.id == exercise.id);
+        .indexWhere((x) => x.exercise != null && x.exercise!.id == exercise.id);
 
     if (replacementTrackedExerciseIndex != -1) {
       return ResDto(

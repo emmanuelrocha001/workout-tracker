@@ -64,6 +64,7 @@ flutter:
   assets:
     - assets/json_docs/_EXERCISES.json
     - assets/json_docs/_MUSCLE_GROUPS.json
+    - assets/json_docs/_TEMPLATES.json
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

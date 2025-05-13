@@ -1,3 +1,5 @@
+import 'package:workout_tracker/models/template_dto.dart';
+
 import '../utility.dart';
 import './tracked_exercise_dto.dart';
 
@@ -8,6 +10,8 @@ class WorkoutDto {
   DateTime? endTime;
   DateTime? lastUpdated;
   String? title;
+  String? templateId;
+  int? templateDayIndex;
   List<TrackedExerciseDto> exercises = [];
   bool areTrackedExercisesLogged = false;
   bool autoTimingSelected = false;
@@ -28,6 +32,8 @@ class WorkoutDto {
     this.showRestTimerAfterEachSet = false,
     this.totalDistance,
     this.totalWeight,
+    this.templateId,
+    this.templateDayIndex,
   });
 
   WorkoutDto.newInstance({
@@ -60,6 +66,8 @@ class WorkoutDto {
       showRestTimerAfterEachSet: json['showRestTimerAfterExercise'] ?? false,
       totalDistance: json['totalDistance'],
       totalWeight: json['totalWeight'],
+      templateId: json['templateId'],
+      templateDayIndex: json['templateDayIndex'],
     );
     workout.setAreTrackedExercisesLogged();
     return workout;
@@ -95,6 +103,8 @@ class WorkoutDto {
       autoTimingSelected: shouldCreateAsNew,
       // needs to be set manually or in user preferences.
       showRestTimerAfterEachSet: false,
+      templateId: workout.templateId,
+      templateDayIndex: workout.templateDayIndex,
     );
   }
 
@@ -110,6 +120,8 @@ class WorkoutDto {
       'showRestTimerAfterExercise': showRestTimerAfterEachSet,
       'totalDistance': totalDistance,
       'totalWeight': totalWeight,
+      'templateId': templateId,
+      'templateDayIndex': templateDayIndex,
     };
   }
 

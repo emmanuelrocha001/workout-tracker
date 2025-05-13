@@ -221,89 +221,106 @@ class _TrackedExerciseListState extends State<TrackedExerciseList> {
                   ),
                 ),
                 const Spacer(),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
-                    child: MenuAnchor(
-                      style: const MenuStyle(
-                        backgroundColor: WidgetStatePropertyAll<Color>(
-                            ConfigProvider.backgroundColorSolid),
-                        // elevation: WidgetStatePropertyAll<double>(0.0),
-                      ),
-                      builder: (BuildContext context, MenuController controller,
-                          Widget? child) {
-                        return IconButton(
-                          icon: const Icon(
-                            Icons.more_vert_rounded,
-                            color: ConfigProvider.mainTextColor,
-                            size: ConfigProvider.defaultIconSize,
-                          ),
-                          // style: _theme.iconButtonTheme.style,
-                          onPressed: () {
-                            // TODO add more options
-                            if (controller.isOpen) {
-                              controller.close();
-                            } else {
-                              controller.open();
-                            }
-                            // Provider.of<WorkoutProvider>(context, listen: false)
-                            //     .deleteTrackedExercise(trackedExercise.id);
-                          },
-                        );
-                      },
-                      menuChildren: [
-                        DefaultMenuItemButton(
-                          icon: Icons.edit_rounded,
-                          label: 'ADJUST DETAILS',
-                          onPressed: _adjustWorkoutTimes,
-                        ),
-                        DefaultMenuItemButton(
-                          icon: Icons.delete_outline_rounded,
-                          label: !workoutProvider.updatingLoggedWorkout
-                              ? "CANCEL WORKOUT"
-                              : "CANCEL UPDATE",
-                          iconColor: Colors.red,
-                          labelColor: Colors.red,
-                          onPressed: () async {
-                            var res = await Helper.showConfirmationDialogForm(
-                                context: context,
-                                message: !workoutProvider.updatingLoggedWorkout
-                                    ? ConfigProvider.cancelInProgressWorkoutText
-                                    : ConfigProvider.cancelUpdateWorkoutText,
-                                confimationButtonLabel: "CONFIRM",
-                                confirmationButtonColor: Colors.red,
-                                cancelButtonColor:
-                                    ConfigProvider.backgroundColor,
-                                cancelButtonLabel: 'RESUME');
-
-                            if (res ?? false) {
-                              workoutProvider.cancelInProgressWorkout();
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
                 Padding(
-                  padding: const EdgeInsets.only(
-                      left: ConfigProvider.defaultSpace / 4,
-                      right: ConfigProvider.defaultSpace,
-                      bottom: ConfigProvider.defaultSpace,
-                      top: ConfigProvider.defaultSpace),
-                  child: TextButton(
-                    onPressed: onAddExercise,
-                    style: TextButton.styleFrom(
-                      visualDensity: VisualDensity.comfortable,
-                      backgroundColor: ConfigProvider.mainColor,
+                  padding: const EdgeInsets.all(ConfigProvider.defaultSpace),
+                  child: MenuAnchor(
+                    style: const MenuStyle(
+                      backgroundColor: WidgetStatePropertyAll<Color>(
+                          ConfigProvider.backgroundColorSolid),
+                      // elevation: WidgetStatePropertyAll<double>(0.0),
                     ),
-                    child: Text(
-                      "ADD EXERCISE",
-                      style: TextStyleTemplates.smallBoldTextStyle(
-                        Utility.getTextColorBasedOnBackground(),
+                    builder: (BuildContext context, MenuController controller,
+                        Widget? child) {
+                      return Row(
+                        spacing: .5,
+                        children: [
+                          IconButton(
+                            style: const ButtonStyle(
+                              visualDensity: VisualDensity.comfortable,
+                              backgroundColor: WidgetStatePropertyAll(
+                                  ConfigProvider.mainColor),
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(
+                                        ConfigProvider.defaultSpace / 2),
+                                    bottomLeft: Radius.circular(
+                                        ConfigProvider.defaultSpace / 2),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            icon: const Icon(
+                              Icons.more_vert_sharp,
+                              color: ConfigProvider.backgroundColorSolid,
+                              size: ConfigProvider.smallIconSize,
+                            ),
+                            // style: _theme.iconButtonTheme.style,
+                            onPressed: () {
+                              // TODO add more options
+                              if (controller.isOpen) {
+                                controller.close();
+                              } else {
+                                controller.open();
+                              }
+                              // Provider.of<WorkoutProvider>(context, listen: false)
+                              //     .deleteTrackedExercise(trackedExercise.id);
+                            },
+                          ),
+                          TextButton(
+                            onPressed: onAddExercise,
+                            style: TextButton.styleFrom(
+                              visualDensity: VisualDensity.comfortable,
+                              backgroundColor: ConfigProvider.mainColor,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(
+                                      ConfigProvider.defaultSpace / 2),
+                                  bottomRight: Radius.circular(
+                                      ConfigProvider.defaultSpace / 2),
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              "ADD EXERCISE",
+                              style: TextStyleTemplates.smallBoldTextStyle(
+                                Utility.getTextColorBasedOnBackground(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                    menuChildren: [
+                      DefaultMenuItemButton(
+                        icon: Icons.edit_rounded,
+                        label: 'ADJUST DETAILS',
+                        onPressed: _adjustWorkoutTimes,
                       ),
-                    ),
+                      DefaultMenuItemButton(
+                        icon: Icons.delete_outline_rounded,
+                        label: !workoutProvider.updatingLoggedWorkout
+                            ? "CANCEL WORKOUT"
+                            : "CANCEL UPDATE",
+                        iconColor: Colors.red,
+                        labelColor: Colors.red,
+                        onPressed: () async {
+                          var res = await Helper.showConfirmationDialogForm(
+                              context: context,
+                              message: !workoutProvider.updatingLoggedWorkout
+                                  ? ConfigProvider.cancelInProgressWorkoutText
+                                  : ConfigProvider.cancelUpdateWorkoutText,
+                              confimationButtonLabel: "CONFIRM",
+                              confirmationButtonColor: Colors.red,
+                              cancelButtonColor: ConfigProvider.backgroundColor,
+                              cancelButtonLabel: 'RESUME');
+
+                          if (res ?? false) {
+                            workoutProvider.cancelInProgressWorkout();
+                          }
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ],
