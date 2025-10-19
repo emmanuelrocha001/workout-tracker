@@ -1,11 +1,11 @@
 // ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_preferences_dto.dart';
+import '../web-helper/web_helper.dart';
 
 class ConfigProvider extends ChangeNotifier {
   SharedPreferencesWithCache? _cache;
@@ -37,11 +37,7 @@ class ConfigProvider extends ChangeNotifier {
     if (!kIsWeb) {
       return false;
     }
-    var userAgent = (html.window.navigator.userAgent).toLowerCase();
-    return userAgent.contains('mobile') || // General mobile devices
-        userAgent.contains('android') || // Android devices
-        userAgent.contains('iphone') || // iPhone
-        userAgent.contains('ipad'); // iPad
+    return WebHelper.isMobileWeb();
   }
 
   bool get isNativeMobile => _isNativeMobile;

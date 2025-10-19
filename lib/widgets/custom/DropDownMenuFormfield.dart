@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class DropdownMenuFormField<T> extends FormField<T> {
-  DropdownMenuFormField({
+class CustomDropdownMenuFormField<T> extends FormField<T> {
+  CustomDropdownMenuFormField({
     super.key,
     bool enabled = true,
     double? width,
@@ -73,8 +73,8 @@ class DropdownMenuFormField<T> extends FormField<T> {
 }
 
 class _DropdownMenuFormFieldState<T> extends FormFieldState<T> {
-  DropdownMenuFormField<T> get _dropdownMenuFormField =>
-      widget as DropdownMenuFormField<T>;
+  CustomDropdownMenuFormField<T> get _dropdownMenuFormField =>
+      widget as CustomDropdownMenuFormField<T>;
 
   // @override
   // void didChange(T? value) {
@@ -83,7 +83,7 @@ class _DropdownMenuFormFieldState<T> extends FormFieldState<T> {
   // }
 
   @override
-  void didUpdateWidget(DropdownMenuFormField<T> oldWidget) {
+  void didUpdateWidget(CustomDropdownMenuFormField<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.initialValue != widget.initialValue) {
       setValue(widget.initialValue);

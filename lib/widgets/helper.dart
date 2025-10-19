@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+import '../web-helper/web_helper.dart';
+
 import 'package:url_launcher/url_launcher_string.dart';
 
 import 'package:another_flushbar/flushbar.dart';
@@ -63,7 +63,7 @@ class Helper {
         mode: LaunchMode.externalNonBrowserApplication,
       );
     } else {
-      html.window.open('youtube://$url', "_self");
+      WebHelper.launchUrlString(url);
     }
   }
 
